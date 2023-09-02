@@ -1,0 +1,293 @@
+
+import StatsModifier from "../Statistic/StatsModifier";
+import Entity from "./Entity";
+import Turnbar from "./Turnbar";
+import IBattleEntity from "./IBattleEntity";
+import BarHandler from "../BarHandler";
+import HealthBar from "./HealthBar";
+import BattleScene from "../../Scenes/BattleScene";
+import Battle from "../Battle";
+import Skill from "../Skill/Skill";
+import ServerHandler from "../ServerHandler";
+import SpriteWrapper from "../Animations/SpriteWrapper";
+import AnimationsHandler from "../Animations/AnimationsHandler";
+import ISkillAnimation from "../Skill/Animations/ISkillAnimation";
+import SkillTooltip from "./SkillTooltip";
+
+export default class BattleEntityAlly implements IBattleEntity {
+  battleEntity: IBattleEntity
+  selectedBar: BarHandler
+  skillImageByName: {[key: string]: Phaser.GameObjects.Image}
+  skillScale: number
+  skillHoveredByName: {[key: string]:boolean}
+  skillTooltipByName: {[key: string]: SkillTooltip}
+  skillCooldownByName: {[key: string]: number}
+  skillCooldownRectangleByName: {[key: string]: Phaser.GameObjects.Graphics}
+  skillCooldownTextByName: {[key: string]: Phaser.GameObjects.Text}
+
+  constructor(battleEntity: IBattleEntity, battleScene: BattleScene) {
+    this.battleEntity = battleEntity
+    this.createSelectedBar(battleScene)
+    this.skillImageByName = {}
+    this.skillHoveredByName = {}
+    this.skillTooltipByName = {}
+    this.skillCooldownRectangleByName = {}
+    this.skillCooldownTextByName = {}
+    this.createSkills(battleScene)
+    this.initSkillCooldownByName()
+  }
+
+  initSkillCooldownByName(){
+    this.skillCooldownByName = {}
+    for (let i = 0; i < this.battleEntity.getEntity().skillArray.length; i++) {
+      this.skillCooldownByName[this.battleEntity.getEntity().skillArray[i].name] = 0
+    }
+  }
+  setOnCooldown(name: string, cooldown: number): void {
+    this.skillCooldownByName[name] = cooldown
+  }
+  isSkillOnCooldown(name: string): boolean {
+    return this.skillCooldownByName[name] > 0
+  }
+  reduceCooldowns() {
+    for(let skillName in this.skillCooldownByName) {
+      this.skillCooldownByName[skillName]--
+      if(this.skillCooldownByName[skillName] < 0) {
+        this.skillCooldownByName[skillName] = 0
+      }
+    }
+  }
+
+  playTurn(battle: Battle, onTurnProcs: any, serverHandler:ServerHandler, animationsHandler: AnimationsHandler): void {
+    console.log("Entity ally ", this.getIndex(), ' playing')
+    this.battleEntity.playTurn(battle, onTurnProcs, serverHandler, animationsHandler)
+    if(!this.battleEntity.isDead() && !this.battleEntity.isStunned()) {
+      battle.battleScene.battle.hasSelectedTarget = false
+      this.selectedBar.showBar()
+      this.showSkills()
+    }
+    else if (this.battleEntity.isStunned()){
+      this.endTurn()
+      battle.isTurnPlaying = false
+    }
+    else {
+      console.log('Ally dead OnTurnProcs')
+      this.endTurn()
+      battle.isTurnPlaying = false
+    }
+    this.reduceCooldowns()
+  }
+
+  endSkillSelection(): void {
+    this.hideSkills()
+    this.selectedBar.hideBar()
+    this.resetSkillSelection()
+  }
+  endTurn(): void {
+    this.battleEntity.endTurn()
+  }
+
+  applyDamage(isCrit: boolean,value: number, battleScene: Phaser.Scene, animationHandler: AnimationsHandler): void {
+    this.battleEntity.applyDamage(isCrit, value, battleScene, animationHandler)
+  }
+  applyHeal(value: number, battleScene: Phaser.Scene): void {
+    this.battleEntity.applyHeal(value, battleScene)
+  }
+  applyBuffsAndStatus(buffs: Array<{name: string, duration: number}>, status: Array<{name: string, duration: number}>, battleScene: Phaser.Scene): void {
+    this.battleEntity.applyBuffsAndStatus(buffs, status, battleScene)
+  }
+  die(battle: Battle, battleScene: Phaser.Scene, animationsHandler: AnimationsHandler): void {
+    this.battleEntity.die(battle, battleScene, animationsHandler)
+  }
+  isDead(): boolean {
+    return this.battleEntity.isDead()
+  }
+
+  createSelectedBar(battleScene: BattleScene) {
+    let width = this.battleEntity.getSprite().getWidth() / 1.7
+    let height = this.battleEntity.getSprite().getHeight() / 12
+    let x = this.battleEntity.getSprite().getPlaceholderX() - width / 2
+    let y = this.battleEntity.getSprite().getPlaceholderY()
+    this.selectedBar = new BarHandler(battleScene, x, y, 0xffdda3, width, height)
+    this.selectedBar.hideBar()
+  }
+
+  createSkills(battleScene: BattleScene): void {
+    const skillWidth = 200
+    this.skillScale = battleScene.battle.positionScaler.computeScaleForWidthHeightRatio(skillWidth, skillWidth, battleScene.battle.positionScaler.spellIconsRatio.widthRatio, battleScene.battle.positionScaler.spellIconsRatio.heightRatio)
+    const skillwidthScaled = skillWidth * this.skillScale
+    const skillGap = skillwidthScaled / 3
+    const totalSizeSkill = skillGap * 2 + skillwidthScaled * 3
+    const startSkill = battleScene.sys.canvas.width / 2 - totalSizeSkill / 2
+    const ySkill = battleScene.sys.canvas.height - battleScene.sys.canvas.height * 0.1
+    this.battleEntity.getEntity().skillArray.forEach((skill, index) => {
+      this.createSkillImage(battleScene, skill.name, startSkill + skillwidthScaled * 0.5 + index * skillwidthScaled + index * skillGap, ySkill, skillwidthScaled)
+      this.createSkillTooltip(battleScene, skill, totalSizeSkill, startSkill, ySkill - skillwidthScaled * 0.5)
+    })
+    this.createCooldownRectangles(this.battleEntity.getEntity().skillArray, skillwidthScaled, battleScene)
+  }
+
+  createCooldownRectangles(skillArray: Skill[], skillwidthScaled:number, battleScene: BattleScene): void {
+    skillArray.forEach((skill, index) => {
+      this.skillCooldownRectangleByName[skill.name] = battleScene.add.graphics();
+      this.skillCooldownRectangleByName[skill.name].fillStyle(0x000000, 1);
+      this.skillCooldownRectangleByName[skill.name].setAlpha(1)
+      this.skillCooldownRectangleByName[skill.name].setVisible(false)
+      // this.skillCooldownRectangleByName[skill.name].fillRoundedRect(this.skillImageByName[skill.name].x - skillwidthScaled / 2, this.skillImageByName[skill.name].y - skillwidthScaled / 2, skillwidthScaled, skillwidthScaled, 8);
+      this.skillCooldownRectangleByName[skill.name].fillRect(this.skillImageByName[skill.name].x - skillwidthScaled / 2, this.skillImageByName[skill.name].y - skillwidthScaled / 2, skillwidthScaled, skillwidthScaled);
+  
+      const fontSize = battleScene.sys.canvas.height * 0.04
+      this.skillCooldownTextByName[skill.name] = battleScene.add.text(this.skillImageByName[skill.name].x, this.skillImageByName[skill.name].y, "0", {fontFamily: "Verdana", fontSize: fontSize.toString() + "px", color: "#FFFFFF"})
+      this.skillCooldownTextByName[skill.name].setVisible(false)
+      this.skillCooldownTextByName[skill.name].setOrigin(0.5, 0.5)
+    })
+  }
+
+  createSkillTooltip(battleScene: BattleScene, skill: Skill, skillBarWidth:number, x:number, y:number): void {
+    this.skillTooltipByName[skill.name] = new SkillTooltip(battleScene, skill, skillBarWidth, x, y, this.getIndex())
+  }
+
+  createSkillImage(battleScene: BattleScene, name: string, x:number, y:number, skillwidthScaled:number): void {
+    this.skillHoveredByName[name] = false
+
+    // let test = battleScene.add.graphics();
+    // test.fillStyle(0x000000, 1);
+    // test.setAlpha(1)
+    // test.setVisible(true)
+    // test.fillRoundedRect(x - skillwidthScaled/2 - 5, y - skillwidthScaled/2 - 5, skillwidthScaled + 10, skillwidthScaled + 10, 8);
+
+    this.skillImageByName[name] = battleScene.add.image(x, y, name)
+    this.skillImageByName[name].setScale(this.skillScale)
+    this.skillImageByName[name].setInteractive();
+    this.skillImageByName[name].on("pointerover", () => { this.handlerHoverSkill(name, this.skillImageByName[name])})
+    this.skillImageByName[name].on("pointerout", () => { this.handlerHoverOutSkill(name, this.skillImageByName[name])});
+    this.skillImageByName[name].setName("skill_" + name + "_" + this.battleEntity.getIndex().toString())
+    this.skillImageByName[name].setVisible(false)
+    this.skillImageByName[name].setInteractive()
+  }
+
+  async handlerHoverSkill(name:string, skill: Phaser.GameObjects.Image){
+    if(!this.skillHoveredByName[name]){
+      this.skillHoveredByName[name] = true
+      await new Promise(resolve => setTimeout(resolve, 700));
+      if(this.skillHoveredByName[name]){
+        this.skillTooltipByName[name].setVisible(true)
+      }
+    }
+  }
+  async handlerHoverOutSkill(name:string, skill: Phaser.GameObjects.Image){
+    this.skillHoveredByName[name] = false
+    this.skillTooltipByName[name].setVisible(false)
+  }
+
+  resetSkillSelection(): void {
+    for(let key in  this.skillImageByName){
+      this.skillImageByName[key].setScale(this.skillScale)
+    }
+  }
+
+  showSkills(): void {
+    // console.log(this.skillCooldownByName)
+    for(let key in  this.skillImageByName){
+      if(!this.isSkillOnCooldown(key))
+        this.skillImageByName[key].visible = true
+      else {
+        this.showCooldown(key)
+      }
+    }
+  }
+  showCooldown(skillName: string){
+    this.skillCooldownRectangleByName[skillName].setVisible(true)
+    this.skillCooldownTextByName[skillName].setText(this.skillCooldownByName[skillName].toString())
+    this.skillCooldownTextByName[skillName].setVisible(true)
+  }
+
+  hideCooldown(skillName: string){
+    this.skillCooldownRectangleByName[skillName].setVisible(false)
+    this.skillCooldownTextByName[skillName].setVisible(false)
+  }
+
+  hideSkills(): void {
+    for(let key in  this.skillImageByName){
+      this.skillImageByName[key].visible = false
+      this.hideCooldown(key)
+    }
+  }
+
+  selectSkill(name: string){
+    for(let key in  this.skillImageByName){
+      if(key === name)
+        this.skillImageByName[key].setScale(this.skillScale * 1.15)
+      else 
+        this.skillImageByName[key].setScale(this.skillScale)
+    }
+  }
+  async playAnim(animationName: string): Promise<void> {
+    this.battleEntity.playAnim(animationName)
+  }
+  // playHurtThenIdle(animationHandler : AnimationsHandler): void {
+  //   this.battleEntity.playHurtThenIdle(animationHandler)
+  // }
+  updateHealth(): void {
+    this.battleEntity.updateHealth()
+  }
+  updateDisplayTurnBar(turnbarValue: number): void {
+    this.battleEntity.updateDisplayTurnBar(turnbarValue)
+  }
+  // getSkillAnim(skillName: string): ISkillAnimation {
+  //   return this.battleEntity.getSkillAnim(skillName)
+  // }
+  getFrontEntityX(): number {
+    return this.battleEntity.getSprite().getPlaceholderX() + this.battleEntity.getSprite().getWidth() / 1.5
+  }
+
+  getEntity(): Entity {
+    return this.battleEntity.getEntity()
+  }
+
+  getIndex(): number {
+    return this.battleEntity.getIndex()
+  }
+  getBattleSpeed(): number {
+    return this.battleEntity.getBattleSpeed()
+  }
+  setBattleSpeed(value: number): void {
+    this.battleEntity.setBattleSpeed(value)
+  }
+  getPosition(): {x: number, y: number} {
+    return this.battleEntity.getPosition()
+  }
+
+  getStatusArray(): Array<StatsModifier> {
+    return this.battleEntity.getStatusArray()
+  }
+
+  getBuffsArray(): Array<StatsModifier> {
+    return this.battleEntity.getBuffsArray()
+  }
+
+  getCurrentHealth(): number {
+    return this.battleEntity.getCurrentHealth()
+  }
+
+  getTurnbar(): Turnbar {
+    return this.battleEntity.getTurnbar()
+  }
+
+  getSprite(): SpriteWrapper {
+    return this.battleEntity.getSprite()
+  }
+
+  getHealthBar(): HealthBar {
+    return this.battleEntity.getHealthBar()
+  }
+  getScaledValue(): number {
+    return this.battleEntity.getScaledValue()
+  }
+  getName(): string {
+    return this.battleEntity.getName()
+  }
+  isStunned(): boolean {
+    return this.battleEntity.isStunned()
+  }
+}

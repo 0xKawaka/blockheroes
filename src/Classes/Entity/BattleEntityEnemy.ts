@@ -1,0 +1,138 @@
+import StatsModifier from "../Statistic/StatsModifier";
+import Entity from "./Entity";
+import Turnbar from "./Turnbar";
+import IBattleEntity from "./IBattleEntity";
+import BarHandler from "../BarHandler";
+import HealthBar from "./HealthBar";
+import ServerHandler from "../ServerHandler";
+import BattleScene from "../../Scenes/BattleScene";
+import Battle from "../Battle";
+import SpriteWrapper from "../Animations/SpriteWrapper";
+import AnimationsHandler from "../Animations/AnimationsHandler";
+import ISkillAnimation from "../Skill/Animations/ISkillAnimation";
+
+export default class BattleEntityEnemy implements IBattleEntity {
+  battleEntity: IBattleEntity
+
+  constructor(battleEntity: IBattleEntity) {
+    this.battleEntity = battleEntity
+    this.battleEntity.getSprite().setFlipX(true)
+  }
+
+  playTurn(battle: Battle, onTurnProcs:any, serverHandler:ServerHandler, animationsHandler: AnimationsHandler): void {
+    console.log("Entity enemy ", this.getIndex(), ' playing')
+    this.battleEntity.playTurn(battle, onTurnProcs, serverHandler, animationsHandler)
+    if(!this.battleEntity.isDead() && !this.battleEntity.isStunned()) {
+      battle.battleScene.battle.isWaitingForEnemySkill = true
+      serverHandler.send({type:"enemyTurn"})
+    }
+    else if (this.battleEntity.isStunned()) {
+      this.endTurn()
+      battle.isTurnPlaying = false
+    }
+    else {
+      console.log('Enemy dead OnTurnProcs')
+      this.endTurn()
+      battle.isTurnPlaying = false
+    }
+  }
+  async playAnim(animationName: string): Promise<void> {
+    this.battleEntity.playAnim(animationName)
+  }
+  // playHurtThenIdle(animationHandler: AnimationsHandler): void {
+  //   this.battleEntity.playHurtThenIdle(animationHandler)
+  // }
+
+  endTurn(): void {
+    this.battleEntity.endTurn()
+  }
+
+  endSkillSelection() {}
+
+  applyDamage(isCrit: boolean,value: number, battleScene: Phaser.Scene, animationHandler: AnimationsHandler): void {
+    this.battleEntity.applyDamage(isCrit, value, battleScene, animationHandler)
+  }
+  applyHeal(value: number, battleScene: Phaser.Scene): void {
+    this.battleEntity.applyHeal(value, battleScene)
+  }
+  applyBuffsAndStatus(buffs: Array<{name: string, duration: number}>, status: Array<{name: string, duration: number}>, battleScene: Phaser.Scene): void {
+    this.battleEntity.applyBuffsAndStatus(buffs, status, battleScene)
+  }
+
+  die(battle: Battle, battleScene: Phaser.Scene, animationsHandler: AnimationsHandler): void {
+    this.battleEntity.die(battle, battleScene, animationsHandler)
+  }
+  isDead(): boolean {
+    return this.battleEntity.isDead()
+  }
+
+  selectSkill(name: string): void {
+  }
+  updateHealth(): void {
+    this.battleEntity.updateHealth()
+  }
+  updateDisplayTurnBar(turnbarValue: number): void {
+    this.battleEntity.updateDisplayTurnBar(turnbarValue)
+  }
+
+  // getSkillAnim(skillName: string): ISkillAnimation {
+  //   return this.battleEntity.getSkillAnim(skillName)
+  // }
+  getFrontEntityX(): number {
+    return this.battleEntity.getSprite().getPlaceholderX() - this.battleEntity.getSprite().getWidth() / 1.5
+  }
+
+  getEntity(): Entity {
+    return this.battleEntity.getEntity()
+  }
+
+  getIndex(): number {
+    return this.battleEntity.getIndex()
+  }
+  getBattleSpeed(): number {
+    return this.battleEntity.getBattleSpeed()
+  }
+  setBattleSpeed(value: number): void {
+    this.battleEntity.setBattleSpeed(value)
+  }
+  setOnCooldown(name: string, cooldown: number): void {
+    this.battleEntity.setOnCooldown(name, cooldown)
+  }
+  getPosition(): {x: number, y: number} {
+    return this.battleEntity.getPosition()
+  }
+
+  getStatusArray(): Array<StatsModifier> {
+    return this.battleEntity.getStatusArray()
+  }
+
+  getBuffsArray(): Array<StatsModifier> {
+    return this.battleEntity.getBuffsArray()
+  }
+
+  getCurrentHealth(): number {
+    return this.battleEntity.getCurrentHealth()
+  }
+
+  getTurnbar(): Turnbar {
+    return this.battleEntity.getTurnbar()
+  }
+
+  getSprite(): SpriteWrapper {
+    return this.battleEntity.getSprite()
+  }
+
+  getHealthBar(): HealthBar {
+    return this.battleEntity.getHealthBar()
+  }
+  getScaledValue(): number {
+    return this.battleEntity.getScaledValue()
+  }
+  getName(): string {
+    return this.battleEntity.getName()
+  }
+  isStunned(): boolean {
+    return this.battleEntity.isStunned()
+  }
+
+}
