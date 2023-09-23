@@ -1,5 +1,7 @@
 .EndBattlePanelContainer {
-  background-color: rgba(4, 12, 19, 0.863);
+  /* background-color: rgba(4, 12, 19, 0.863); */
+  border: 0.2em solid rgb(146, 113, 47);
+  background-color: rgb(102, 80, 54);
   border-radius: 1em;
   width: 60%;
   padding: 2%;

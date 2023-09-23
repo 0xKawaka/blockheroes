@@ -1,0 +1,52 @@
+.RuneContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* width: 100%; */
+  height: 13em;
+  gap: 1em;
+}
+.RuneImageStatisticsContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1em;
+}
+
+.RuneImage {
+  width: 8em;
+}
+
+.RuneStatisticsContainer {
+  display: flex;
+  flex-direction: column;
+  width: 7em;
+}
+
+.RuneStatistic {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.RuneButtonsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 2em;
+}
+
+.RuneButton {
+  cursor: pointer;
+  width: 4.5em;
+  text-align: center;
+  padding: 0.5em;
+  border: 0.1em solid white;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.RuneButton:hover {
+  background-color: white;
+  color: black;
+}

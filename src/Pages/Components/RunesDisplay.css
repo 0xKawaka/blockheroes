@@ -1,0 +1,15 @@
+.RunesDisplayContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+}
+
+.RuneTypeContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 5em;
+}
+
+.RunePlaceholderContainer {
+  cursor: pointer;
+}

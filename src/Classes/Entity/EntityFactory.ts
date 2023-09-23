@@ -30,6 +30,10 @@ export default class EntityFactory {
     return new Entity(name, new Statistics(level, health, speed), skillArray)
   }
 
+  static createEntity(name: string, level: number, health: number, speed: number, skillArray: Array<Skill>) {
+    return new Entity(name, new Statistics(level, health, speed), skillArray)
+  }
+
   static getSkills(entityName: string): Array<Skill> {
     let skillArray = new Array<Skill>()
     let skillIdsArray = skillsetByMonsterName[entityName]

@@ -1,0 +1,8 @@
+.RuneMiniatureContainer {
+  position: relative;
+  cursor: pointer;
+}
+
+.RuneMiniatureRank {
+  position: absolute;
+}

@@ -1,0 +1,34 @@
+.RunePanelContainer {
+  width: 100%;
+}
+.RuneDetailsAndListContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4em;
+}
+
+.RuneDetailsContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 40em;
+  gap: 6em;
+}
+
+
+.RuneEquippedWrapper, .RuneSelectedWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+}
+
+.RunesList {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.5em;
+  flex-wrap: wrap;
+}

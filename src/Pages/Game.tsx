@@ -1,9 +1,9 @@
-import { getPhaserConfig } from '../phaserConfig'
+import { getPhaserConfig } from '../Scenes/phaserConfig'
 import Phaser from 'phaser'
 import { useState, useEffect } from 'react'
 import './Game.css'
 import EndBattlePanel from './Components/EndBattlePanel'
-import ServerHandler from '../Classes/ServerHandler'
+import ServerHandler from '../Classes/IO/ServerHandler'
 import NavBar from './Components/Navbar'
 import NetworkError from './Components/NetworkError'
 import {type StarknetWindowObject } from "get-starknet"
@@ -15,21 +15,14 @@ type GameProps = {
 
 function Game({serverHandler}: GameProps) {
 
-  // const [gameInstance, setGameInstance] = useState<Phaser.Game | undefined>(undefined)
   const [afterBattle, setAfterBattle] = useState<boolean>(false)
   const [battleVisible, setBattleVisible] = useState<boolean>(false)
-  // const [battleHeight, setBattleHeight] = useState<string>("0%")
   const [winOrLose, setWinOrLose] = useState<string>("")
   const [walletAdrs, setWalletAdrs] = useState("")
   const [wallet, setWallet] = useState<StarknetWindowObject>()
 
-  // useEffect(() => {
-
-  // }, [afterBattle]);
-
 
   function handleStartFight() {
-    // assert(selectedTeam.length > 0 && selectedTeam.length <= 4);
     setBattleVisible(true)
     // setBattleHeight("100%")
     // const phaserGame = new Phaser.Game(getPhaserConfig(serverHandler, walletAdrs, "BattleContainer"))*
@@ -37,14 +30,14 @@ function Game({serverHandler}: GameProps) {
       console.log("No wallet selected")
       return
     }
-    const phaserGame = new Phaser.Game(getPhaserConfig(serverHandler, wallet.selectedAddress, "BattleContainer", "world1", "battle1"))
+    // const phaserGame = new Phaser.Game(getPhaserConfig(serverHandler, wallet.selectedAddress, "BattleContainer", "world1", "battle1", [1,2,2,1]))
     // setGameInstance(phaserGame)
 
-    phaserGame.events.on('destroy', () => {
-      onDestroyProcs()
-    })
-
+    // phaserGame.events.on('destroy', () => {
+    //   onDestroyProcs()
+    // })
   }
+  
   async function onDestroyProcs() {
     console.log("Game destroyed")
     const endBattleInfos = await serverHandler.getEndBattleInfos()
@@ -55,7 +48,7 @@ function Game({serverHandler}: GameProps) {
     setAfterBattle(true)
   }
 
-  return (   
+  return (
     <div id="BattleContainer" className="BattleContainer">
     {!battleVisible &&
       <div className="GamePanelAndNavbarContainer">
@@ -67,12 +60,13 @@ function Game({serverHandler}: GameProps) {
                 Start Battle
             </div>
         }
-        {afterBattle && winOrLose === "Defeat" &&
+        {/* {afterBattle && winOrLose === "Defeat" &&
           <EndBattlePanel title={winOrLose} setWinOrLose={setWinOrLose} setAfterBattle={setAfterBattle}/>          
         }
         {afterBattle && winOrLose === "Victory" &&
-          <EndBattlePanel title={winOrLose} lootItems={[{name:"Explorer's medal", amount:1, image:"Emblem"}, {name:"Contributor's medal", amount:1, image:"Emblem"}]} setWinOrLose={setWinOrLose} setAfterBattle={setAfterBattle} />          
-        }
+          <EndBattlePanel title={winOrLose} lootItems={[{name:"Explorer's emblem", amount:1, image:"Emblem"}]} setWinOrLose={setWinOrLose} setAfterBattle={setAfterBattle} />
+          // {name:"Contributor's emblem", amount:1, image:"Emblem"}    
+        } */}
       </div>
       :
       <div className="GamePanelContainer">

@@ -2,7 +2,7 @@ import StatsModifier from "../Statistic/StatsModifier";
 import Entity from "./Entity";
 import Turnbar from "./Turnbar";
 import HealthBar from "./HealthBar";
-import ServerHandler from "../ServerHandler";
+import ServerHandler from "../IO/ServerHandler";
 import Battle from "../Battle";
 import SpriteWrapper from "../Animations/SpriteWrapper";
 import AnimationsHandler from "../Animations/AnimationsHandler";

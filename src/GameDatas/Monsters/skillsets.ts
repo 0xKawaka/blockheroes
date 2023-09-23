@@ -1,9 +1,7 @@
 let skillsetByMonsterName: {[key: string]: Array<string>}= {
-  // "Knight": ["Attack", "Heal", "Slice Legs"],
-  // "Knight": ["Attack", "StrikeStun", "StrikeAOETaunt"],
-  "Knight": ["Attack", "StrikeStun", "Slice Legs"],
-  "Priest": ["Attack", "HealAOE", "DefendSelfAndAlly"],
-  "Assassin": ["Attack", "StrikeAndBoostATK", "StrikeReduceSpeedAOE"],
+  "Knight": ["Attack", "Blade Swing", "Fire Strike"],
+  "Priest": ["Attack", "Healing Prayer", "Water Shield"],
+  "Assassin": ["Attack", "StrikeAndBoostATK", "Sandstorm Strikes"],
   "Hunter": ["Attack", "BuffSpeedATKSelf", "StrikeBurnAOE"],
 }
 

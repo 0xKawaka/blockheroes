@@ -1,0 +1,34 @@
+.GamePhaserContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.GamePageContainer {
+  color: white;
+}
+
+.GamePageMenu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10em;
+}
+
+.GamePageMenuButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.GamePageMenuButton {
+  cursor: pointer;
+}
+
+.ArrowBack {
+  cursor: pointer;
+  height: 1.5em;
+}

@@ -3,7 +3,7 @@ import EntityFactory from "./Entity/EntityFactory";
 // import BattleScene from "../Scenes/BattleScene";
 import Turnbar from "./Entity/Turnbar";
 import IBattleEntity from "./Entity/IBattleEntity";
-import ServerHandler from "./ServerHandler";
+import ServerHandler from "./IO/ServerHandler";
 import AnimationsHandler from "./Animations/AnimationsHandler";
 import PositionScaler from "./Entity/PositionScaler";
 import BattleScene from "../Scenes/BattleScene";
@@ -54,6 +54,9 @@ export default class Battle {
         this.battleScene.destroyGame()
         return
       }
+      this.battleEntities.forEach(entity => {
+        console.log("index:", entity.getIndex(), " name:", entity.getName(), " speed:", entity.getBattleSpeed())
+      })
       // console.log('before : ', JSON.parse(JSON.stringify(this.turnTimeline)))
       this.loopUntilNextTurn()
       // console.log('after : ', JSON.parse(JSON.stringify(this.turnTimeline)))
@@ -203,7 +206,6 @@ export default class Battle {
   }
 
   createEntity(entity: Entity, entityIndex: number, isAllyOrEnemy: string, alliesCount:number, enemiesCount: number){
-    
     if (isAllyOrEnemy === "ally") {
       let battleEntity = EntityFactory.createBattleEntityAllyOrEnemyFromEntity(entity, entityIndex, alliesCount, isAllyOrEnemy, this.battleScene)
       this.animationsHandler.addOnAnimationCompleteListener(battleEntity)
@@ -217,8 +219,6 @@ export default class Battle {
       this.turnTimeline.push(battleEntity.getTurnbar())
       this.enemiesIndexes.push(entityIndex)
     }
-
-
   }
 
   loopUntilNextTurn() {

@@ -9,7 +9,7 @@ import BattleScene from "../../Scenes/BattleScene";
 import { buffsDebuffsStats, onTurnStackableBuffNames, onTurnStackableStatusNames } from "../../GameDatas/Skills/buffsStatus";
 import BuffDisplay from "./BuffDisplay";
 import StackableBuff from "./StackableBuff";
-import ServerHandler from "../ServerHandler";
+import ServerHandler from "../IO/ServerHandler";
 import SpriteWrapper from "../Animations/SpriteWrapper";
 import AnimationsHandler from "../Animations/AnimationsHandler";
 import ISkillAnimation from "../Skill/Animations/ISkillAnimation";

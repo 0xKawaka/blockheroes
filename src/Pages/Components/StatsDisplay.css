@@ -1,0 +1,28 @@
+.StatsDisplayContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.HeroStat {
+  display: flex;
+  flex-direction: row;
+}
+
+.HeroStatName {
+  width: 50%;
+}
+/* .HeroStatValue {
+  width: 25%;
+} */
+
+.HeroStatDetailsContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  /* gap: 0.5em; */
+  width: 50%;
+}
+
+.HeroBaseStatAndBonusSum {
+  display: flex;
+}

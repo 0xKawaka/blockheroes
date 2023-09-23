@@ -4,7 +4,7 @@ import Turnbar from "./Turnbar";
 import IBattleEntity from "./IBattleEntity";
 import BarHandler from "../BarHandler";
 import HealthBar from "./HealthBar";
-import ServerHandler from "../ServerHandler";
+import ServerHandler from "../IO/ServerHandler";
 import BattleScene from "../../Scenes/BattleScene";
 import Battle from "../Battle";
 import SpriteWrapper from "../Animations/SpriteWrapper";

@@ -1,0 +1,11 @@
+.BattlesSelectList{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3em;
+}
+
+.BattleOverviewContainer {
+  width: 40em;
+}

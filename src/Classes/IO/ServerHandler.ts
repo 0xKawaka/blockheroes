@@ -1,4 +1,5 @@
-import Battle from "./Battle";
+import Battle from "../Battle";
+import RuneHandler from "./RuneHandler";
 
 export default class ServerHandler {
   socket: WebSocket
@@ -7,21 +8,28 @@ export default class ServerHandler {
   onTurnProcsStack: Array<{type: string, entityIndex: number, damages:Array<number>, heals:Array<number>, buffs:Array<{name: string, duration: number}>,
   statuses:Array<{name: string, duration: number}>, isDead:boolean, speed: number}>
   endBattleInfos: {winOrLose: string}
+  RuneHandler: RuneHandler
 
   constructor() {
     this.isWaiting = false
     this.onTurnProcsStack = []
-    // let socket = new WebSocket("wss://localhost:62930");
-    // let socket = new WebSocket('wss://localhost:62930', { rejectUnauthorized: false });
+    this.RuneHandler = new RuneHandler()
 
-    let socket = new WebSocket("wss://79.137.84.165:62930");
-    socket.addEventListener("open", (event) => {
-      socket.send("Hello Server!");
+    if(process.env.NODE_ENV === "development"){
+      this.socket = new WebSocket("ws://localhost:62930");
+    }
+    else {
+      this.socket = new WebSocket("wss://blockheroes.uk/gameserver");
+    }
+    this.socket.addEventListener("open", (event) => {
+      this.socket.send("Hello Server!");
     });
-    socket.addEventListener("message", (event) => {
+
+    this.socket.addEventListener("message", (event) => {
       this.handleMessages(event)
     });
-    this.socket = socket
+    // this.this.socket = socket
+
   }
 
   setBattle(battle: Battle) {
@@ -48,9 +56,18 @@ export default class ServerHandler {
       this.onTurnProcsStack.push(data)
     }
     else if(data.type === "endBattle" && data.winOrLose) {
-      console.log(data)
+      // console.log(data)
       delete data.type
       this.endBattleInfos = data
+    }
+    else if (data.type === "runeEquipped") {
+      this.RuneHandler.handleRuneEquipped(data.runeId, data.heroId, data.spot)
+    }
+    else if (data.type === "runeUnequipped") {
+      this.RuneHandler.handleRuneUnequipped(data.runeId, data.heroId, data.spot)
+    }
+    else if (data.type === "runeUpgraded" && data.runeId && data.runesList) {
+      this.RuneHandler.handleRuneUpgraded(data.runeId, data.runesList)
     }
   }
 

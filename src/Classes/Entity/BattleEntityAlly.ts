@@ -8,7 +8,7 @@ import HealthBar from "./HealthBar";
 import BattleScene from "../../Scenes/BattleScene";
 import Battle from "../Battle";
 import Skill from "../Skill/Skill";
-import ServerHandler from "../ServerHandler";
+import ServerHandler from "../IO/ServerHandler";
 import SpriteWrapper from "../Animations/SpriteWrapper";
 import AnimationsHandler from "../Animations/AnimationsHandler";
 import ISkillAnimation from "../Skill/Animations/ISkillAnimation";
