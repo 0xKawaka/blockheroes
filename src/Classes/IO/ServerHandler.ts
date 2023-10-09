@@ -57,7 +57,7 @@ export default class ServerHandler {
     }
     else if(data.type === "endBattle" && data.winOrLose) {
       // console.log(data)
-      delete data.type
+      // delete data.type
       this.endBattleInfos = data
     }
     else if (data.type === "runeEquipped") {

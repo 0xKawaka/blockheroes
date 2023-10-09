@@ -84,13 +84,13 @@ export default class AnimationsHandler {
     });
   }
 
-  setAnimationPlaying(entityName: string, entityIndex:number, animationName: number, value: boolean){
-    this.annimationStateIndexer[animationName][entityName + entityIndex] = value
-  }
+  // setAnimationPlaying(entityName: string, entityIndex:number, animationIndex: number, value: boolean){
+  //   this.annimationStateIndexer[animationIndex][entityName + entityIndex] = value
+  // }
 
-  getAnimationPlaying(entityName: string, entityIndex:number, animationName: number){
-    return this.annimationStateIndexer[animationName][entityName + entityIndex]
-  }
+  // getAnimationPlaying(entityName: string, entityIndex:number, animationIndex: number){
+  //   return this.annimationStateIndexer[animationIndex][entityName + entityIndex]
+  // }
 
   async moveObjectToPosition(casterSprite: SpriteWrapper, x:number, y:number, maxTime: number) {
     casterSprite.setDestination(x, y)
@@ -114,6 +114,12 @@ export default class AnimationsHandler {
     bolt.destroy();
   }
 
+  isAnimPlaying(entity: IBattleEntity){
+    return (this.attackAnimationDict[entity.getName() + entity.getIndex()] || this.deathAnimationDict[entity.getName() + entity.getIndex()] ||
+    this.hurtAnimationDict[entity.getName() + entity.getIndex()] || this.jumpAnimationDict[entity.getName() + entity.getIndex()] ||
+    this.runAnimationDict[entity.getName() + entity.getIndex()] || this.spellAnimationDict[entity.getName() + entity.getIndex()])
+  }
+
   async waitForOtherAnimationsToFinish(entity: IBattleEntity){
     while(this.attackAnimationDict[entity.getName() + entity.getIndex()] || this.deathAnimationDict[entity.getName() + entity.getIndex()] ||
     this.hurtAnimationDict[entity.getName() + entity.getIndex()] || this.jumpAnimationDict[entity.getName() + entity.getIndex()] ||
@@ -123,6 +129,17 @@ export default class AnimationsHandler {
       // console.log("Waiting for other animations to finish ")
       await new Promise(resolve => setTimeout(resolve, 5));
     }
+  }
+
+  areAnimationsFinishedBeforeEndGame(){
+    for(let key in this.attackAnimationDict){
+      if(this.attackAnimationDict[key] || this.deathAnimationDict[key] ||
+      this.hurtAnimationDict[key] || this.jumpAnimationDict[key] ||
+      this.runAnimationDict[key] || this.spellAnimationDict[key]){
+        return false
+      }
+    }
+    return true
   }
 
   async waitAndPlayAnim(entity: IBattleEntity, animName: string){
@@ -136,6 +153,13 @@ export default class AnimationsHandler {
     // console.log('playing anim', entity.getName(), entity.getIndex(), animName)
     entity.getSprite().anims.stop();
     entity.playAnim(animName)
+  }
+
+  async playAnimIfNoneRuning(entity: IBattleEntity, animName: string){
+    if(!this.isAnimPlaying(entity)){
+      this.setAnimAndResetOtherAnimations(entity.getName(), entity.getIndex(), animName)
+      entity.playAnim(animName)
+    }
   }
 
   async waitAndIdle(entity: IBattleEntity){
@@ -158,10 +182,11 @@ export default class AnimationsHandler {
     }
   }
 
-  playSpellEffectOnEntity(entity: IBattleEntity, spellEffectName: string, frameRate: number, spriteWidth: number, spriteHeight: number, widthRatio:number, heightRatio:number){
+  playSpellEffectOnEntity(entity: IBattleEntity, spellEffectName: string, scaleValue: number, frameRate: number, spriteWidth: number, spriteHeight: number, widthRatio:number, heightRatio:number){
     let spellEffect = this.battle.battleScene.add.sprite(entity.getSprite().x, entity.getSprite().y, spellEffectName);
     spellEffect.setOrigin(0.5, 1);
-    spellEffect.setScale(this.battle.positionScaler.computeScaleForWidthHeightRatio(spriteWidth, spriteHeight, widthRatio, heightRatio))
+    // spellEffect.setScale(this.battle.positionScaler.computeScaleForWidthHeightRatio(spriteWidth, spriteHeight, widthRatio, heightRatio))
+    spellEffect.setScale(scaleValue)
     this.battle.battleScene.anims.create({
       key: spellEffectName,
       frames: this.battle.battleScene.anims.generateFrameNumbers(spellEffectName),

@@ -9,11 +9,14 @@ import AnimationsHandler from "../Animations/AnimationsHandler";
 import ISkillAnimation from "../Skill/Animations/ISkillAnimation";
 
 export default interface IBattleEntity {
-  applyDamage(isCrit: boolean,value: number, battleScene: Phaser.Scene, animationHandler: AnimationsHandler): void
-  applyHeal(value: number, battleScene: Phaser.Scene): void
+  applyDamage(value: number): void
+  applyHeal(value: number): void
+  applyDamageAndPlayAnim(isCrit: boolean, value: number, battleScene: Phaser.Scene, animationHandler: AnimationsHandler): void
+  applyHealAndPlayAnim(value: number, battleScene: Phaser.Scene): void
   applyBuffsAndStatus(buffs: Array<{name: string, duration: number}>, status: Array<{name: string, duration: number}>, battleScene: Phaser.Scene): void
   die(battle: Battle, battleScene: Phaser.Scene, animationsHandler: AnimationsHandler): void
-  playTurn(battle: Battle, onTurnProcs:any, serverHandler: ServerHandler, animationsHandler: AnimationsHandler): void
+  playTurn(battle: Battle, onTurnProcs:any, serverHandler: ServerHandler, animationsHandler: AnimationsHandler): Promise<void>
+  waitDamageAndHealAnimsDone(): Promise<void>
   playAnim(animationName: string): void
   // playHurtThenIdle(animationHandler: AnimationsHandler): void
   endSkillSelection(): void
@@ -27,7 +30,7 @@ export default interface IBattleEntity {
   getIndex(): number
   getBattleSpeed(): number
   setBattleSpeed(value: number): void
-  setOnCooldown(name: string, cooldown: number): void
+  setOnCooldown(name: string): void
   getPosition(): {x: number, y: number}
   getStatusArray(): Array<StatsModifier>
   getBuffsArray(): Array<StatsModifier>

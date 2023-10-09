@@ -1,6 +1,10 @@
 .StatsDisplayContainer {
   display: flex;
   flex-direction: column;
+  width: 60%;
+  overflow: hidden; 
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .HeroStat {
@@ -9,7 +13,7 @@
 }
 
 .HeroStatName {
-  width: 50%;
+  width: 35%;
 }
 /* .HeroStatValue {
   width: 25%;
@@ -20,7 +24,7 @@
   flex-direction: row;
   justify-content: space-between;
   /* gap: 0.5em; */
-  width: 50%;
+  width: 75%;
 }
 
 .HeroBaseStatAndBonusSum {

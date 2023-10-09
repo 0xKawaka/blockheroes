@@ -3,8 +3,8 @@ import Skill from "../Skill/Skill"
 import StatsModifier from "../Statistic/StatsModifier"
 import BattleEntity from "./BattleEntity"
 import Entity from "./Entity"
-import skillsetByMonsterName from "../../GameDatas/Monsters/skillsets"
-import {skillsDict} from "../../GameDatas/Skills/skills"
+// import skillsetByMonsterName from "../../GameDatas/Monsters/skillsets"
+// import {skillsDict} from "../../GameDatas/Skills/skills"
 import BattleEntityAlly from "./BattleEntityAlly"
 import BattleEntityEnemy from "./BattleEntityEnemy"
 import IBattleEntity from "./IBattleEntity"
@@ -14,35 +14,35 @@ import ISkillAnimation from "../Skill/Animations/ISkillAnimation"
 
 export default class EntityFactory {
 
-  static createBattleEntityAllyOrEnemyFromEntity(entity: Entity, entityIndex:number, totalEntityCount: number, isAllyOrEnemy: string, battleScene: BattleScene): IBattleEntity {
+  static createBattleEntityAllyOrEnemyFromEntity(entity: Entity, width: number, height: number, upscale: number, entityIndex:number, totalEntityCount: number, isAllyOrEnemy: string, battleScene: BattleScene): IBattleEntity {
     let statusArray = new Array<StatsModifier>()
     let buffsArray = new Array<StatsModifier>()
     if (isAllyOrEnemy === "ally") {
-      return new BattleEntityAlly(new BattleEntity(entity, entityIndex, totalEntityCount, statusArray, buffsArray, battleScene, true, animsByEntityName[entity.name]), battleScene)
+      return new BattleEntityAlly(new BattleEntity(entity, entityIndex, totalEntityCount, statusArray, buffsArray, battleScene, true, animsByEntityName[entity.name], width, height, upscale), battleScene)
     }
-    return new BattleEntityEnemy(new BattleEntity(entity, entityIndex, totalEntityCount, statusArray, buffsArray, battleScene, false, animsByEntityName[entity.name]))
+    return new BattleEntityEnemy(new BattleEntity(entity, entityIndex, totalEntityCount, statusArray, buffsArray, battleScene, false, animsByEntityName[entity.name], width, height, upscale))
   }
 
-  static createEntityFromScratch(name: string, level: number, health: number, speed: number) {
-    let skillArray = this.getSkills(name)
-    // let skillAnimationDict = this.getSkillAnimations(name)
-    // return new Entity(name, new Statistics(level, health, speed), skillArray, skillAnimationDict)
-    return new Entity(name, new Statistics(level, health, speed), skillArray)
-  }
+  // static createEntityFromScratch(name: string, level: number, health: number, speed: number) {
+  //   let skillArray = this.getSkills(name)
+  //   // let skillAnimationDict = this.getSkillAnimations(name)
+  //   // return new Entity(name, new Statistics(level, health, speed), skillArray, skillAnimationDict)
+  //   return new Entity(name, new Statistics(level, health, speed), skillArray)
+  // }
 
   static createEntity(name: string, level: number, health: number, speed: number, skillArray: Array<Skill>) {
     return new Entity(name, new Statistics(level, health, speed), skillArray)
   }
 
-  static getSkills(entityName: string): Array<Skill> {
-    let skillArray = new Array<Skill>()
-    let skillIdsArray = skillsetByMonsterName[entityName]
-    for (let i = 0; i < skillIdsArray.length; i++) {
-      let skill = skillsDict[skillIdsArray[i]]
-      skillArray.push(skill)
-    }
-    return skillArray
-  }
+  // static getSkills(entityName: string): Array<Skill> {
+  //   let skillArray = new Array<Skill>()
+  //   let skillIdsArray = skillsetByMonsterName[entityName]
+  //   for (let i = 0; i < skillIdsArray.length; i++) {
+  //     let skill = skillsDict[skillIdsArray[i]]
+  //     skillArray.push(skill)
+  //   }
+  //   return skillArray
+  // }
 
   // static getSkillAnimations(entityName: string): {[key: string]: ISkillAnimation} {
   //   let skillAnimDict: { [key: string]: ISkillAnimation } = {};

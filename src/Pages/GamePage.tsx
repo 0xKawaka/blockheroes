@@ -7,8 +7,10 @@ import {HeroesListType, RunesList, HeroesStatsDict, WorldsBattlesInfosDict, Hero
 import WorldSelect from './Components/WorldSelect'
 import worldmap from '../assets/icons/worldmap.png'
 import myheroes from '../assets/icons/myheroes.png'
+import summons from '../assets/icons/summons.png'
 import SkillsHandler from '../Classes/IO/SkillsHandler'
 import { computeBonusStats } from './utils/statisticsCompute'
+import Summons from './Components/Summons'
 
 
 type GamePageProps = {
@@ -27,10 +29,20 @@ function GamePage({serverHandler} : GamePageProps) {
   const [refreshUseEffect, setRefreshUseEffect] = useState<number>(0)
   const [showMyHeroes, setShowMyHeroes] = useState<boolean>(false)
   const [showWorldSelect, setShowWorldSelect] = useState<boolean>(false)
-  const [isPhaserRunning, setIsPhaserRunning] = useState<boolean>(false)
+  const [showSummons, setShowSummons] = useState<boolean>(false)
+  const [isBattleRunning, setIsBattleRunning] = useState<boolean>(false)
+
+  // function getGamePhaserContainerStyle(){
+  //   if (isBattleRunning){
+  //     return {flexDirection: "column-reverse"}
+  //   }
+  //   else {
+  //     return {flexDirection: "column"}
+  //   }
+  // }
 
   function getGamePageContainerStyle(){
-    if (isPhaserRunning){
+    if (isBattleRunning){
       return {
         paddingTop: "0px",
         paddingLeft: "0px",
@@ -117,25 +129,33 @@ function GamePage({serverHandler} : GamePageProps) {
 
 
   return (
-    <div className='GamePhaserContainer' id='GamePhaserContainer' >
+    <div className='GamePhaserContainer' id='GamePhaserContainer'>
       <div className='GamePageContainer' style={getGamePageContainerStyle()}>
-        {!showMyHeroes && !showWorldSelect &&
+        {!showMyHeroes && !showWorldSelect && !showSummons &&
           <div className='GamePageMenu'>
             <div className='GamePageMenuButton' onClick={() => setShowMyHeroes(true)}>
-            <div className="GamePageMenuButtonIcon">
-              <img src={myheroes} />
-            </div>
-            <div className="GamePageMenuButtonText">
-              My Heroes Collection
-            </div>
+              <div className="GamePageMenuButtonIcon">
+                <img src={myheroes} />
+              </div>
+              <div className="GamePageMenuButtonText">
+                My Heroes Collection
+              </div>
             </div>
             <div className='GamePageMenuButton' onClick={() => setShowWorldSelect(true)}>
-            <div className="GamePageMenuButtonIcon">
-              <img src={worldmap} />
+              <div className="GamePageMenuButtonIcon">
+                <img src={worldmap} />
+              </div>
+              <div className="GamePageMenuButtonText">
+                World Battles
+              </div>
             </div>
-            <div className="GamePageMenuButtonText">
-              World Battles
-            </div>
+            <div className='GamePageMenuButton' onClick={() => setShowSummons(true)}>
+              <div className="GamePageMenuButtonIcon">
+                <img src={summons} />
+              </div>
+              <div className="GamePageMenuButtonText">
+                Summon Heroes
+              </div>
             </div>
           </div>
         }
@@ -143,7 +163,10 @@ function GamePage({serverHandler} : GamePageProps) {
           <MyHeroes serverHandler={serverHandler} heroesList={heroesList} runesList={runesList} setShowMyHeroes={setShowMyHeroes}/>
         }
         {showWorldSelect &&
-          <WorldSelect worldsBattlesList={worldsBattlesList} heroesList={heroesList} serverHandler={serverHandler} setShowWorldSelect={setShowWorldSelect} setIsPhaserRunning={setIsPhaserRunning} />
+          <WorldSelect worldsBattlesList={worldsBattlesList} heroesList={heroesList} serverHandler={serverHandler} setShowWorldSelect={setShowWorldSelect} setIsBattleRunning={setIsBattleRunning} />
+        }
+        {showSummons &&
+          <Summons setShowSummons={setShowSummons} />
         }
       </div>
     </div>

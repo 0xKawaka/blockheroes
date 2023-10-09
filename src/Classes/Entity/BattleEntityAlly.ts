@@ -28,6 +28,7 @@ export default class BattleEntityAlly implements IBattleEntity {
   constructor(battleEntity: IBattleEntity, battleScene: BattleScene) {
     this.battleEntity = battleEntity
     this.createSelectedBar(battleScene)
+    this.skillScale = battleScene.battle.scaler.getScaleFactor()
     this.skillImageByName = {}
     this.skillHoveredByName = {}
     this.skillTooltipByName = {}
@@ -43,8 +44,8 @@ export default class BattleEntityAlly implements IBattleEntity {
       this.skillCooldownByName[this.battleEntity.getEntity().skillArray[i].name] = 0
     }
   }
-  setOnCooldown(name: string, cooldown: number): void {
-    this.skillCooldownByName[name] = cooldown
+  setOnCooldown(name: string): void {
+    this.skillCooldownByName[name] = this.battleEntity.getEntity().getSkillCooldownByName(name)
   }
   isSkillOnCooldown(name: string): boolean {
     return this.skillCooldownByName[name] > 0
@@ -58,9 +59,9 @@ export default class BattleEntityAlly implements IBattleEntity {
     }
   }
 
-  playTurn(battle: Battle, onTurnProcs: any, serverHandler:ServerHandler, animationsHandler: AnimationsHandler): void {
+  async playTurn(battle: Battle, onTurnProcs: any, serverHandler:ServerHandler, animationsHandler: AnimationsHandler):Promise<void> {
     console.log("Entity ally ", this.getIndex(), ' playing')
-    this.battleEntity.playTurn(battle, onTurnProcs, serverHandler, animationsHandler)
+    await this.battleEntity.playTurn(battle, onTurnProcs, serverHandler, animationsHandler)
     if(!this.battleEntity.isDead() && !this.battleEntity.isStunned()) {
       battle.battleScene.battle.hasSelectedTarget = false
       this.selectedBar.showBar()
@@ -78,6 +79,10 @@ export default class BattleEntityAlly implements IBattleEntity {
     this.reduceCooldowns()
   }
 
+  async waitDamageAndHealAnimsDone(): Promise<void> {
+    await this.battleEntity.waitDamageAndHealAnimsDone()
+  }
+
   endSkillSelection(): void {
     this.hideSkills()
     this.selectedBar.hideBar()
@@ -87,12 +92,19 @@ export default class BattleEntityAlly implements IBattleEntity {
     this.battleEntity.endTurn()
   }
 
-  applyDamage(isCrit: boolean,value: number, battleScene: Phaser.Scene, animationHandler: AnimationsHandler): void {
-    this.battleEntity.applyDamage(isCrit, value, battleScene, animationHandler)
+  applyDamage(value: number): void {
+    this.battleEntity.applyDamage(value)
   }
-  applyHeal(value: number, battleScene: Phaser.Scene): void {
-    this.battleEntity.applyHeal(value, battleScene)
+  applyHeal(value: number): void {
+    this.battleEntity.applyHeal(value)
   }
+  applyDamageAndPlayAnim(isCrit: boolean, value: number, battleScene: Phaser.Scene, animationHandler: AnimationsHandler): void {
+    this.battleEntity.applyDamageAndPlayAnim(isCrit, value, battleScene, animationHandler)
+  }
+  applyHealAndPlayAnim(value: number, battleScene: Phaser.Scene): void {
+    this.battleEntity.applyHealAndPlayAnim(value, battleScene)
+  }
+
   applyBuffsAndStatus(buffs: Array<{name: string, duration: number}>, status: Array<{name: string, duration: number}>, battleScene: Phaser.Scene): void {
     this.battleEntity.applyBuffsAndStatus(buffs, status, battleScene)
   }
@@ -113,16 +125,20 @@ export default class BattleEntityAlly implements IBattleEntity {
   }
 
   createSkills(battleScene: BattleScene): void {
-    const skillWidth = 200
-    this.skillScale = battleScene.battle.positionScaler.computeScaleForWidthHeightRatio(skillWidth, skillWidth, battleScene.battle.positionScaler.spellIconsRatio.widthRatio, battleScene.battle.positionScaler.spellIconsRatio.heightRatio)
-    const skillwidthScaled = skillWidth * this.skillScale
+    const skillBaseWidth = 200
+    this.skillScale = battleScene.battle.positionScaler.computeScaleForWidthHeightRatio(skillBaseWidth, skillBaseWidth, battleScene.battle.positionScaler.spellIconsRatio.widthRatio, battleScene.battle.positionScaler.spellIconsRatio.heightRatio)
+    const skillwidthScaled = skillBaseWidth * this.skillScale
     const skillGap = skillwidthScaled / 3
     const totalSizeSkill = skillGap * 2 + skillwidthScaled * 3
-    const startSkill = battleScene.sys.canvas.width / 2 - totalSizeSkill / 2
-    const ySkill = battleScene.sys.canvas.height - battleScene.sys.canvas.height * 0.1
+    // const xSkillBar = battleScene.sys.canvas.width / 2 - totalSizeSkill / 2
+    // const ySkillBar = battleScene.sys.canvas.height - battleScene.sys.canvas.height * 0.1
+    const xSkillBar = battleScene.battle.positionner.getSkillBarStartX(totalSizeSkill)
+    const ySkillBar = battleScene.battle.positionner.getSkillBarStartY()
     this.battleEntity.getEntity().skillArray.forEach((skill, index) => {
-      this.createSkillImage(battleScene, skill.name, startSkill + skillwidthScaled * 0.5 + index * skillwidthScaled + index * skillGap, ySkill, skillwidthScaled)
-      this.createSkillTooltip(battleScene, skill, totalSizeSkill, startSkill, ySkill - skillwidthScaled * 0.5)
+      // this.createSkillImage(battleScene, skill.name, xSkillBar + skillwidthScaled * 0.5 + index * skillwidthScaled + index * skillGap, ySkillBar, skillwidthScaled)
+      // this.createSkillTooltip(battleScene, skill, totalSizeSkill, xSkillBar, ySkillBar - skillwidthScaled * 0.5)
+      this.createSkillImage(battleScene, skill.name, xSkillBar + skillwidthScaled * 0.5 + index * skillwidthScaled + index * skillGap, ySkillBar, skillwidthScaled)
+      this.createSkillTooltip(battleScene, skill, totalSizeSkill, xSkillBar, ySkillBar - skillwidthScaled * 0.5)
     })
     this.createCooldownRectangles(this.battleEntity.getEntity().skillArray, skillwidthScaled, battleScene)
   }

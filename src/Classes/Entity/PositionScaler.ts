@@ -18,7 +18,7 @@ export default class PositionScaler {
     1: [{x: 0, y: 0}],
     2: [{x: 0, y: 0}, {x: 0, y: 0}],
     3: [{x: 0.07, y: 0}, {x: 0, y: 0}, {x: 0.07, y: 0}],
-    4: [{x: 0.3, y: 0.4}, {x: 0.2, y: 0.5}, {x: 0.2, y: 0.65}, {x: 0.3, y: 0.75}],
+    4: [{x: 0.3, y: 0.49}, {x: 0.2, y: 0.56}, {x: 0.2, y: 0.76}, {x: 0.3, y: 0.83}],
   }
   widthPositionRatio:number = 0.13
   heightOfTerrainRatio:number = 0.6
@@ -28,7 +28,7 @@ export default class PositionScaler {
     this.buffStatusSize = {width: 100, height: 100}
     this.buffStatusGapRatio = 0.005
 
-    this.entityRatio = {widthRatio: 0.5, heightRatio: 0.5}
+    this.entityRatio = {widthRatio: 0.5, heightRatio: 0.4}
     this.buffStatusRatio = {widthRatio: 0.0275, heightRatio: 0.035}
     this.healthBarRatio = {widthRatio: 0.11, heightRatio: 0.021}
     this.turnBarRatio = {widthRatio: 0.11, heightRatio: 0.0035}

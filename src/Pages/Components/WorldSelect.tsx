@@ -11,10 +11,10 @@ type WorldSelectProps = {
   heroesList: HeroesListType
   serverHandler: ServerHandler
   setShowWorldSelect: React.Dispatch<React.SetStateAction<boolean>>
-  setIsPhaserRunning: React.Dispatch<React.SetStateAction<boolean>>
+  setIsBattleRunning: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function WorldSelect({ worldsBattlesList, heroesList, serverHandler, setShowWorldSelect, setIsPhaserRunning }: WorldSelectProps) {
+export default function WorldSelect({ worldsBattlesList, heroesList, serverHandler, setShowWorldSelect, setIsBattleRunning }: WorldSelectProps) {
 
   const [worldIdStr, setWorldIdStr] = useState<string>("")
 
@@ -38,7 +38,7 @@ export default function WorldSelect({ worldsBattlesList, heroesList, serverHandl
       </div>
     }
     {worldIdStr !== "" &&
-      <BattlesSelect worldIdStr={worldIdStr} battlesList={worldsBattlesList[worldIdStr]} heroesList={heroesList} serverHandler={serverHandler} setWorldIdStr={setWorldIdStr} setIsPhaserRunning={setIsPhaserRunning} />
+      <BattlesSelect worldIdStr={worldIdStr} battlesList={worldsBattlesList[worldIdStr]} heroesList={heroesList} serverHandler={serverHandler} setWorldIdStr={setWorldIdStr} setIsBattleRunning={setIsBattleRunning} />
     }
   </div>
   )

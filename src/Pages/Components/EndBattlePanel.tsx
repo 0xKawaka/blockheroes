@@ -5,22 +5,20 @@ type EndBattlePanelProps = {
   title:string,
   lootItems?: Array<{name:string, amount:number, image:string}>
   setWinOrLose: React.Dispatch<React.SetStateAction<string>>,
-  setAfterBattle: React.Dispatch<React.SetStateAction<boolean>>
-  setBattleRunning: React.Dispatch<React.SetStateAction<boolean>>
-  setIsPhaserRunning: React.Dispatch<React.SetStateAction<boolean>>
+  setIsLootPanelVisible: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsBattleRunning: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const imagesByItemName: {[key: string]: string} = {
   "Emblem": require("../../assets/lootItems/emblem.png"),
 }
 
-export default function EndBattlePanel({title, lootItems, setWinOrLose, setAfterBattle, setBattleRunning, setIsPhaserRunning}: EndBattlePanelProps) {
+export default function EndBattlePanel({title, lootItems, setWinOrLose, setIsLootPanelVisible, setIsBattleRunning}: EndBattlePanelProps) {
 
   function handleContinue() {
     setWinOrLose("")
-    setBattleRunning(false)
-    setAfterBattle(false)
-    setIsPhaserRunning(false)
+    setIsLootPanelVisible(false)
+    setIsBattleRunning(false)
   }
 
   return(

@@ -5,9 +5,12 @@ import SkillBuff from "../Skill/SkillBuff";
 
 export default class SkillTooltip {
   rectangle: Phaser.GameObjects.Graphics
-  titleText: Phaser.GameObjects.Text
-  text: Phaser.GameObjects.Text
-  cooldown: Phaser.GameObjects.Text
+  // titleText: Phaser.GameObjects.Text
+  titleText: Phaser.GameObjects.BitmapText
+  // text: Phaser.GameObjects.Text
+  text: Phaser.GameObjects.BitmapText
+  // cooldown: Phaser.GameObjects.Text
+  cooldown: Phaser.GameObjects.BitmapText
 
   constructor(battleScene: BattleScene, skill: Skill, skillBarWidth:number, x:number, y:number, entityIndex: number) {
 
@@ -19,15 +22,18 @@ export default class SkillTooltip {
     this.rectangle.fillRoundedRect(x, y - height, width, height, 8);
 
     const startTextY = y - height * 0.95
-    const fontSize = battleScene.sys.canvas.height * 0.014
-    this.cooldown = battleScene.add.text(x + width - width * 0.2, startTextY, skill.cooldown.toString() + " turns", {fontFamily: "Verdana", fontSize: fontSize.toString() + "px", color: "#FFFFFF"})
-
-    this.titleText = battleScene.add.text(x + battleScene.sys.canvas.width * 0.01, startTextY, skill.name, {fontFamily: "Verdana", fontSize: (fontSize + fontSize * 0.08).toString()  + "px", color: "#FFFFFF", fontStyle: "bold"})
-    this.titleText.setWordWrapWidth(skillBarWidth)
+    // const fontSize = battleScene.sys.canvas.height * 0.014
+    // this.cooldown = battleScene.add.text(x + width - width * 0.2, startTextY, skill.cooldown.toString() + " turns", {fontFamily: "Verdana", fontSize: fontSize.toString() + "px", color: "#FFFFFF"})
+    this.cooldown = battleScene.add.bitmapText(x + width - width * 0.2, startTextY, "RetroGaming", skill.cooldown.toString() + " turns")
+  
+    // this.titleText = battleScene.add.text(x + battleScene.sys.canvas.width * 0.01, startTextY, skill.name, {fontFamily: "Verdana", fontSize: (fontSize + fontSize * 0.08).toString()  + "px", color: "#FFFFFF", fontStyle: "bold"})
+    this.titleText = battleScene.add.bitmapText(x + battleScene.sys.canvas.width * 0.01, startTextY, "RetroGaming", this.capitalizeFirstLetter(this.toPlural(skill.name)))
+    // this.titleText.setWordWrapWidth(skillBarWidth)
     this.titleText.setName("tooltipTittle_" + skill.name + "_" + entityIndex.toString())
 
-    this.text = battleScene.add.text(x + battleScene.sys.canvas.width * 0.01, startTextY + battleScene.sys.canvas.height* 0.04, this.createText(skill), {fontFamily: "Verdana", fontSize: fontSize.toString() + "px", color: "#FFFFFF"})
-    this.text.setWordWrapWidth(skillBarWidth)
+    this.text = battleScene.add.bitmapText(x + battleScene.sys.canvas.width * 0.01, startTextY + battleScene.sys.canvas.height* 0.04, "RetroGaming", this.createText(skill))
+    // this.text = battleScene.add.text(x + battleScene.sys.canvas.width * 0.01, startTextY + battleScene.sys.canvas.height* 0.04, this.createText(skill), {fontFamily: "Verdana", fontSize: fontSize.toString() + "px", color: "#FFFFFF"})
+    // this.text.setWordWrapWidth(skillBarWidth)
     this.text.setName("tooltip_" + skill.name + "_" + entityIndex.toString())
 
     this.setVisible(false)

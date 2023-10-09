@@ -5,19 +5,19 @@ export default class SpriteWrapper extends Phaser.GameObjects.Sprite {
   placeholderHeight: number
 
   // constructor(scene: Phaser.Scene, x: number, y: number, name: string, scaleValue: number, index: number, placeholderWidth: number, placeholderHeight: number) {
-  constructor(scene: Phaser.Scene, x: number, y: number, name: string, scaleValue: number, index: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, name: string, scaleValue: number, upscale: number, index: number) {
     super(scene, x, y, name);
     scene.add.existing(this);
     this.target = null
     this.setScale(scaleValue)
     this.setOrigin(0.5, 1)
-    // this.placeholderWidth = placeholderWidth
-    // this.placeholderHeight = placeholderHeight
-    // this.placeholder = scene.add.rectangle(x, y, this.placeholderWidth, this.placeholderHeight, 0x000000, 0)
-    this.placeholder = scene.add.rectangle(x, y, this.displayWidth / 5, this.displayHeight / 2.5, 0x000000, 0)
+    // this.setScrollFactor(0)
+
+    this.placeholder = scene.add.rectangle(x, y, this.displayWidth / upscale / 5, this.displayHeight / upscale / 2.5, 0x000000, 0)
     this.placeholder.setOrigin(0.5, 1)
     this.placeholder.setName('entity_'+ index.toString())
-    this.placeholder.setInteractive();
+    // this.placeholder.setScrollFactor(0)
+    this.placeholder.setInteractive()
     scene.physics.add.existing(this.placeholder);
   }
 
@@ -59,10 +59,6 @@ export default class SpriteWrapper extends Phaser.GameObjects.Sprite {
   isMoving(){
     return this.target != null
   }
-
-  // setFlipX(value: boolean): void {
-  //   this.flipX = value
-  // }
 
   getPlaceholder(){
     return this.placeholder

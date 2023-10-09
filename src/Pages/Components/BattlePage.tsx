@@ -13,20 +13,20 @@ type BattlePageProps = {
   selectedHeroesIds: number[]
   enemiesTeam: Entity[]
   serverHandler: ServerHandler
-  setBattleRunning: React.Dispatch<React.SetStateAction<boolean>>
-  setIsPhaserRunning: React.Dispatch<React.SetStateAction<boolean>>
+  setPhaserRunning: React.Dispatch<React.SetStateAction<boolean>>
+  setIsBattleRunning: React.Dispatch<React.SetStateAction<boolean>>
+  setIsLootPanelVisible: React.Dispatch<React.SetStateAction<boolean>>
+  setWinOrLose: React.Dispatch<React.SetStateAction<string>>
 }
 
-export default function BattlePage({world, battle, selectedTeam, selectedHeroesIds, enemiesTeam, serverHandler, setBattleRunning, setIsPhaserRunning}: BattlePageProps) {
+export default function BattlePage({world, battle, selectedTeam, selectedHeroesIds, enemiesTeam, serverHandler, setPhaserRunning, setIsBattleRunning, setIsLootPanelVisible, setWinOrLose}: BattlePageProps) {
 
-  const [afterBattle, setAfterBattle] = useState<boolean>(false)
-  const [battleVisible, setBattleVisible] = useState<boolean>(true)
-  const [winOrLose, setWinOrLose] = useState<string>("")
   // const [walletAdrs, setWalletAdrs] = useState("")
 
   function handleStartFight() {
-    setIsPhaserRunning(true)
-    setBattleVisible(true)
+    setIsBattleRunning(true)
+    setPhaserRunning(true)
+    setIsLootPanelVisible(false)
     // const phaserGame = new Phaser.Game(getPhaserConfig(serverHandler, walletAdrs, "BattleContainer"))*
     // const phaserGame = new Phaser.Game(getPhaserConfig(serverHandler, "0xtest", "BattlePageContainer", world, battle))
     const phaserGame = new Phaser.Game(getPhaserConfig(serverHandler, "0xtest", "GamePhaserContainer", world, battle, selectedTeam, selectedHeroesIds, enemiesTeam))
@@ -44,23 +44,14 @@ export default function BattlePage({world, battle, selectedTeam, selectedHeroesI
     console.log("Game destroyed")
     const endBattleInfos = await serverHandler.getEndBattleInfos()
     setWinOrLose(endBattleInfos.winOrLose)
-    setBattleVisible(false)
-    setAfterBattle(true)
+    setPhaserRunning(false)
+    setIsBattleRunning(false)
+    setIsLootPanelVisible(true)
   }
 
   return(
   <div className="BattlePageContainer">
-    {!battleVisible &&
-      <div className="OutOfBattleContainer">
-        {afterBattle && winOrLose === "Defeat" &&
-          <EndBattlePanel title={winOrLose} setWinOrLose={setWinOrLose} setAfterBattle={setAfterBattle} setBattleRunning={setBattleRunning} setIsPhaserRunning={setIsPhaserRunning} />          
-        }
-        {afterBattle && winOrLose === "Victory" &&
-          <EndBattlePanel title={winOrLose} lootItems={[{name:"Explorer's emblem", amount:1, image:"Emblem"}]} setWinOrLose={setWinOrLose} setAfterBattle={setAfterBattle} setBattleRunning={setBattleRunning} setIsPhaserRunning={setIsPhaserRunning} />
-          // {name:"Contributor's emblem", amount:1, image:"Emblem"}    
-        }
-      </div>
-    }
+
   </div>
   )
 }

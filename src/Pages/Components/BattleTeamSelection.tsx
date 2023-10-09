@@ -19,11 +19,11 @@ type BattleTeamSelectionProps = {
   heroesList: HeroesListType
   selectedHeroesIds: number[],
   setSelectedHeroesIds: React.Dispatch<React.SetStateAction<number[]>>
-  setBattleRunning: React.Dispatch<React.SetStateAction<boolean>>
+  setPhaserRunning: React.Dispatch<React.SetStateAction<boolean>>
   setEnemiesSkills: React.Dispatch<React.SetStateAction<Array<Array<Skill>>>>
 }
 
-export default function BattleTeamSelection({enemiesNames, enemiesLevels, energyCost, heroesList, selectedHeroesIds, setSelectedHeroesIds, setBattleRunning, setEnemiesSkills }: BattleTeamSelectionProps) {
+export default function BattleTeamSelection({enemiesNames, enemiesLevels, energyCost, heroesList, selectedHeroesIds, setSelectedHeroesIds, setPhaserRunning, setEnemiesSkills }: BattleTeamSelectionProps) {
   // const [selectedHeroesIds, setSelectedHeroesIds] = useState<number[]>([])
   const notSelectedHeroesList = heroesList.filter(hero => !selectedHeroesIds.includes(hero.id))
   const [loadingEnemiesSkills, setLoadingEnemiesSkills] = useState<boolean>(true)
@@ -42,7 +42,7 @@ export default function BattleTeamSelection({enemiesNames, enemiesLevels, energy
       return
     }
     if(selectedHeroesIds.length > 0){
-      setBattleRunning(true)
+      setPhaserRunning(true)
     }
   }
 

@@ -18,6 +18,7 @@ export default class CastProjectileAOE implements ISkillAnimation {
     for (let ally of allies) {
       animationHandler.playSpellEffectOnEntity(ally,
         spellAnimDict[animation + casterEntity.getName()].name,
+        battle.scaler.getScaleFactor(),
         spellAnimDict[animation + casterEntity.getName()].framerate,
         spellAnimDict[animation + casterEntity.getName()].width,
         spellAnimDict[animation + casterEntity.getName()].height,

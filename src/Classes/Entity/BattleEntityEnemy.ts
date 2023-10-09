@@ -19,9 +19,9 @@ export default class BattleEntityEnemy implements IBattleEntity {
     this.battleEntity.getSprite().setFlipX(true)
   }
 
-  playTurn(battle: Battle, onTurnProcs:any, serverHandler:ServerHandler, animationsHandler: AnimationsHandler): void {
+  async playTurn(battle: Battle, onTurnProcs:any, serverHandler:ServerHandler, animationsHandler: AnimationsHandler): Promise<void> {
     console.log("Entity enemy ", this.getIndex(), ' playing')
-    this.battleEntity.playTurn(battle, onTurnProcs, serverHandler, animationsHandler)
+    await this.battleEntity.playTurn(battle, onTurnProcs, serverHandler, animationsHandler)
     if(!this.battleEntity.isDead() && !this.battleEntity.isStunned()) {
       battle.battleScene.battle.isWaitingForEnemySkill = true
       serverHandler.send({type:"enemyTurn"})
@@ -36,6 +36,11 @@ export default class BattleEntityEnemy implements IBattleEntity {
       battle.isTurnPlaying = false
     }
   }
+
+  async waitDamageAndHealAnimsDone(): Promise<void> {
+    await this.battleEntity.waitDamageAndHealAnimsDone()
+  }
+
   async playAnim(animationName: string): Promise<void> {
     this.battleEntity.playAnim(animationName)
   }
@@ -48,13 +53,20 @@ export default class BattleEntityEnemy implements IBattleEntity {
   }
 
   endSkillSelection() {}
+  
+  applyDamage(value: number): void {
+    this.battleEntity.applyDamage(value)
+  }
+  applyHeal(value: number): void {
+    this.battleEntity.applyHeal(value)
+  }
+  applyDamageAndPlayAnim(isCrit: boolean, value: number, battleScene: Phaser.Scene, animationHandler: AnimationsHandler): void {
+    this.battleEntity.applyDamageAndPlayAnim(isCrit, value, battleScene, animationHandler)
+  }
+  applyHealAndPlayAnim(value: number, battleScene: Phaser.Scene): void {
+    this.battleEntity.applyHealAndPlayAnim(value, battleScene)
+  }
 
-  applyDamage(isCrit: boolean,value: number, battleScene: Phaser.Scene, animationHandler: AnimationsHandler): void {
-    this.battleEntity.applyDamage(isCrit, value, battleScene, animationHandler)
-  }
-  applyHeal(value: number, battleScene: Phaser.Scene): void {
-    this.battleEntity.applyHeal(value, battleScene)
-  }
   applyBuffsAndStatus(buffs: Array<{name: string, duration: number}>, status: Array<{name: string, duration: number}>, battleScene: Phaser.Scene): void {
     this.battleEntity.applyBuffsAndStatus(buffs, status, battleScene)
   }
@@ -95,8 +107,8 @@ export default class BattleEntityEnemy implements IBattleEntity {
   setBattleSpeed(value: number): void {
     this.battleEntity.setBattleSpeed(value)
   }
-  setOnCooldown(name: string, cooldown: number): void {
-    this.battleEntity.setOnCooldown(name, cooldown)
+  setOnCooldown(name: string): void {
+    this.battleEntity.setOnCooldown(name)
   }
   getPosition(): {x: number, y: number} {
     return this.battleEntity.getPosition()

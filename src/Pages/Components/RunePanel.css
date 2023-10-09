@@ -13,6 +13,7 @@
   flex-direction: row;
   align-items: flex-start;
   width: 40em;
+  height: 11.5em;
   gap: 6em;
 }
 

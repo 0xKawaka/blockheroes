@@ -1,12 +1,11 @@
-import { assert } from 'console'
 import Phaser from 'phaser'
-import BackgroundDict from '../assets/backgrounds/BackgroundDict'
-import {getLevelBackground, getLevelMonsters} from '../GameDatas/Levels/levels'
-import loadingBattle from '../assets/backgrounds/loadingBattle.png'
+import {getLevelBackground} from '../GameDatas/Levels/levels'
+// import loadingBattle from '../assets/backgrounds/loadingBattle.png'
 import { projectileInfos, spellAnimInfos } from '../GameDatas/Skills/skills'
 import { buffsDebuffsStats, onTurnStackableBuffNames, onTurnStackableStatusNames } from '../GameDatas/Skills/buffsStatus'
-
-
+import Entity from '../Classes/Entity/Entity'
+import Skill from '../Classes/Skill/Skill'
+import { getSpriteSize } from '../GameDatas/Monsters/spriteSize'
 
 export default class BattleLoader extends Phaser.Scene {
   constructor() {
@@ -15,7 +14,7 @@ export default class BattleLoader extends Phaser.Scene {
 
   preload() {
     this.createLoadingScreen()
-    this.load.image('loaderBackground', loadingBattle)
+    // this.load.image('loaderBackground', loadingBattle)
     let worldId = this.registry.get('worldId')
     let battleId = this.registry.get('battleId')
     let serverHandler = this.registry.get('serverHandler')
@@ -26,15 +25,69 @@ export default class BattleLoader extends Phaser.Scene {
     this.load.image('background', img)
     this.loadMusicLoop()
     this.loadSpellAnimations()
-    this.loadProjectiles()
-    this.loadBuffsStatus();
+    this.loadProjectiles() 
+    this.loadBuffsStatus()
+    let selectedTeam = this.registry.get('selectedTeam')
+    let enemiesTeam = this.registry.get('enemiesTeam')
+    this.loadEntities(enemiesTeam, selectedTeam)
   }
 
   create({}:{}) {
-    let worldId = this.registry.get('worldId')
-    let battleId = this.registry.get('battleId')
+    // this.createLoadingScreen()
+    // let worldId = this.registry.get('worldId')
+    // let battleId = this.registry.get('battleId')
     // this.scene.start('Battle', {background:getLevelBackground(worldId, battleId), monsterArray:getLevelMonsters(worldId, battleId)})
-    this.scene.start('Battle', {background:getLevelBackground(worldId, battleId)})
+    // this.scene.start('UI')
+    this.scene.start('Battle')
+  }
+
+  loadEntities(enemiesTeam: Array<Entity>, selectedTeam: Array<Entity>) {
+    this.loadSkills(enemiesTeam)
+    this.loadSkills(selectedTeam)
+    let enemiesNameArray: Array<string> = this.getEntitiesNameArray(enemiesTeam)
+
+    let loadedNames: Array<string> = []
+    for (let i = 0; i < enemiesNameArray.length; i++) {
+      if (!loadedNames.includes(enemiesNameArray[i])) {
+        const spritesheet  = require('../assets/monsters/' + enemiesNameArray[i] + '/' + 'spritesheetSmall.png')
+        // this.load.spritesheet(enemiesNameArray[i], spritesheet, { frameWidth: 360, frameHeight: 160 })
+        // const spritesheet  = require('../assets/monsters/' + enemiesNameArray[i] + '/' + 'spritesheet.png')
+        this.load.spritesheet(enemiesNameArray[i], spritesheet, getSpriteSize(enemiesNameArray[i]))
+
+        loadedNames.push(enemiesNameArray[i])
+      }
+    }
+    for(let i = 0; i < selectedTeam.length; i++){
+      if(!loadedNames.includes(selectedTeam[i].name)){
+        const spritesheet  = require('../assets/monsters/' + selectedTeam[i].name + '/' + 'spritesheetSmall.png')
+        // this.load.spritesheet(selectedTeam[i].name, spritesheet, { frameWidth: 360, frameHeight: 160 })
+        // const spritesheet  = require('../assets/monsters/' + selectedTeam[i].name + '/' + 'spritesheet.png')
+        this.load.spritesheet(selectedTeam[i].name, spritesheet, getSpriteSize(selectedTeam[i].name))
+
+        loadedNames.push(selectedTeam[i].name)
+      }
+    }
+  }
+
+  getEntitiesNameArray(entitiesArray: Array<Entity>): Array<string> {
+    let enemiesNameArray: Array<string> = []
+    for (let i = 0; i < entitiesArray.length; i++) {
+      enemiesNameArray.push(entitiesArray[i].name)
+    }
+    return enemiesNameArray
+  }
+
+  loadSkills(entitiesArray: Array<Entity>) {
+    let loadedSkills: Array<string> = []
+    for (let i = 0; i < entitiesArray.length; i++) {
+      entitiesArray[i].skillArray.forEach((skill: Skill) => {
+        if (!loadedSkills.includes(skill.name)) {
+          loadedSkills.push(skill.name)
+          // this.load.image(skill.name, skillsDict[skill.name].image)
+          this.load.image(skill.name, skill.image)
+        }
+      })
+    }
   }
 
   loadSpellAnimations(){
@@ -77,59 +130,37 @@ export default class BattleLoader extends Phaser.Scene {
   }
 
   createLoadingScreen(){
+
     let progressBar = this.add.graphics();
-    let progressBox = this.add.graphics();
+    // let progressBox = this.add.graphics();
 
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
+    const scale = Math.round(width / 640)
 
     const progressBarWidth = width / 4
-    const progressBarHeight = height / 25
-    // let progressBarWidthOffset = (width / 9)
-    // let progressBarHeightOffset = (height / 47)
+    const progressBarHeight = height / 20
     const progressBarX = width / 2 - (progressBarWidth / 2)
     const progressBarY = height / 2
 
+    // progressBox.fillStyle(0xFFFFFF, 0.3);
+    // progressBox.fillRect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);
 
-    progressBox.fillStyle(0xFFFFFF, 0.5);
-    progressBox.fillRect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);
+    const fontName = 'RetroGaming'
+    const textSize = 10
 
-    const textSize = height / 50
-    const textStr = textSize + "px monospace"
-
-
-    var loadingText = this.make.text({
-        x: width / 2,
-        y: height / 2 - progressBarHeight,
-        text: 'Loading...',
-        style: {
-            font: textStr,
-        }
-    });
+    // let loadingText = this.add.bitmapText(progressBarX + progressBarWidth / 2, progressBarY + 10, 'arcade', 'Loading...', 32);
+    let loadingText = this.add.bitmapText(width / 2, height / 2 - progressBarHeight, fontName + textSize, 'Loading...').setScale(scale);
     loadingText.setOrigin(0.5, 0.5);
-    var percentText = this.make.text({
-      x: width / 2,
-      y: height / 2 + progressBarHeight/2,
-      text: '0%',
-      style: {
-          font: textStr,
-          color: '#000000'
-      }
-    });
+
+    let percentText = this.add.bitmapText(progressBarX + progressBarWidth / 2, progressBarY + progressBarHeight / 2, fontName + textSize, '0%').setScale(scale);
     percentText.setOrigin(0.5, 0.5);
     
-    var assetText = this.make.text({
-        x: width / 2,
-        y: height / 2 + progressBarHeight * 2,
-        text: '',
-        style: {
-            font: textStr,
-        }
-    });
-
+    let assetText = this.add.bitmapText(width / 2, height / 2 + progressBarHeight * 2, fontName + textSize, '').setScale(scale);
     assetText.setOrigin(0.5, 0.5);
+
     this.load.on('progress', function (value:any) {
-      percentText.setText(value * 100 + '%');
+      percentText.setText(Math.round(value * 100) + '%');
       progressBar.clear();
       progressBar.fillStyle(0xeab676, 1);
       progressBar.fillRect(progressBarX + (progressBarWidth/100), progressBarY + (progressBarHeight/10), (progressBarWidth - (progressBarWidth/50)) * value, progressBarHeight - (progressBarHeight/5));
@@ -141,7 +172,7 @@ export default class BattleLoader extends Phaser.Scene {
     });
     this.load.on('complete', function () {
         progressBar.destroy();
-        progressBox.destroy();
+        // progressBox.destroy();
         loadingText.destroy();
         percentText.destroy();
         assetText.destroy();

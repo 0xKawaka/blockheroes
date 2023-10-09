@@ -10,7 +10,7 @@ let serverHandler = new ServerHandler()
 
 root.render(
   // <React.StrictMode>
-    <App serverHandler={serverHandler} />
+  <App serverHandler={serverHandler} />
   // </React.StrictMode>
 );
 

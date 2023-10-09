@@ -16,6 +16,16 @@ export default class Entity {
     // this.skillAnimationDict = skillAnimationDict
   }
 
+  getSkillCooldownByName(name: string): number {
+    for (let skill of this.skillArray) {
+      if (skill.name === name) {
+        return skill.cooldown
+      }
+    }
+    console.log("Skill cooldown  not found")
+    return -1
+  }
+
   // getSkillAnim(skillName: string): ISkillAnimation {
   //   return this.skillAnimationDict[skillName]
   // }

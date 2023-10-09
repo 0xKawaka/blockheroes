@@ -3,5 +3,9 @@
   /* background-color: rgb(24, 23, 23); */
   color:white;
   display: flex;
-  align-items:start;
+  /* align-items:start; */
+}
+
+.myHeroesMenuAndHeroesListContainer {
+  width: 100%;
 }
