@@ -1,4 +1,3 @@
-
 import StatsModifier from "../Statistic/StatsModifier";
 import Entity from "./Entity";
 import Turnbar from "./Turnbar";
@@ -8,16 +7,20 @@ import HealthBar from "./HealthBar";
 import BattleScene from "../../Scenes/BattleScene";
 import Battle from "../Battle";
 import Skill from "../Skill/Skill";
-import ServerHandler from "../IO/ServerHandler";
 import SpriteWrapper from "../Animations/SpriteWrapper";
 import AnimationsHandler from "../Animations/AnimationsHandler";
 import ISkillAnimation from "../Skill/Animations/ISkillAnimation";
 import SkillTooltip from "./SkillTooltip";
+import ImgBar from "./ImgBar";
+import { StartTurnEvent } from "../../Blockchain/event/eventTypes";
+import UIScene from "../../Scenes/UIScene";
+
 
 export default class BattleEntityAlly implements IBattleEntity {
   battleEntity: IBattleEntity
-  selectedBar: BarHandler
+  // selectedBar: BarHandler
   skillImageByName: {[key: string]: Phaser.GameObjects.Image}
+  skillSelectedImageByName: {[key: string]: Phaser.GameObjects.Image}
   skillScale: number
   skillHoveredByName: {[key: string]:boolean}
   skillTooltipByName: {[key: string]: SkillTooltip}
@@ -27,9 +30,11 @@ export default class BattleEntityAlly implements IBattleEntity {
 
   constructor(battleEntity: IBattleEntity, battleScene: BattleScene) {
     this.battleEntity = battleEntity
-    this.createSelectedBar(battleScene)
-    this.skillScale = battleScene.battle.scaler.getScaleFactor()
+    // this.createSelectedBar(battleScene)
+    // this.skillScale = battleScene.battle.scaler.getScaleFactor()
+    this.skillScale = this.battleEntity.getScaledValue()
     this.skillImageByName = {}
+    this.skillSelectedImageByName = {}
     this.skillHoveredByName = {}
     this.skillTooltipByName = {}
     this.skillCooldownRectangleByName = {}
@@ -59,15 +64,20 @@ export default class BattleEntityAlly implements IBattleEntity {
     }
   }
 
-  async playTurn(battle: Battle, onTurnProcs: any, serverHandler:ServerHandler, animationsHandler: AnimationsHandler):Promise<void> {
+  async playTurn(battle: Battle, startTurnEvent: StartTurnEvent, animationsHandler: AnimationsHandler):Promise<void> {
     console.log("Entity ally ", this.getIndex(), ' playing')
-    await this.battleEntity.playTurn(battle, onTurnProcs, serverHandler, animationsHandler)
+    console.log("Entity health before procs : ", this.getCurrentHealth())
+    await this.battleEntity.playTurn(battle, startTurnEvent, animationsHandler)
+    this.reduceCooldowns()
+    console.log("Entity health after procs : ", this.getCurrentHealth())
     if(!this.battleEntity.isDead() && !this.battleEntity.isStunned()) {
       battle.battleScene.battle.hasSelectedTarget = false
-      this.selectedBar.showBar()
+      // this.selectedBar.showBar()
+      this.changeOutlineBarsColor(0xc9cb8d, 1)
       this.showSkills()
     }
     else if (this.battleEntity.isStunned()){
+      battle.updateEndTurnInCaseOfStun()
       this.endTurn()
       battle.isTurnPlaying = false
     }
@@ -76,7 +86,10 @@ export default class BattleEntityAlly implements IBattleEntity {
       this.endTurn()
       battle.isTurnPlaying = false
     }
-    this.reduceCooldowns()
+  }
+
+  changeOutlineBarsColor(color: number, alpha: number): void {
+    this.battleEntity.setOutlineBarsColor(color, alpha)
   }
 
   async waitDamageAndHealAnimsDone(): Promise<void> {
@@ -85,7 +98,8 @@ export default class BattleEntityAlly implements IBattleEntity {
 
   endSkillSelection(): void {
     this.hideSkills()
-    this.selectedBar.hideBar()
+    // this.selectedBar.hideBar()
+    this.changeOutlineBarsColor(0x000000, 1)
     this.resetSkillSelection()
   }
   endTurn(): void {
@@ -115,18 +129,18 @@ export default class BattleEntityAlly implements IBattleEntity {
     return this.battleEntity.isDead()
   }
 
-  createSelectedBar(battleScene: BattleScene) {
-    let width = this.battleEntity.getSprite().getWidth() / 1.7
-    let height = this.battleEntity.getSprite().getHeight() / 12
-    let x = this.battleEntity.getSprite().getPlaceholderX() - width / 2
-    let y = this.battleEntity.getSprite().getPlaceholderY()
-    this.selectedBar = new BarHandler(battleScene, x, y, 0xffdda3, width, height)
-    this.selectedBar.hideBar()
-  }
+  // createSelectedBar(battleScene: BattleScene) {
+  //   let width = this.battleEntity.getSprite().getWidth() / 1.7
+  //   let height = this.battleEntity.getSprite().getHeight() / 12
+  //   let x = this.battleEntity.getSprite().getPlaceholderX() - width / 2
+  //   let y = this.battleEntity.getSprite().getPlaceholderY()
+  //   this.selectedBar = new BarHandler(battleScene, x, y, 0xffdda3, width, height)
+  //   this.selectedBar.hideBar()
+  // }
 
   createSkills(battleScene: BattleScene): void {
-    const skillBaseWidth = 200
-    this.skillScale = battleScene.battle.positionScaler.computeScaleForWidthHeightRatio(skillBaseWidth, skillBaseWidth, battleScene.battle.positionScaler.spellIconsRatio.widthRatio, battleScene.battle.positionScaler.spellIconsRatio.heightRatio)
+    const skillBaseWidth = 30
+    // this.skillScale = battleScene.battle.positionScaler.computeScaleForWidthHeightRatio(skillBaseWidth, skillBaseWidth, battleScene.battle.positionScaler.spellIconsRatio.widthRatio, battleScene.battle.positionScaler.spellIconsRatio.heightRatio)
     const skillwidthScaled = skillBaseWidth * this.skillScale
     const skillGap = skillwidthScaled / 3
     const totalSizeSkill = skillGap * 2 + skillwidthScaled * 3
@@ -138,7 +152,7 @@ export default class BattleEntityAlly implements IBattleEntity {
       // this.createSkillImage(battleScene, skill.name, xSkillBar + skillwidthScaled * 0.5 + index * skillwidthScaled + index * skillGap, ySkillBar, skillwidthScaled)
       // this.createSkillTooltip(battleScene, skill, totalSizeSkill, xSkillBar, ySkillBar - skillwidthScaled * 0.5)
       this.createSkillImage(battleScene, skill.name, xSkillBar + skillwidthScaled * 0.5 + index * skillwidthScaled + index * skillGap, ySkillBar, skillwidthScaled)
-      this.createSkillTooltip(battleScene, skill, totalSizeSkill, xSkillBar, ySkillBar - skillwidthScaled * 0.5)
+      // this.createSelectedImage()
     })
     this.createCooldownRectangles(this.battleEntity.getEntity().skillArray, skillwidthScaled, battleScene)
   }
@@ -159,10 +173,6 @@ export default class BattleEntityAlly implements IBattleEntity {
     })
   }
 
-  createSkillTooltip(battleScene: BattleScene, skill: Skill, skillBarWidth:number, x:number, y:number): void {
-    this.skillTooltipByName[skill.name] = new SkillTooltip(battleScene, skill, skillBarWidth, x, y, this.getIndex())
-  }
-
   createSkillImage(battleScene: BattleScene, name: string, x:number, y:number, skillwidthScaled:number): void {
     this.skillHoveredByName[name] = false
 
@@ -175,30 +185,35 @@ export default class BattleEntityAlly implements IBattleEntity {
     this.skillImageByName[name] = battleScene.add.image(x, y, name)
     this.skillImageByName[name].setScale(this.skillScale)
     this.skillImageByName[name].setInteractive();
-    this.skillImageByName[name].on("pointerover", () => { this.handlerHoverSkill(name, this.skillImageByName[name])})
-    this.skillImageByName[name].on("pointerout", () => { this.handlerHoverOutSkill(name, this.skillImageByName[name])});
+    this.skillImageByName[name].on("pointerover", () => { this.handlerHoverSkill(name, this.battleEntity.getIndex(), battleScene.battle.UIScene)})
+    this.skillImageByName[name].on("pointerout", () => { this.handlerHoverOutSkill(name, this.battleEntity.getIndex(), battleScene.battle.UIScene)});
     this.skillImageByName[name].setName("skill_" + name + "_" + this.battleEntity.getIndex().toString())
     this.skillImageByName[name].setVisible(false)
     this.skillImageByName[name].setInteractive()
+
+    this.skillSelectedImageByName[name] = battleScene.add.image(x, y, "skillSelected")
+    this.skillSelectedImageByName[name].setScale(this.skillScale)
+    this.skillSelectedImageByName[name].setVisible(false)
   }
 
-  async handlerHoverSkill(name:string, skill: Phaser.GameObjects.Image){
+  async handlerHoverSkill(name:string, entitIndex:number, UIScene: UIScene){
     if(!this.skillHoveredByName[name]){
       this.skillHoveredByName[name] = true
-      await new Promise(resolve => setTimeout(resolve, 700));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       if(this.skillHoveredByName[name]){
-        this.skillTooltipByName[name].setVisible(true)
+        UIScene.setTooltipVisibility(name, entitIndex, true)
       }
     }
   }
-  async handlerHoverOutSkill(name:string, skill: Phaser.GameObjects.Image){
+  async handlerHoverOutSkill(name:string, entitIndex: number, UIScene: UIScene){
     this.skillHoveredByName[name] = false
-    this.skillTooltipByName[name].setVisible(false)
+    UIScene.setTooltipVisibility(name, entitIndex, false)
   }
 
   resetSkillSelection(): void {
-    for(let key in  this.skillImageByName){
-      this.skillImageByName[key].setScale(this.skillScale)
+    for(let key in this.skillImageByName){
+      // this.skillImageByName[key].setScale(this.skillScale)
+      this.skillSelectedImageByName[key].setVisible(false)
     }
   }
 
@@ -233,9 +248,11 @@ export default class BattleEntityAlly implements IBattleEntity {
   selectSkill(name: string){
     for(let key in  this.skillImageByName){
       if(key === name)
-        this.skillImageByName[key].setScale(this.skillScale * 1.15)
-      else 
-        this.skillImageByName[key].setScale(this.skillScale)
+        this.skillSelectedImageByName[key].setVisible(true)
+        // this.skillImageByName[key].setScale(this.skillScale * 1.15)
+      else
+        this.skillSelectedImageByName[key].setVisible(false)
+        // this.skillImageByName[key].setScale(this.skillScale)
     }
   }
   async playAnim(animationName: string): Promise<void> {
@@ -253,6 +270,9 @@ export default class BattleEntityAlly implements IBattleEntity {
   // getSkillAnim(skillName: string): ISkillAnimation {
   //   return this.battleEntity.getSkillAnim(skillName)
   // }
+  setOutlineBarsColor(color: number, alpha: number): void {
+    this.battleEntity.setOutlineBarsColor(color, alpha)
+  }
   getFrontEntityX(): number {
     return this.battleEntity.getSprite().getPlaceholderX() + this.battleEntity.getSprite().getWidth() / 1.5
   }
@@ -269,6 +289,9 @@ export default class BattleEntityAlly implements IBattleEntity {
   }
   setBattleSpeed(value: number): void {
     this.battleEntity.setBattleSpeed(value)
+  }
+  getSkillIndexByName(name: string): number {
+    return this.battleEntity.getSkillIndexByName(name)
   }
   getPosition(): {x: number, y: number} {
     return this.battleEntity.getPosition()

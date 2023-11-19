@@ -38,15 +38,13 @@ export default class AnimationsHandler {
     }
   }
 
-  async playSkillAnim(battle: Battle, skill: string, caster: number, target: number, damageDict: {[key: number]: {isCrit: boolean,value: number}},
+  async playSkillAnim(battle: Battle, skill: string, caster: number, target: number, damageDict: {[key: number]: {value: number}},
     healDict: {[key: number]: {value: number}}, statusDict: {[key: number]: Array<{name: string, duration: number}>},
     buffsDict: {[key: number]: Array<{name: string, duration: number}>} ,deathArray: Array<number>) {
     console.log("Playing skill anim")
 
     let targetEntity = this.battle.getEntityByIndex(target)
     let casterEntity = this.battle.getEntityByIndex(caster)
-
-
 
     if (!targetEntity || !casterEntity)
       return
@@ -84,14 +82,6 @@ export default class AnimationsHandler {
     });
   }
 
-  // setAnimationPlaying(entityName: string, entityIndex:number, animationIndex: number, value: boolean){
-  //   this.annimationStateIndexer[animationIndex][entityName + entityIndex] = value
-  // }
-
-  // getAnimationPlaying(entityName: string, entityIndex:number, animationIndex: number){
-  //   return this.annimationStateIndexer[animationIndex][entityName + entityIndex]
-  // }
-
   async moveObjectToPosition(casterSprite: SpriteWrapper, x:number, y:number, maxTime: number) {
     casterSprite.setDestination(x, y)
     this.battle.battleScene.physics.moveTo(casterSprite.getPlaceholder(), x, y, 1, maxTime);
@@ -107,10 +97,6 @@ export default class AnimationsHandler {
   }
 
   handleOverlap(bolt: any, target: any){
-    // target.play("explode");
-    // target.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
-    //   target.destroy();
-    // });
     bolt.destroy();
   }
 

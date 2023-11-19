@@ -1,8 +1,8 @@
 .EndBattlePanelContainer {
   /* background-color: rgba(4, 12, 19, 0.863); */
-  border: 0.2em solid rgb(146, 113, 47);
+  border: 0.2rem solid rgb(146, 113, 47);
   background-color: rgb(102, 80, 54);
-  border-radius: 1em;
+  border-radius: 1rem;
   width: 60%;
   padding: 2%;
   display: flex;
@@ -10,11 +10,11 @@
   align-items: center;
   justify-content: flex-start;  
   color: white;
-  gap: 4em;
+  gap: 4rem;
 } 
 
 .EndBattlePanelTitleVictory, .EndBattlePanelTitleDefeat  {
-  font-size: 3em;
+  font-size: 5rem;
   font-weight: bold;
   text-align: center;
   font-style: italic;
@@ -29,33 +29,36 @@
 }
 
 .buttonContinue{
-  padding: 0.9em;
-  border: 0.1em solid rgb(11, 83, 151);
-  border-radius: 0.4em;
-  background-color: #5291da;
-  font-size: 1.2em;
+  padding: 1.3rem;
+  border-radius: 0.5rem;
+  background-color: rgb(180, 133, 38);
+  font-size: 1.8rem;
   font-weight: bold;
   color: #ffffff;
   cursor: pointer;
   align-items: center;
 }
 
+.buttonContinue:hover{
+  background-color: rgb(209, 152, 37);
+}
+
 .EndBattlePanelLootContainer {
   display: flex;
-  gap: 6em;
+  gap: 6rem;
 }
 
 @media screen and (max-width: 800px) {
   .EndBattlePanelContainer {
-    font-size: 0.9em;
-    gap: 3em;
+    font-size: 0.9rem;
+    gap: 3rem;
   }
 }
 
 @media screen and (max-width: 700px) {
   .EndBattlePanelContainer {
-    font-size: 0.8em;
-    gap: 2.5em;
+    font-size: 0.8rem;
+    gap: 2.5rem;
     width: 70%;
   }
 
@@ -65,22 +68,22 @@
 }
 @media screen and (max-width: 600px) {
   .EndBattlePanelContainer {
-    font-size: 0.7em;
-    gap: 2em;
+    font-size: 0.7rem;
+    gap: 2rem;
     width: 80%;
   }
 }
 
 @media screen and (max-width: 500px) {
   .EndBattlePanelContainer {
-    font-size: 0.6em;
-    gap: 1.7em;
+    font-size: 0.6rem;
+    gap: 1.7rem;
   }
 }
 
 @media screen and (max-width: 360px) {
   .EndBattlePanelContainer {
-    font-size: 0.5em;
-    gap: 1.5em;
+    font-size: 0.5rem;
+    gap: 1.5rem;
   }
 }

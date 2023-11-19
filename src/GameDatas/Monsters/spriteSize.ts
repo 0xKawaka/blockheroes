@@ -1,6 +1,6 @@
 const spriteSize: {[key: string]: {frameWidth: number, frameHeight: number, upscale: number}} = {
-  'Priest': {frameWidth: 360, frameHeight: 160, upscale: 1.25},
-  'Assassin': {frameWidth: 360, frameHeight: 160, upscale: 1.25},
+  'priest': {frameWidth: 360, frameHeight: 160, upscale: 1.25},
+  'assassin': {frameWidth: 360, frameHeight: 160, upscale: 1.25},
 }
 function getSpriteSize(name: string): {frameWidth: number, frameHeight: number, upscale: number} {
   if(spriteSize[name]){

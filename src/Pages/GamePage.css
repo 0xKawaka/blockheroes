@@ -1,22 +1,45 @@
+img {
+  image-rendering: auto;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  /* Safari seems to support, but seems deprecated and does the same thing as the others. */
+  image-rendering: -webkit-optimize-contrast;
+}
+
 .GamePhaserContainer {
   height: 100%;
   display: flex;
   flex-direction: column;
-  /* flex-direction: column-reverse; */
-  /* overflow: hidden; */
-  /* font-family: RetroGaming; */
+  font-size: 2rem;
+  /* font-weight: 520; */
 }
 
 .GamePageContainer {
   color: white;
+  height: 100%;
+}
+
+.GamePageTitleAndMenu {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  
+  
+  /* height: 100%; */
+  /* gap: 1em; */
+}
+
+.GamePageTitle {
+  height: 30rem;
 }
 
 .GamePageMenu {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 10em;
+  gap: 14rem;
 }
 
 .GamePageMenuButton {
@@ -24,13 +47,19 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
 }
 
 .GamePageMenuButton {
   cursor: pointer;
 }
 
+.GamePageMenuButtonIcon {
+  image-rendering: pixelated;
+  height: 13rem;
+}
+
 .ArrowBack {
   cursor: pointer;
-  height: 1.5em;
+  height: 5rem;
 }

@@ -3,7 +3,6 @@ import EntityFactory from "./Entity/EntityFactory";
 // import BattleScene from "../Scenes/BattleScene";
 import Turnbar from "./Entity/Turnbar";
 import IBattleEntity from "./Entity/IBattleEntity";
-import ServerHandler from "./IO/ServerHandler";
 import AnimationsHandler from "./Animations/AnimationsHandler";
 import PositionScaler from "./Entity/PositionScaler";
 import BattleScene from "../Scenes/BattleScene";
@@ -11,8 +10,12 @@ import { getSpriteSize } from "../GameDatas/Monsters/spriteSize";
 import Scaler from "./Camera/Scaler";
 import Zoomer from "./Camera/Zoomer";
 import Positionner from "./Camera/Positionner";
+import EventHandler from "../Blockchain/event/EventHandler";
+import { SkillEvent } from "../Blockchain/event/eventTypes";
+import { Sender } from "../Blockchain/Sender";
+import { Account } from "starknet";
+import UIScene from "../Scenes/UIScene";
 // import { skillsDict } from "../GameDatas/Skills/skills";
-
 
 export default class Battle {
   battleEntities: Array<IBattleEntity>
@@ -22,12 +25,13 @@ export default class Battle {
   turnTimeline: Array<Turnbar>
   entityFactory: EntityFactory
   battleScene: BattleScene
+  UIScene: UIScene
   selectedSkill: string
   skillTargetType: string
   hasSelectedTarget: boolean
   isTurnPlaying: boolean
-  isWaitingForEnemySkill: boolean
-  serverHandler: ServerHandler
+  eventHandler: EventHandler
+  localWallet: Account
   animationsHandler: AnimationsHandler
   positionScaler: PositionScaler
   scaler: Scaler
@@ -36,7 +40,6 @@ export default class Battle {
 
   constructor(battleScene: BattleScene) {
     this.battleScene = battleScene
-    // this.serverHandler = serverHandler
     this.battleEntities = []
     this.deadEntities = []
     this.alliesIndexes = []
@@ -45,7 +48,6 @@ export default class Battle {
     this.entityFactory = new EntityFactory()
     this.hasSelectedTarget = false
     this.isTurnPlaying = false
-    this.isWaitingForEnemySkill = false
     this.animationsHandler = new AnimationsHandler(this)
     this.positionScaler = new PositionScaler()
   }
@@ -62,8 +64,16 @@ export default class Battle {
     this.zoomer = zoomer
   }
 
-  setServerHandler(serverHandler: ServerHandler){
-    this.serverHandler = serverHandler
+  setEventHandler(eventHandler: EventHandler){
+    this.eventHandler = eventHandler
+  }
+
+  setLocalWallet(localWallet: Account){
+    this.localWallet = localWallet
+  }
+
+  setUIScene(UIScene: UIScene){
+    this.UIScene = UIScene
   }
 
   async startBattle() {
@@ -75,20 +85,24 @@ export default class Battle {
         this.battleScene.destroyGame()
         return
       }
-      this.battleEntities.forEach(entity => {
-        console.log("index:", entity.getIndex(), " name:", entity.getName(), " speed:", entity.getBattleSpeed())
-      })
+      // this.battleEntities.forEach(entity => {
+      //   console.log("index:", entity.getIndex(), " name:", entity.getName(), " speed:", entity.getBattleSpeed())
+      // })
       // console.log('before : ', JSON.parse(JSON.stringify(this.turnTimeline)))
       this.loopUntilNextTurn()
       // console.log('after : ', JSON.parse(JSON.stringify(this.turnTimeline)))
       this.isTurnPlaying = true
       this.updateDisplayTurnBars()
-      let onTurnProcs = await this.serverHandler.getFirstOnTurnProcs()
-      console.log("On turn procs received")
-      await this.getEntityHighestTurn().playTurn(this, onTurnProcs, this.serverHandler, this.animationsHandler)
-      // this.getEntityHighestTurn().playTurn(this.battleScene, this.serverHandler)
-      while(this.isTurnPlaying){
-        await new Promise(resolve => setTimeout(resolve, 50));
+      let currentStartTurnEvent = this.eventHandler.shiftStartTurnEvent()
+      if(!currentStartTurnEvent){
+        console.log("No start turn event received")
+      }
+      else {
+        console.log("StartTurnEvent : " + JSON.stringify(currentStartTurnEvent))
+        await this.getEntityHighestTurn().playTurn(this, currentStartTurnEvent, this.animationsHandler)
+        while(this.isTurnPlaying){
+          await new Promise(resolve => setTimeout(resolve, 50));
+        }
       }
       await new Promise(resolve => setTimeout(resolve, 50));
     }
@@ -120,25 +134,57 @@ export default class Battle {
     return entity.getTurnbar().turnbar
   }
 
-  async processSkillReceivedServer(skill:string, caster: number, target: number, damageDict: {[key: number]: {isCrit: boolean,value: number}},
-    healDict: {[key: number]: {value: number}}, statusDict: {[key: number]: Array<{name: string, duration: number}>},
-    buffsDict: {[key: number]: Array<{name: string, duration: number}>}, speedDict:{[key: number]: number} ,deathArray: Array<number>){
-    console.log("Skill received from server")
-    await this.animationsHandler.playSkillAnim(this, skill, caster, target, damageDict, healDict, statusDict, buffsDict, deathArray)
-    // this.applyBuffsAndStatus(buffsDict, statusDict)
-    // this.applyDamages(damageDict)
-    // this.applyHeals(healDict)
+  updateEndTurnInCaseOfStun() {
+    let endTurn = this.eventHandler.shiftEndTurnEvent()
+    if(!endTurn){
+      console.log("No end turn event received")
+      return;
+    }
+    this.applyBuffsAndStatus(endTurn.buffsDict, endTurn.statusDict)
+    this.updateSpeeds(endTurn.speedsDict)
+  }
+
+  async processNextSkill(entityThatPlaysIndex: number){
+    console.log("Processing next skill")
+    let skill = this.eventHandler.shiftSkillEvent()
+    let endTurn = this.eventHandler.shiftEndTurnEvent()
+
+    console.log('skillEvent : '  + JSON.stringify(skill))
+    console.log('endTurnEvent : ' + JSON.stringify(endTurn))
+
+    if(!skill){
+      console.log("No skill event received")
+      return;
+    }
+    if(!endTurn){
+      console.log("No end turn event received")
+      return;
+    }
+    if(skill.casterId !== entityThatPlaysIndex){
+      console.log("Wrong entity playing : ", skill.casterId, " instead of ", entityThatPlaysIndex)
+      return;
+    }
+    let caster = this.getEntityByIndex(skill.casterId)
+    if(!caster){
+      console.log("Entity not found")
+      return;
+    }
+    const skillName = caster.getEntity().skillArray[skill.skillIndex].name
+    
+    await this.animationsHandler.playSkillAnim(this, skillName, skill.casterId, skill.targetId, skill.damagesDict, skill.healsDict, endTurn.statusDict, endTurn.buffsDict, skill.deathArray)
+    // this.applyBuffsAndStatus(skill.buffsDict, skill.statusDict)
+    // this.applyDamages(skill.damagesDict)
+    // this.applyHeals(skill.healsDict)
     // this.updateHealths()
-    // this.applyDeaths(deathArray)
-    this.updateSpeeds(speedDict)
-    let casterEntity = this.getEntityByIndex(caster)
-    if (casterEntity){
-      if (this.alliesIndexes.includes(caster)){
+    // this.applyDeaths(skill.deathArray)
+    this.updateSpeeds(endTurn.speedsDict)
+    if (caster){
+      if (this.alliesIndexes.includes(caster.getIndex())){
         // console.log("setOnCooldown")
-        casterEntity.setOnCooldown(skill)
+        caster.setOnCooldown(skillName)
         // casterEntity.setOnCooldown(skill, skillsDict[skill].cooldown)
       }
-      casterEntity.endTurn()
+      caster.endTurn()
     }
     this.selectedSkill = ""
     this.isTurnPlaying = false
@@ -146,10 +192,15 @@ export default class Battle {
 
 
   applyBuffsAndStatus(buffsDict: {[key: number]: Array<{name: string, duration: number}>}, statusDict: {[key: number]: Array<{name: string, duration: number}>}){
-    for(let key in buffsDict){
-      let entity = this.getEntityByIndex(parseInt(key))
-      if(entity)
-        entity.applyBuffsAndStatus(buffsDict[key], statusDict[key], this.battleScene)
+    for (let entityIndex=0; entityIndex < this.battleEntities.length; entityIndex++){
+      let entity = this.battleEntities[entityIndex]
+      let buffs = buffsDict[entity.getIndex()]
+      let status = statusDict[entity.getIndex()]
+      if(!buffs)
+        buffs = []
+      if(!status)
+        status = []
+      entity.applyBuffsAndStatus(buffs, status, this.battleScene)
     }
   }
   applyDeaths(deathArray: Array<number>){
@@ -159,11 +210,11 @@ export default class Battle {
         entity.die(this, this.battleScene, this.animationsHandler)
     }
   }
-  applyDamages(damageDict: {[key: number]: {isCrit: boolean,value: number}}){
+  applyDamages(damageDict: {[key: number]: {value: number}}){
     for(let key in damageDict){
       let entity = this.getEntityByIndex(parseInt(key))
       if(entity)
-        entity.applyDamageAndPlayAnim(damageDict[key].isCrit, damageDict[key].value, this.battleScene, this.animationsHandler)
+        entity.applyDamageAndPlayAnim(false, damageDict[key].value, this.battleScene, this.animationsHandler)
     }
   }
   applyHeals(healDict: {[key: number]: {value: number}}){
@@ -188,13 +239,16 @@ export default class Battle {
     }
   }
 
-  processEntityClick(nameArray: string[]){
+  async processEntityClick(nameArray: string[]){
     if(this.isAllyTurn() && this.selectedSkill != "" && !this.hasSelectedTarget){
-      if(this.isEntitySelectionValid(parseInt(nameArray[1]))){
+      let entityClickedId = parseInt(nameArray[1])
+      if(this.isEntitySelectionValid(entityClickedId)){
         this.hasSelectedTarget = true
+        
         this.getEntityHighestTurn().endSkillSelection()
-        this.serverHandler.send({type: "skill", skill:this.selectedSkill, target:parseInt(nameArray[1])})
-        this.serverHandler.waitForResponse()
+        console.log('cast ' + this.getEntityHighestTurn().getSkillIndexByName(this.selectedSkill) + ' on ' + entityClickedId)
+        await Sender.playTurn(this.localWallet, this.getEntityHighestTurn().getSkillIndexByName(this.selectedSkill), entityClickedId, this.eventHandler)
+        await this.processNextSkill(this.getEntityHighestTurn().getIndex())
       }
     }
   }
@@ -246,13 +300,13 @@ export default class Battle {
   createEntity(entity: Entity, entityIndex: number, isAllyOrEnemy: string, alliesCount:number, enemiesCount: number){
     let entityFrameSize = getSpriteSize(entity.name)
     if (isAllyOrEnemy === "ally") {
-      let battleEntity = EntityFactory.createBattleEntityAllyOrEnemyFromEntity(entity, entityFrameSize.frameWidth, entityFrameSize.frameHeight, entityFrameSize.upscale, entityIndex, alliesCount, isAllyOrEnemy, this.battleScene)
+      let battleEntity = EntityFactory.createBattleEntityAllyOrEnemyFromEntity(entity, entityFrameSize.frameWidth, entityFrameSize.frameHeight, entityFrameSize.upscale, entityIndex, alliesCount, enemiesCount, isAllyOrEnemy, this.battleScene)
       this.animationsHandler.addOnAnimationCompleteListener(battleEntity)
       this.battleEntities.push(battleEntity)
       this.turnTimeline.push(battleEntity.getTurnbar())
       this.alliesIndexes.push(entityIndex)
     } else if (isAllyOrEnemy === "enemy") {
-      let battleEntity = EntityFactory.createBattleEntityAllyOrEnemyFromEntity(entity, entityFrameSize.frameWidth, entityFrameSize.frameHeight, entityFrameSize.upscale, entityIndex, enemiesCount, isAllyOrEnemy, this.battleScene)
+      let battleEntity = EntityFactory.createBattleEntityAllyOrEnemyFromEntity(entity, entityFrameSize.frameWidth, entityFrameSize.frameHeight, entityFrameSize.upscale, entityIndex, alliesCount, enemiesCount, isAllyOrEnemy, this.battleScene)
       this.animationsHandler.addOnAnimationCompleteListener(battleEntity)
       this.battleEntities.push(battleEntity)
       this.turnTimeline.push(battleEntity.getTurnbar())
@@ -263,7 +317,7 @@ export default class Battle {
   loopUntilNextTurn() {
     this.updateTurnTimeline()
     this.sortTurnTimeline()
-    while (this.turnTimeline[0].turnbar < 100) {
+    while (this.turnTimeline[0].turnbar < 999) {
       this.incrementTurnBars()
       this.sortTurnTimeline()
     }
@@ -272,7 +326,7 @@ export default class Battle {
   sortTurnTimeline() {
     this.turnTimeline.sort((a, b) => {
       if(a.turnbar === b.turnbar){
-        return a.entityIndex > b.entityIndex ? -1 : 1
+        return a.entityIndex < b.entityIndex ? -1 : 1
       }
       return a.turnbar > b.turnbar ? -1 : 1
     })

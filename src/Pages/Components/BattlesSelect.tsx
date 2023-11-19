@@ -1,8 +1,7 @@
-import ServerHandler from "../../Classes/IO/ServerHandler"
-import { BattlesInfosList, HeroStats, HeroesListType, HeroesStatsDict, RunesList } from "../../Types/apiTypes"
+import { BattleInfos, HeroInfos, HeroStats, HeroesStatsDict, RunesList } from "../../Types/apiTypes"
 import BattleOverview from "./BattleOverview"
 import './BattlesSelect.css'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import BattleTeamSelection from "./BattleTeamSelection"
 import ArrowBack from "../../assets/misc/arrowback.png"
 import BattlePage from "./BattlePage"
@@ -10,13 +9,15 @@ import EntityFactory from "../../Classes/Entity/EntityFactory"
 import Entity from "../../Classes/Entity/Entity"
 import Skill from "../../Classes/Skill/Skill"
 import EndBattlePanel from "./EndBattlePanel"
+import { Account } from "starknet"
+import EventHandler from "../../Blockchain/event/EventHandler"
 
 type BattleSelectProps = {
-  worldIdStr: string
-  battlesList: BattlesInfosList
-  heroesList: HeroesListType
-  serverHandler: ServerHandler
-  setWorldIdStr: React.Dispatch<React.SetStateAction<string>>
+  worldId: number
+  battlesList: Array<BattleInfos>
+  heroesList: Array<HeroInfos>
+  localWallet: Account
+  setWorldId: React.Dispatch<React.SetStateAction<number>>
   setIsBattleRunning: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -31,14 +32,17 @@ function computeTotalStats(baseeStats: HeroStats, bonusStats: HeroStats): HeroSt
   }
 }
 
-function BattlesSelect ( {worldIdStr, battlesList, heroesList, serverHandler, setWorldIdStr, setIsBattleRunning} : BattleSelectProps) {
+function BattlesSelect ( {worldId, battlesList, heroesList, localWallet, setWorldId, setIsBattleRunning} : BattleSelectProps) {
   const [selectedBattleIndex, setSelectedBattleIndex] = useState<number>(-1)
   const [selectedHeroesIds, setSelectedHeroesIds] = useState<number[]>([])
   const [phaserRunning , setPhaserRunning] = useState<boolean>(false)
   const [isLootPanelVisible, setIsLootPanelVisible] = useState<boolean>(false)
-  const [enemiesSkills, setEnemiesSkills] = useState<Array<Array<Skill>>>([])
-
   const [winOrLose, setWinOrLose] = useState<string>("")
+  const [eventHandler, setEventHandler] = useState<EventHandler>()
+
+  useEffect(() => {
+    setEventHandler(new EventHandler())
+  }, [])
 
   function getSelectedTeam(selectedHeroesIds:number[]): Entity[] {
     let selectedTeamNames = []
@@ -61,8 +65,8 @@ function BattlesSelect ( {worldIdStr, battlesList, heroesList, serverHandler, se
 
   function getEnemiesTeam(selectedBattleIndex:number): Entity[] {
     let entities = []
-    for (let i=0; i<battlesList[selectedBattleIndex].enemies.names.length; i++){
-      entities.push(EntityFactory.createEntity(battlesList[selectedBattleIndex].enemies.names[i], battlesList[selectedBattleIndex].enemies.levels[i], battlesList[selectedBattleIndex].enemies.statistics[i].health, battlesList[selectedBattleIndex].enemies.statistics[i].speed, enemiesSkills[i]))
+    for (let i=0; i<battlesList[selectedBattleIndex].enemies.length; i++){
+      entities.push(EntityFactory.createEntity(battlesList[selectedBattleIndex].enemies[i].name, battlesList[selectedBattleIndex].enemies[i].level, battlesList[selectedBattleIndex].enemies[i].stats.health, battlesList[selectedBattleIndex].enemies[i].stats.speed, battlesList[selectedBattleIndex].enemies[i].spells))
     }
     return entities
   }
@@ -72,13 +76,13 @@ function BattlesSelect ( {worldIdStr, battlesList, heroesList, serverHandler, se
     {!phaserRunning && !isLootPanelVisible && selectedBattleIndex == -1  &&
       <div className="BattlesSelectArrowBackAndBattlesListContainer">
         <div className="BattleSelectArrowBackContainer" >
-          <img className="ArrowBack" src={ArrowBack} onClick={() => setWorldIdStr("")}/>
+          <img className="ArrowBack" src={ArrowBack} onClick={() => setWorldId(-1)}/>
         </div>
         <div className="BattlesSelectList">
           {battlesList !== undefined && battlesList.map((battle, i) => {
             return (  
               <div className="BattleOverviewContainer" key={i} onClick={() => setSelectedBattleIndex(i)}>
-                <BattleOverview enemiesNames={battle.enemies.names} enemiesLevels={battle.enemies.levels} energyCost={battle.energyCost} />
+                <BattleOverview enemiesNames={battle.enemies.map((enemy) => {return enemy.name})} enemiesLevels={battle.enemies.map((enemy) => {return enemy.level})} energyCost={battle.energyCost} />
               </div>
             )
           })}
@@ -88,11 +92,11 @@ function BattlesSelect ( {worldIdStr, battlesList, heroesList, serverHandler, se
     {!phaserRunning && !isLootPanelVisible && selectedBattleIndex !== -1 &&
       <div className="BattleTeamSelectionAndArrowBackContainer">
         <img className="ArrowBack" src={ArrowBack} onClick={() => setSelectedBattleIndex(-1)}/>
-        <BattleTeamSelection enemiesNames={battlesList[selectedBattleIndex].enemies.names} enemiesLevels={battlesList[selectedBattleIndex].enemies.levels} energyCost={battlesList[selectedBattleIndex].energyCost} heroesList={heroesList} selectedHeroesIds={selectedHeroesIds} setSelectedHeroesIds={setSelectedHeroesIds} setPhaserRunning={setPhaserRunning} setEnemiesSkills={setEnemiesSkills} />
+        <BattleTeamSelection worldId={worldId} battleId={selectedBattleIndex} enemiesNames={battlesList[selectedBattleIndex].enemies.map((enemy) => {return enemy.name})} enemiesLevels={battlesList[selectedBattleIndex].enemies.map((enemy) => {return enemy.level})} energyCost={battlesList[selectedBattleIndex].energyCost} heroesList={heroesList} selectedHeroesIds={selectedHeroesIds} localWallet={localWallet} eventHandler={eventHandler!} setSelectedHeroesIds={setSelectedHeroesIds} setPhaserRunning={setPhaserRunning} />
       </div>
     }
     {phaserRunning &&
-      <BattlePage serverHandler={serverHandler} world={worldIdStr} battle={"battle"+(selectedBattleIndex+1)} selectedTeam={getSelectedTeam(selectedHeroesIds)} selectedHeroesIds={selectedHeroesIds} enemiesTeam={getEnemiesTeam(selectedBattleIndex)} setPhaserRunning={setPhaserRunning} setIsBattleRunning={setIsBattleRunning} setIsLootPanelVisible={setIsLootPanelVisible} setWinOrLose={setWinOrLose}  />
+      <BattlePage worldId={worldId} battleId={selectedBattleIndex} selectedTeam={getSelectedTeam(selectedHeroesIds)} selectedHeroesIds={selectedHeroesIds} enemiesTeam={getEnemiesTeam(selectedBattleIndex)} eventHandler={eventHandler!} localWallet={localWallet} setPhaserRunning={setPhaserRunning} setIsBattleRunning={setIsBattleRunning} setIsLootPanelVisible={setIsLootPanelVisible} setWinOrLose={setWinOrLose}  />
     }
     {!phaserRunning && isLootPanelVisible &&
       <div className="OutOfBattleContainer">

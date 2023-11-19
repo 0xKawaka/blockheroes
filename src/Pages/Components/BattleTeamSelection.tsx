@@ -3,30 +3,36 @@ import HeroMiniature from "./HeroMiniature"
 import portraitsDict from "../../assets/portraits/portraitsDict"
 import energy from "../../assets/icons/energy.png"
 import { useState, useEffect } from "react"
-import { HeroesListType } from "../../Types/apiTypes"
+import { HeroInfos } from "../../Types/apiTypes"
 import HeroesList from "./HeroesList"
 import ApiHandler from "../../Classes/IO/ApiHandler"
 import Skill from "../../Classes/Skill/Skill"
 import { create } from "domain"
 import SkillsHandler from "../../Classes/IO/SkillsHandler"
+import { Sender } from "../../Blockchain/Sender"
+import { Account } from "starknet"
+import EventHandler from "../../Blockchain/event/EventHandler"
 
 
 type BattleTeamSelectionProps = {
+  worldId:number,
+  battleId:number,
   enemiesNames: string[],
   enemiesLevels: number[],
   // enemiesRanks: number[],
   energyCost: number,
-  heroesList: HeroesListType
+  heroesList: Array<HeroInfos>
   selectedHeroesIds: number[],
+  localWallet: Account,
+  eventHandler: EventHandler
   setSelectedHeroesIds: React.Dispatch<React.SetStateAction<number[]>>
   setPhaserRunning: React.Dispatch<React.SetStateAction<boolean>>
-  setEnemiesSkills: React.Dispatch<React.SetStateAction<Array<Array<Skill>>>>
 }
 
-export default function BattleTeamSelection({enemiesNames, enemiesLevels, energyCost, heroesList, selectedHeroesIds, setSelectedHeroesIds, setPhaserRunning, setEnemiesSkills }: BattleTeamSelectionProps) {
-  // const [selectedHeroesIds, setSelectedHeroesIds] = useState<number[]>([])
+export default function BattleTeamSelection({worldId, battleId, enemiesNames, enemiesLevels, energyCost, heroesList, selectedHeroesIds, localWallet, eventHandler, setSelectedHeroesIds, setPhaserRunning }: BattleTeamSelectionProps) {
+  const [isStartingBattle, setIsStartingBattle] =  useState<boolean>(false)
   const notSelectedHeroesList = heroesList.filter(hero => !selectedHeroesIds.includes(hero.id))
-  const [loadingEnemiesSkills, setLoadingEnemiesSkills] = useState<boolean>(true)
+
 
   function handleHeroClick(heroId: number) {
     if(selectedHeroesIds.includes(heroId)){
@@ -36,37 +42,29 @@ export default function BattleTeamSelection({enemiesNames, enemiesLevels, energy
       setSelectedHeroesIds([...selectedHeroesIds, heroId])
     }
   }
-  function handlePlayClick() {
-    if(loadingEnemiesSkills){
-      console.log("loadingEnemiesSkills")
-      return
+  async function handlePlayClick() {
+    if(selectedHeroesIds.length == 0){
+      console.log("Can't start battle without heroes")
+      return;
     }
-    if(selectedHeroesIds.length > 0){
-      setPhaserRunning(true)
-    }
+    setIsStartingBattle(true)
+    await Sender.startBattle(localWallet, selectedHeroesIds, worldId, battleId, eventHandler);
+    setIsStartingBattle(false)
+    setPhaserRunning(true)
   }
-
-  useEffect(() => {
-    ApiHandler.getEnemiesSkills(enemiesNames).then((enemiesSkills) => {
-      setEnemiesSkills(SkillsHandler.createEnemiesSkills(enemiesSkills))
-      setLoadingEnemiesSkills(false)
-    }
-    )
-  }, [])
 
   return(
   <div className="BattleTeamSelectionContainer">
     <div className="BattleTeamSelectionAndPlayButtonContainer">  
       <div className="BattleTeamSelectionTeamsContainer">
         <div className="BattleTeamSelectionMiniaturesAndTitleContainer">
-          {/* <div className="BattleTeamSelectionTitle">My team</div> */}
           <div className="BattleTeamSelectionHeroesMiniatures">
             {selectedHeroesIds.length > 0 && selectedHeroesIds.map((heroId, i) => {
               const heroInfos = heroesList.find(hero => hero.id === heroId)
               if(heroInfos === undefined) return (<></>)
               return (
                 <div className="HeroMiniatureWrapper" key={i} onClick={() =>  handleHeroClick(heroId)}>
-                  <HeroMiniature image={portraitsDict[heroInfos.name]} rank={1} level={heroInfos.level} imageWidth="90px"></HeroMiniature>
+                  <HeroMiniature image={portraitsDict[heroInfos.name]} rank={1} level={heroInfos.level} imageWidth="9rem"></HeroMiniature>
                 </div>
               )
             }
@@ -75,12 +73,11 @@ export default function BattleTeamSelection({enemiesNames, enemiesLevels, energy
         </div>
         <div className="BattleTeamSelectionVersusText">VS</div>
         <div className="BattleTeamSelectionMiniaturesAndTitleContainer">
-          {/* <div className="BattleTeamSelectionTitle">Enemies</div> */}
           <div className="BattleTeamSelectionEnemiesMiniatures">
             {enemiesNames.map((enemyName, i) => {
               return (
                 <div className="HeroMiniatureWrapper" key={i}>
-                  <HeroMiniature image={portraitsDict[enemyName]} rank={1} level={enemiesLevels[i]} imageWidth="90px"></HeroMiniature>
+                  <HeroMiniature image={portraitsDict[enemyName]} rank={1} level={enemiesLevels[i]} imageWidth="9rem"></HeroMiniature>
                 </div>
               )
             }
@@ -88,15 +85,22 @@ export default function BattleTeamSelection({enemiesNames, enemiesLevels, energy
           </div>
         </div>
       </div>
-      {<div className="BattleTeamSelectionPlayButton" onClick={handlePlayClick}>
+      {!isStartingBattle && 
+      <div className="BattleTeamSelectionPlayButton" onClick={handlePlayClick}>
         <div className="BattleTeamSelectionPlayButtonText">Play</div>
         <div className="BattleTeamSelectionEnergyCostValueIconContainer">
           <div className="BattleTeamSelectionEnergyCostValue">{energyCost}</div>
           <img className="BattleTeamSelectionEnergyCostIcon" src={energy} />
         </div>
-      </div>}
+      </div>
+      }
+      {isStartingBattle &&
+      <div className="BattleTeamSelectionPlayButton">
+        <div className="BattleTeamSelectionPlayButtonText">Loading...</div>
+      </div>
+      }
     </div>
-    <HeroesList heroesList={notSelectedHeroesList} handleHeroClick={handleHeroClick} /> 
+    <HeroesList heroesList={notSelectedHeroesList} handleHeroClick={handleHeroClick} heroesWidth="7.5rem"/> 
   </div>
   )
 }

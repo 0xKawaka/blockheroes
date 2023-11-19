@@ -6,3 +6,7 @@
 .RuneMiniatureRank {
   position: absolute;
 }
+
+.RuneMiniatureImage {
+  image-rendering: pixelated;
+}

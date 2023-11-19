@@ -29,7 +29,7 @@ export default function EndBattlePanel({title, lootItems, setWinOrLose, setIsLoo
     {title === "Victory" && 
     <div className="EndBattlePanelTitleVictory">{title.toUpperCase()}</div>
     }
-    {lootItems && lootItems.length > 0 &&
+    {/* {lootItems && lootItems.length > 0 &&
       <div className="EndBattlePanelLootContainer">
         {lootItems.map((item, index) => {
           return (
@@ -37,7 +37,7 @@ export default function EndBattlePanel({title, lootItems, setWinOrLose, setIsLoo
           )
         })} 
       </div>
-    }
+    } */}
     <div className="buttonContinue" onClick={handleContinue}>Continue</div>
   </div>
   )

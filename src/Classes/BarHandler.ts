@@ -2,6 +2,8 @@ export default class BarHandler {
   bar: Phaser.GameObjects.Graphics
   width: number
   height: number
+  style: Phaser.GameObjects.Graphics
+  rectangle: Phaser.GameObjects.Graphics
 
   constructor(battleScene: Phaser.Scene, x:number, y:number, color:number, width:number, height: number) {
     this.width = width
@@ -21,11 +23,17 @@ export default class BarHandler {
 
   makeBar(battleScene: Phaser.Scene, x: number, y: number, color: number, width: number, height: number) {
     let bar = battleScene.add.graphics();
-    bar.fillStyle(color, 1);
-    bar.fillRect(0, 0, width, height);
+    this.style = bar.fillStyle(color, 1);
+    this.rectangle = bar.fillRect(0, 0, width, height);
     bar.x = x;
     bar.y = y;
     return bar;
+  }
+
+  setColor(color: number, alpha: number) {
+    this.bar.fillStyle(color, alpha);
+    this.bar.fillRect(0, 0, this.width, this.height);
+    this.bar.update()
   }
 
   hideBar() {

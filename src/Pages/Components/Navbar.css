@@ -15,25 +15,25 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 1em;
+  gap: 1rem;
   justify-content: flex-end;
 }
 
 .connectButton, .disconnectButton  {
   display: inline-block;
-  padding: 0.5em;
-  border-radius: 0.4em;
+  padding: 0.5rem;
+  border-radius: 0.4rem;
   color: white;
   cursor: pointer;
   text-align: center;
 }
 
 .connectButton {
-  border: 0.2em rgb(22, 168, 66) solid;
+  border: 0.2rem rgb(22, 168, 66) solid;
   background-color: rgb(41, 172, 80);
 }
 .disconnectButton {
-  border: 0.2em rgb(55, 91, 146) solid;
+  border: 0.2rem rgb(55, 91, 146) solid;
   background-color: rgb(74, 121, 192);
 }
 

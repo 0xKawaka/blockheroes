@@ -1,4 +1,3 @@
-import ServerHandler from "../../Classes/IO/ServerHandler"
 import "./Rune.css"
 import RuneMiniature from "./RuneMiniature"
 import { useState } from "react"
@@ -16,27 +15,23 @@ type RuneProps = {
   heroId: number,
   runeSpotClicked: number,
   alreadyEquippedRune: boolean,
-  serverHandler: ServerHandler
 }
 
-function handleEquipRune(runeId: number, spot: number, heroId: number, serverHandler: ServerHandler){
+function handleEquipRune(runeId: number, spot: number, heroId: number){
   console.log("Equip rune:", runeId, " spot:", spot, "  hero:", heroId)
-  serverHandler.send({type: "equipRune", runeId:runeId, spot:spot, heroId:heroId, walletAdrs:'0xtest'})
 }
 
-function handleUnequipRune(runeId: number, spot: number, heroId: number, serverHandler: ServerHandler){
+function handleUnequipRune(runeId: number, spot: number, heroId: number){
   console.log("Unequip rune:", runeId, " spot:", spot, "  hero:", heroId)
-  serverHandler.send({type: "unequipRune", runeId:runeId, spot:spot, heroId:heroId, walletAdrs:'0xtest'})
 }
 
-function handleUpgradeRune(runeId: number, serverHandler: ServerHandler){
+function handleUpgradeRune(runeId: number){
   console.log("Upgrade rune:", runeId)
-  serverHandler.send({type: "upgradeRune", runeId:runeId, walletAdrs:'0xtest'})
 }
 
 const maxRankRune = 16
 
-export default function Rune({id, statistics, isPercents, values, equipped, shape, rank, rarity, image, heroId, runeSpotClicked, alreadyEquippedRune, serverHandler}: RuneProps) {
+export default function Rune({id, statistics, isPercents, values, equipped, shape, rank, rarity, image, heroId, runeSpotClicked, alreadyEquippedRune}: RuneProps) {
 
   const equippedString = equipped ? "Remove" : "Equip"
 
@@ -59,10 +54,10 @@ export default function Rune({id, statistics, isPercents, values, equipped, shap
         </div>
       </div>
       <div className="RuneButtonsContainer">
-        {rank < maxRankRune && <div className="RuneButton" onClick={() => handleUpgradeRune(id, serverHandler)}>Upgrade</div>}
-        {equipped && <div className="RuneButton" onClick={() => handleUnequipRune(id, runeSpotClicked, heroId, serverHandler)}>{equippedString}</div>}
+        {rank < maxRankRune && <div className="RuneButton" onClick={() => handleUpgradeRune(id)}>Upgrade</div>}
+        {equipped && <div className="RuneButton" onClick={() => handleUnequipRune(id, runeSpotClicked, heroId)}>{equippedString}</div>}
         {!equipped && !alreadyEquippedRune && !(shape !== runeSpotClicked) &&
-          <div className="RuneButton" onClick={() => handleEquipRune(id, runeSpotClicked, heroId, serverHandler)}>{equippedString}</div>
+          <div className="RuneButton" onClick={() => handleEquipRune(id, runeSpotClicked, heroId)}>{equippedString}</div>
         }
         {!equipped && shape !== runeSpotClicked &&
           <div className="RuneButton" onMouseOver={() => setShowWrongShapeTooltip(true)} onMouseOut={() => setShowWrongShapeTooltip(false)}>{equippedString}</div>

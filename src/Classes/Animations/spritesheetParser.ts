@@ -1,11 +1,7 @@
 const animsByEntityName: {
   [key: string]: {[key: string]:{start:number, end:number}},
-} = {
-  // "Hunter": {hurt:{start:0, end:1}, idle:{start:2, end:6}, die:{start:7, end:12}, jump:{start:13, end:19}, attack: {start:22, end:25}, skill1:{start:26, end:30}, skill2: {start:26, end:30}, run:{start:35, end:42}},
-  // "Priest": {hurt:{start:0, end:1}, idle:{start:2, end:6}, die:{start:7, end:12}, jump:{start:13, end:19}, attack: {start:22, end:25}, skill1:{start:26, end:30}, skill2: {start:26, end:30}, run:{start:35, end:42}},
-  // "Assassin": {hurt:{start:0, end:1}, idle:{start:2, end:6}, die:{start:7, end:12}, jump:{start:13, end:19}, attack: {start:22, end:25}, skill1:{start:26, end:30}, skill2: {start:26, end:30}, run:{start:35, end:42}},
-  
-  "Hunter": {
+} = {  
+  "hunter": {
     idle:{start:0, end:11},
     hurt:{start:12, end:17},
     die:{start:18, end:36},
@@ -16,7 +12,7 @@ const animsByEntityName: {
     attack: {start:84, end:98},
     run: {start:99, end:108},
   },
-  "Priest": {
+  "priest": {
     idle:{start:0, end:7},
     hurt:{start:8, end:14},
     die:{start:15, end:30},
@@ -24,7 +20,7 @@ const animsByEntityName: {
     skill1: {start:49, end:60},
     attack: {start:61, end:68},
   },
-  "Assassin": {
+  "assassin": {
     idle:{start:0, end:7},
     hurt:{start:8, end:13},
     die:{start:14, end:32},
@@ -35,7 +31,7 @@ const animsByEntityName: {
     run: {start:88, end:95},
     roll: {start:96, end:101},
   },
-  "Knight": {
+  "knight": {
     idle:{start:0, end:7},
     hurt:{start:8, end:13},
     die:{start:14, end:26},
@@ -46,7 +42,5 @@ const animsByEntityName: {
     run: {start:83, end:90},
   }
 }
-
-// idle, hurt, death, spattack, jump, airatk, baseatk, run
 
 export {animsByEntityName}

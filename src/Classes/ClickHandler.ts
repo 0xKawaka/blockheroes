@@ -6,7 +6,6 @@ export default class ClickHandler {
     this.battle = battle
   }
 
-
   handleClick(pointer: Phaser.Input.Pointer, currentlyOver: Array<Phaser.GameObjects.GameObject>) {
     if(currentlyOver[0]?.name === undefined) {
       console.log('PointerDown', currentlyOver[0]?.name );
@@ -14,7 +13,7 @@ export default class ClickHandler {
     }
     const splitedObjectName = ClickHandler.splitName(currentlyOver[0]?.name)
     if(splitedObjectName[0] === "skill"){
-      console.log("Skill clicked", splitedObjectName)
+      // console.log("Skill clicked", splitedObjectName)
       this.battle.processSkillClick(splitedObjectName)
     }
     else if(splitedObjectName[0] === "entity"){

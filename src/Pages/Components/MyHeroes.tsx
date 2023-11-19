@@ -1,37 +1,35 @@
-import ServerHandler from '../../Classes/IO/ServerHandler'
 import { useState, useEffect } from 'react'
 import "./MyHeroes.css"
 import HeroPanel from "./HeroPanel"
-import {HeroesStatsDict, HeroesListType, RunesList} from '../../Types/apiTypes'
+import {HeroesStatsDict, HeroInfos, RunesList} from '../../Types/apiTypes'
 import RunePanel from "./RunePanel"
 import HeroesList from "./HeroesList"
 import ArrowBack from "../../assets/misc/arrowback.png"
 
 type MyHeroesProps = {
-  serverHandler: ServerHandler
-  heroesList: HeroesListType
+  heroesList: Array<HeroInfos>
   runesList: RunesList
   setShowMyHeroes: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-function getUnequipedRunes(runesList:RunesList, heroesList:HeroesListType){
+function getUnequipedRunes(runesList:RunesList, heroesList:Array<HeroInfos>){
   const runesIdsEquiped = heroesList.map(hero => hero.runesIds).flat()
   return runesList.filter(rune => !runesIdsEquiped.includes(rune.id))
 }
 
-function getHeroById(heroId:number, heroesList:HeroesListType){
+function getHeroById(heroId:number, heroesList:Array<HeroInfos>){
   return heroesList.find(hero => hero.id === heroId)
 }
 
 
-function MyHeroes ( {serverHandler, heroesList, runesList, setShowMyHeroes} : MyHeroesProps) {
+function MyHeroes ( {heroesList, runesList, setShowMyHeroes} : MyHeroesProps) {
   const [showingHero, setShowingHero] = useState<boolean>(false)
   const [heroId, setHeroId] = useState<number>(0)
   const [showingRunes, setShowingRunes] = useState<boolean>(false)
   const [runeSelectId, setRuneSelectId] = useState<number>(0)
   const [runeSpotClicked, setRuneSpotClicked] = useState<number>(0)
 
-  serverHandler.RuneHandler.setRuneClickedIdSetter(setRuneSelectId)
+  // serverHandler.RuneHandler.setRuneClickedIdSetter(setRuneSelectId)
 
   const runeListUnequiped = getUnequipedRunes(runesList, heroesList)
 
@@ -52,17 +50,17 @@ function MyHeroes ( {serverHandler, heroesList, runesList, setShowMyHeroes} : My
   <div className="myHeroesContainer">
     {!showingHero && !showingRunes &&
       <div className="myHeroesMenuAndHeroesListContainer">
-        <div className="myHeroesArrowBackContainer" onClick={() => setShowMyHeroes(false)}>
-          <img className="ArrowBack" src={ArrowBack} />
+        <div className="myHeroesArrowBackContainer" >
+          <img className="ArrowBack" src={ArrowBack} onClick={() => setShowMyHeroes(false)}/>
         </div>
-        <HeroesList heroesList={heroesList} handleHeroClick={handleHeroClick}></HeroesList>
+        <HeroesList heroesList={heroesList} handleHeroClick={handleHeroClick} heroesWidth="8.8rem"></HeroesList>
       </div>
     }
     {showingHero && !showingRunes && heroInfos &&
       <HeroPanel heroIndex={heroId} heroInfos={heroInfos} runesList={runesList} setShowingHero={setShowingHero} handleRuneClick={handleRuneClick}></HeroPanel>
     }
     {showingRunes &&
-      <RunePanel runeClicked={runesList.find(rune => rune.id === runeSelectId)} runeSpotClicked={runeSpotClicked} runeListUnequiped={runeListUnequiped} heroId={heroId} setShowingRunes={setShowingRunes} serverHandler={serverHandler}></RunePanel>
+      <RunePanel runeClicked={runesList.find(rune => rune.id === runeSelectId)} runeSpotClicked={runeSpotClicked} runeListUnequiped={runeListUnequiped} heroId={heroId} setShowingRunes={setShowingRunes} ></RunePanel>
     }
 
   </div>)

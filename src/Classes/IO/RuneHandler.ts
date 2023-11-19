@@ -3,9 +3,9 @@ import { RunesList } from "../../Types/apiTypes"
 export default class RuneHandler {
   setRuneClickedId: React.Dispatch<React.SetStateAction<number>>
   setRuneSelectedId: React.Dispatch<React.SetStateAction<number>>
-  handleRuneEquippedUX: (runeId: number, heroId: number, spot: number) => void
-  handleRuneUnequippedUX: (runeId: number, heroId: number, spot: number) => void
-  handleRuneUpgradedUX: (runeId:number, runesList: RunesList) => void
+  handleRuneEquippedRH: (runeId: number, heroId: number, spot: number) => void
+  handleRuneUnequippedRH: (runeId: number, heroId: number, spot: number) => void
+  handleRuneUpgradedRH: (runeId:number, runesList: RunesList) => void
 
 
   constructor() {
@@ -14,28 +14,28 @@ export default class RuneHandler {
   handleRuneEquipped(runeId: number, heroId: number, spot: number) {
     this.setRuneClickedId(runeId)
     this.setRuneSelectedId(0)
-    this.handleRuneEquippedUX(runeId, heroId, spot)
+    this.handleRuneEquippedRH(runeId, heroId, spot)
   }
 
   handleRuneUnequipped(runeId: number, heroId: number, spot: number) {
     this.setRuneClickedId(0)
-    this.handleRuneUnequippedUX(runeId, heroId, spot)
+    this.handleRuneUnequippedRH(runeId, heroId, spot)
   }
 
   handleRuneUpgraded(runeId:number, runesList: RunesList) {
-    this.handleRuneUpgradedUX(runeId, runesList)
+    this.handleRuneUpgradedRH(runeId, runesList)
   }
 
-  setHandleRuneEquippedUX(handleRuneEquippedUX: (runeId: number, heroId: number, spot: number) => void){
-    this.handleRuneEquippedUX = handleRuneEquippedUX
+  setHandleRuneEquippedRH(handleRuneEquippedRH: (runeId: number, heroId: number, spot: number) => void){
+    this.handleRuneEquippedRH = handleRuneEquippedRH
   }
 
-  setHandleRuneUnequippedUX(handleRuneUnequippedUX: (runeId: number, heroId: number, spot: number) => void){
-    this.handleRuneUnequippedUX = handleRuneUnequippedUX
+  setHandleRuneUnequippedRH(handleRuneUnequippedRH: (runeId: number, heroId: number, spot: number) => void){
+    this.handleRuneUnequippedRH = handleRuneUnequippedRH
   }
 
-  setHandleRuneUpgradedUX(handleRuneUpgradedUX: (runeId:number, runesList: RunesList) => void){
-    this.handleRuneUpgradedUX = handleRuneUpgradedUX
+  setHandleRuneUpgradedRH(handleRuneUpgradedRH: (runeId:number, runesList: RunesList) => void){
+    this.handleRuneUpgradedRH = handleRuneUpgradedRH
   }
 
   setRuneClickedIdSetter(setRuneClickedId: React.Dispatch<React.SetStateAction<number>>){

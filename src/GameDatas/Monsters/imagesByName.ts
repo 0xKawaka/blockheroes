@@ -1,6 +1,6 @@
 // const imgTypes = ["idle"]
 // const directions = ["faceRight"]
-const monstersNames = ["Knight", "Assassin", "Priest", "Hunter"]
+const monstersNames = ["knight", "assassin", "priest", "hunter"]
 
 let imagesByName: {[key: string]: {[key: string]: {[key: string]: any}} } = {}
 

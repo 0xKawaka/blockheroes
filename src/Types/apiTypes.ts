@@ -1,17 +1,21 @@
 import Skill from "../Classes/Skill/Skill"
 
+type GameAccount = {shards: number, energy: number}
 type RunesList = Array<RuneInfos>
 type RuneInfos = {id:number, shape: number, statistics: Array<string>, isPercents:Array<boolean>, values:Array<number>, rarity:number, rank:number}
-type HeroesListType = Array<HeroInfos>
-type HeroInfos = {id:number, name: string, owner:string, level:number, experience:number, runesIds:Array<number>, spots:Array<number>, spells: Array<Skill>, baseStats:HeroStats, bonusStats:HeroStats}
+type HeroInfos = {id:number, name: string, level:number, rank: number, experience:number, runesIds:Array<number>, spots:Array<number>, spells: Array<Skill>, baseStats:HeroStats, bonusStats:HeroStats}
+type EnemyInfos = {name: string, level:number, rank: number, spells: Array<Skill>, stats:HeroStats}
 type HeroStats = {health:number, attack:number, defense:number, speed:number, criticalChance:number, criticalDamage:number}
-type WorldsBattlesInfosDict = {[key : string]: BattlesInfosList}
-type BattlesInfosList = Array<BattleInfos>
-type BattleInfos = {enemies: {names: Array<string>, levels: Array<number>, statistics: Array<HeroStats>}, energyCost:number}
+type BattlesInfosDict = {[key : number]: Array<BattleInfos>}
+type BattleInfos = {enemies: Array<EnemyInfos>, energyCost:number}
 type HeroesStatsDict = {[key: string]: HeroStats}
 type SkillsDict = {[key: string]: Skill}
+type BaseStatsDict = {[key: string]: HeroStats}
+type SkillSets = {[key: string]: Array<string>}
 
 
+type BattlesInfosApi = {[key : number]: Array<BattleInfosApi>}
+type BattleInfosApi = {background: string, names: Array<string>, levels: Array<number>, ranks: Array<number>, energyCost:number}
 type HeroesListApi= Array<HeroInfosApi>
 type HeroInfosApi = {id:number, name: string, owner:string, level:number, experience:number, runesIds:Array<number>, spots:Array<number>, spells:Array<SkillApi>, baseStats:HeroStats}
 type SkillsDictApi = {[key: string]: SkillApi}
@@ -29,4 +33,4 @@ type SkillApi = {
 }
 
 
-export type {RunesList, HeroesListType, HeroInfos, HeroStats, HeroesStatsDict, RuneInfos, BattlesInfosList, BattleInfos, WorldsBattlesInfosDict, SkillApi, HeroInfosApi, HeroesListApi, SkillsDict, SkillsDictApi}
+export type {GameAccount, RunesList, HeroInfos, EnemyInfos, HeroStats, HeroesStatsDict, RuneInfos, BattleInfos, BattlesInfosApi, BattlesInfosDict, SkillApi, HeroInfosApi, HeroesListApi, SkillsDict, SkillsDictApi, BaseStatsDict, SkillSets}

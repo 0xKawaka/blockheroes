@@ -4,8 +4,8 @@ export default class HealthBar{
   healthBar: BarHandler
   backgroundBar: BarHandler
 
-  constructor(battleScene: Phaser.Scene, x:number, y:number, color:number, width:number, height: number) {
-    this.backgroundBar = new BarHandler(battleScene, x - 1, y - 1, 0x000000, width + 2, height + 2)
+  constructor(battleScene: Phaser.Scene, x:number, y:number, color:number, backgroundColor: number, width:number, height: number) {
+    this.backgroundBar = new BarHandler(battleScene, x, y, backgroundColor, width, height)
     this.healthBar = new BarHandler(battleScene, x, y, color, width, height)
   }
 
@@ -27,6 +27,19 @@ export default class HealthBar{
 
   updateBothBars() {
     this.healthBar.updateBar()
-    this.backgroundBar.updateBar()
+    // this.backgroundBar.updateBar()
+  }
+
+  getX(): number {
+    return this.healthBar.bar.x
+  }
+  getY(): number {
+    return this.healthBar.bar.y
+  }
+  getWidth(): number {
+    return this.healthBar.width
+  }
+  getHeight(): number {
+    return this.healthBar.height
   }
 }

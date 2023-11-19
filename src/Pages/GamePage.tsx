@@ -1,28 +1,38 @@
 import './GamePage.css'
 import ApiHandler from '../Classes/IO/ApiHandler'
-import ServerHandler from '../Classes/IO/ServerHandler'
 import MyHeroes from './Components/MyHeroes'
 import { useState, useEffect } from 'react'
-import {HeroesListType, RunesList, HeroesStatsDict, WorldsBattlesInfosDict, HeroStats} from '../Types/apiTypes'
+import {RunesList, HeroesStatsDict, BattlesInfosDict, HeroStats, HeroInfos, GameAccount, SkillsDict, SkillSets, BaseStatsDict} from '../Types/apiTypes'
 import WorldSelect from './Components/WorldSelect'
-import worldmap from '../assets/icons/worldmap.png'
-import myheroes from '../assets/icons/myheroes.png'
-import summons from '../assets/icons/summons.png'
+import title from '../assets/misc/BlockHeroes_Title.png'
+import collectionIcon from '../assets/icons/Menu_CollectionIcon.png'
+import battleIcon from '../assets/icons/Menu_BattleIcon.png'
+import summonIcon from '../assets/icons/Menu_SummonIcon.png'
 import SkillsHandler from '../Classes/IO/SkillsHandler'
 import { computeBonusStats } from './utils/statisticsCompute'
 import Summons from './Components/Summons'
+import { StarknetWindowObject } from 'get-starknet'
+import { Getter } from '../Blockchain/Getter'
+import { HeroesFactory } from '../Classes/Heroes/HeroesFactory'
+import Register from './Components/Register'
+import { Account } from "starknet";
+import { HeroBlockchain } from '../Types/blockchainTypes'
 
 
 type GamePageProps = {
-  serverHandler: ServerHandler
+  localWallet: Account
+  wallet: StarknetWindowObject | undefined
 }  
 
-function GamePage({serverHandler} : GamePageProps) {
-
-  const [heroesList, setHeroesList] = useState<HeroesListType>([])
+function GamePage({localWallet, wallet} : GamePageProps) {
+  const [account, setAccount] = useState<GameAccount>({energy: 0, shards: 0})
+  const [hasAccount, setHasAccount] = useState<boolean>(false)
+  const [heroesList, setHeroesList] = useState<Array<HeroInfos>>([])
   const [runesList, setRunesList] = useState<RunesList>([])
-  const [worldsBattlesList, setWorldsBattlesList] = useState<WorldsBattlesInfosDict>({})
-  // const [baseStatsDict, setBaseStatsDict] = useState<HeroesStatsDict>({})
+  const [skillsDict, setSkillsDict] = useState<SkillsDict>({})
+  const [skillSets, setSkillSets] = useState<SkillSets>({})
+  const [baseStatsDict, setBaseStatsDict] = useState<BaseStatsDict>({})
+  const [worldsBattlesList, setWorldsBattlesList] = useState<BattlesInfosDict>({})
   const [runeEquippedDatas, setRuneEquippedDatas] = useState<{runeId: number, heroId: number, spot: number}>({runeId: 0, heroId: 0, spot: 0})
   const [runeUnequippedDatas, setRuneUnequippedDatas] = useState<{runeId: number, heroId: number, spot: number}>({runeId: 0, heroId: 0, spot: 0})
   const [useEffectAction, setUseEffectAction] = useState<string>('none')
@@ -31,15 +41,6 @@ function GamePage({serverHandler} : GamePageProps) {
   const [showWorldSelect, setShowWorldSelect] = useState<boolean>(false)
   const [showSummons, setShowSummons] = useState<boolean>(false)
   const [isBattleRunning, setIsBattleRunning] = useState<boolean>(false)
-
-  // function getGamePhaserContainerStyle(){
-  //   if (isBattleRunning){
-  //     return {flexDirection: "column-reverse"}
-  //   }
-  //   else {
-  //     return {flexDirection: "column"}
-  //   }
-  // }
 
   function getGamePageContainerStyle(){
     if (isBattleRunning){
@@ -51,11 +52,22 @@ function GamePage({serverHandler} : GamePageProps) {
     }
     else {
       return {
-        paddingTop: "100px",
-        paddingLeft: "100px",
-        paddingRight: "100px",
+        paddingTop: "4rem",
+        paddingLeft: "4rem",
+        paddingRight: "4rem",
       }
     }
+  }
+
+  function handleNewAccount(){
+    setRefreshUseEffect(refreshUseEffect + 1)
+  }
+
+  async function handleNewHeroEvent(hero: HeroBlockchain) {
+    let heroInfos = HeroesFactory.createHero(hero!, skillsDict, skillSets, baseStatsDict)
+    let newHeroesList = [...heroesList]
+    newHeroesList.push(heroInfos)
+    setHeroesList(newHeroesList)
   }
 
   function handleRuneEquipped(runeId:number, heroId:number, spot:number){
@@ -69,7 +81,7 @@ function GamePage({serverHandler} : GamePageProps) {
     setRefreshUseEffect(refreshUseEffect + 1)
   }
 
-  function indexOfHeroEquippedRuneId(runeId:number, heroesList:HeroesListType): number {
+  function indexOfHeroEquippedRuneId(runeId:number, heroesList:Array<HeroInfos>): number {
     for (let i=0; i<heroesList.length; i++){
       const indexRune = heroesList[i].runesIds.indexOf(runeId)
       if (indexRune !== -1){
@@ -88,10 +100,6 @@ function GamePage({serverHandler} : GamePageProps) {
     }
   }
 
-  serverHandler.RuneHandler.setHandleRuneEquippedUX(handleRuneEquipped)
-  serverHandler.RuneHandler.setHandleRuneUnequippedUX(handleRuneUnequipped)
-  serverHandler.RuneHandler.setHandleRuneUpgradedUX(handleRuneUpgraded)
-
   useEffect(() => {
     console.log('useEffect GamePage')
     if (useEffectAction === 'equip'){
@@ -101,6 +109,7 @@ function GamePage({serverHandler} : GamePageProps) {
       newHeroesList[indexHero].spots.push(runeEquippedDatas.spot)
       newHeroesList[indexHero].bonusStats = computeBonusStats(newHeroesList[indexHero], runesList)
       setHeroesList(newHeroesList)
+      setUseEffectAction('none')
     }
     else if (useEffectAction === 'unequip'){
       const indexHero = heroesList.findIndex(hero => hero.id === runeUnequippedDatas.heroId)
@@ -110,19 +119,31 @@ function GamePage({serverHandler} : GamePageProps) {
       newHeroesList[indexHero].spots.splice(indexRune, 1)
       newHeroesList[indexHero].bonusStats = computeBonusStats(newHeroesList[indexHero], runesList)
       setHeroesList(newHeroesList)
+      setUseEffectAction('none')
     }
     else {
       (async () => {
-        const promiseGetHeeroes = ApiHandler.getHeroesWithSpellsBaseStatsAndRunes('0xtest')
-        const promiseGetRunes = ApiHandler.getRunes('0xtest')
-        Promise.all([promiseGetHeeroes, promiseGetRunes]).then((values) => {
-          let heroesWithFormattedSkillsAndBonusStats = SkillsHandler.formatHeroesSkillsAndBonusStats(values[0], values[1])
-          setHeroesList(heroesWithFormattedSkillsAndBonusStats)
-          setRunesList(values[1])
-        })
-        ApiHandler.getWorldsBattlesListWithStats().then((worldsBattlesList) => {
-          setWorldsBattlesList(worldsBattlesList)
-        })
+        let accountPromise = await Getter.getAccount(localWallet);
+        let heroesPromise = Getter.getAllHeroes(localWallet);
+        let skillsDictPromise = ApiHandler.getSkillsDict();
+        let skillSetsPromise = ApiHandler.getSkillSets();
+        let baseStatsDictPromise = ApiHandler.getBaseStats();
+        let [account, heroes, skillsDictApi, skillSets, baseStatsDict] = await Promise.all([accountPromise, heroesPromise, skillsDictPromise, skillSetsPromise, baseStatsDictPromise]);
+        if(account){
+          setAccount(account);
+          setHasAccount(true);
+        }
+        const skillsDict = SkillsHandler.formatSkills(skillsDictApi);
+        let heroesWithSkillsAndStats = HeroesFactory.createHeroes(heroes, skillsDict, skillSets, baseStatsDict);
+        setHeroesList(heroesWithSkillsAndStats);
+        setRunesList([]);
+        setSkillsDict(skillsDict);
+        setSkillSets(skillSets);
+        setBaseStatsDict(baseStatsDict);
+        let battlesInfos = await ApiHandler.getBattlesInfos();
+        const battlesWithEnemyStatsAndSkills = HeroesFactory.createEnemyHeroes(battlesInfos, skillsDict, skillSets, baseStatsDict);
+        // console.log(battlesWithEnemyStatsAndSkills);
+        setWorldsBattlesList(battlesWithEnemyStatsAndSkills);
       })();
     }
   }, [refreshUseEffect]);
@@ -131,42 +152,42 @@ function GamePage({serverHandler} : GamePageProps) {
   return (
     <div className='GamePhaserContainer' id='GamePhaserContainer'>
       <div className='GamePageContainer' style={getGamePageContainerStyle()}>
-        {!showMyHeroes && !showWorldSelect && !showSummons &&
+        {hasAccount && !showMyHeroes && !showWorldSelect && !showSummons &&
+        <div className='GamePageTitleAndMenu'>
+          <img className='GamePageTitle' src={title} />
           <div className='GamePageMenu'>
             <div className='GamePageMenuButton' onClick={() => setShowMyHeroes(true)}>
-              <div className="GamePageMenuButtonIcon">
-                <img src={myheroes} />
-              </div>
+              <img className='GamePageMenuButtonIcon' src={collectionIcon} />
               <div className="GamePageMenuButtonText">
-                My Heroes Collection
+                My Collection
               </div>
             </div>
             <div className='GamePageMenuButton' onClick={() => setShowWorldSelect(true)}>
-              <div className="GamePageMenuButtonIcon">
-                <img src={worldmap} />
-              </div>
+              <img className='GamePageMenuButtonIcon' src={battleIcon} />
               <div className="GamePageMenuButtonText">
-                World Battles
+                Battle
               </div>
             </div>
             <div className='GamePageMenuButton' onClick={() => setShowSummons(true)}>
-              <div className="GamePageMenuButtonIcon">
-                <img src={summons} />
-              </div>
+              <img className='GamePageMenuButtonIcon' src={summonIcon} />
               <div className="GamePageMenuButtonText">
                 Summon Heroes
               </div>
             </div>
           </div>
+        </div>
+        }
+        {!hasAccount &&
+          <Register localWallet={localWallet} wallet={wallet} handleNewAccount={handleNewAccount} />
         }
         {showMyHeroes &&
-          <MyHeroes serverHandler={serverHandler} heroesList={heroesList} runesList={runesList} setShowMyHeroes={setShowMyHeroes}/>
+          <MyHeroes heroesList={heroesList} runesList={runesList} setShowMyHeroes={setShowMyHeroes}/>
         }
         {showWorldSelect &&
-          <WorldSelect worldsBattlesList={worldsBattlesList} heroesList={heroesList} serverHandler={serverHandler} setShowWorldSelect={setShowWorldSelect} setIsBattleRunning={setIsBattleRunning} />
+          <WorldSelect worldsBattlesList={worldsBattlesList} heroesList={heroesList} localWallet={localWallet} setShowWorldSelect={setShowWorldSelect} setIsBattleRunning={setIsBattleRunning} />
         }
         {showSummons &&
-          <Summons setShowSummons={setShowSummons} />
+          <Summons localWallet={localWallet} wallet={wallet} setShowSummons={setShowSummons} handleNewHeroEvent={handleNewHeroEvent} />
         }
       </div>
     </div>

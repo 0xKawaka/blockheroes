@@ -1,4 +1,4 @@
-import { currentChain, currentChainName } from "../../BlockchainDatas/chain"
+import { currentChain, currentChainName } from "../../Blockchain/data/chain"
 import "./NetworkError.css"
 
 type NetworkErrorProps = {

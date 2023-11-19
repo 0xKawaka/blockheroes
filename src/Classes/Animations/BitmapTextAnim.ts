@@ -4,6 +4,8 @@ export default class BitmapTextAnim extends Phaser.GameObjects.BitmapText {
   distanceCount: number
   atTopStay: number
   atTopStayCount: number
+  notIncreaseDistanceWhenCount: number
+  increaseDistanceCount: number
 
   constructor(scene: Phaser.Scene, distance: number, scaleValue: number, x: number, y: number, text: string, font: string, color:number) {
     super(scene, x, y, font, text)
@@ -13,6 +15,8 @@ export default class BitmapTextAnim extends Phaser.GameObjects.BitmapText {
     this.atTopStay = 40
     this.atTopStayCount = 0
     this.distanceCount = 0
+    this.notIncreaseDistanceWhenCount = 3
+    this.increaseDistanceCount = 0
     this.setTint(color)
     scene.add.existing(this)
     scene.events.on('update', this.update, this)
@@ -20,8 +24,14 @@ export default class BitmapTextAnim extends Phaser.GameObjects.BitmapText {
 
   update(){
     if(this.distanceCount < this.distance){
-      this.distanceCount += this.scaleValue
-      this.y -= this.scaleValue
+      if(this.increaseDistanceCount % this.notIncreaseDistanceWhenCount == 0){
+        this.increaseDistanceCount += 1
+      }
+      else {
+        this.increaseDistanceCount += 1
+        this.distanceCount += this.scaleValue
+        this.y -= this.scaleValue
+      }
     }
     else if (this.atTopStayCount < this.atTopStay) {
       this.atTopStayCount += 1

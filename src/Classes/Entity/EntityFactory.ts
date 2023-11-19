@@ -14,13 +14,13 @@ import ISkillAnimation from "../Skill/Animations/ISkillAnimation"
 
 export default class EntityFactory {
 
-  static createBattleEntityAllyOrEnemyFromEntity(entity: Entity, width: number, height: number, upscale: number, entityIndex:number, totalEntityCount: number, isAllyOrEnemy: string, battleScene: BattleScene): IBattleEntity {
+  static createBattleEntityAllyOrEnemyFromEntity(entity: Entity, width: number, height: number, upscale: number, entityIndex:number, alliesCount: number, enemiesCount: number, isAllyOrEnemy: string, battleScene: BattleScene): IBattleEntity {
     let statusArray = new Array<StatsModifier>()
     let buffsArray = new Array<StatsModifier>()
     if (isAllyOrEnemy === "ally") {
-      return new BattleEntityAlly(new BattleEntity(entity, entityIndex, totalEntityCount, statusArray, buffsArray, battleScene, true, animsByEntityName[entity.name], width, height, upscale), battleScene)
+      return new BattleEntityAlly(new BattleEntity(entity, entityIndex, alliesCount, enemiesCount, statusArray, buffsArray, battleScene, true, animsByEntityName[entity.name], width, height, upscale), battleScene)
     }
-    return new BattleEntityEnemy(new BattleEntity(entity, entityIndex, totalEntityCount, statusArray, buffsArray, battleScene, false, animsByEntityName[entity.name], width, height, upscale))
+    return new BattleEntityEnemy(new BattleEntity(entity, entityIndex, alliesCount, enemiesCount, statusArray, buffsArray, battleScene, false, animsByEntityName[entity.name], width, height, upscale))
   }
 
   // static createEntityFromScratch(name: string, level: number, health: number, speed: number) {

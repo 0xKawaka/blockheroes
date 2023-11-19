@@ -1,11 +1,15 @@
 import Phaser from 'phaser'
 import {getLevelBackground} from '../GameDatas/Levels/levels'
-// import loadingBattle from '../assets/backgrounds/loadingBattle.png'
 import { projectileInfos, spellAnimInfos } from '../GameDatas/Skills/skills'
 import { buffsDebuffsStats, onTurnStackableBuffNames, onTurnStackableStatusNames } from '../GameDatas/Skills/buffsStatus'
 import Entity from '../Classes/Entity/Entity'
 import Skill from '../Classes/Skill/Skill'
 import { getSpriteSize } from '../GameDatas/Monsters/spriteSize'
+import SkillSelected from "../assets/battleUI/SkillSelected.png"
+import LifeBar from "../assets/battleUI/LifeBar.png"
+import LifeBarOutline from "../assets/battleUI/LifeBarOutline.png"
+import TurnBar from "../assets/battleUI/TurnBar.png"
+import TurnBarOutline from "../assets/battleUI/TurnBarOutline.png"
 
 export default class BattleLoader extends Phaser.Scene {
   constructor() {
@@ -14,13 +18,8 @@ export default class BattleLoader extends Phaser.Scene {
 
   preload() {
     this.createLoadingScreen()
-    // this.load.image('loaderBackground', loadingBattle)
     let worldId = this.registry.get('worldId')
     let battleId = this.registry.get('battleId')
-    let serverHandler = this.registry.get('serverHandler')
-    let walletAdrs = this.registry.get('walletAdrs')
-    let selectedHeroesIds = this.registry.get('selectedHeroesIds')
-    serverHandler.send({type:"newBattle", walletAdrs:walletAdrs, battleId:battleId, worldId:worldId, selectedHeroesIds: selectedHeroesIds})
     let img = require('../assets/backgrounds/' +  getLevelBackground(worldId, battleId) + '.png')
     this.load.image('background', img)
     this.loadMusicLoop()
@@ -30,14 +29,15 @@ export default class BattleLoader extends Phaser.Scene {
     let selectedTeam = this.registry.get('selectedTeam')
     let enemiesTeam = this.registry.get('enemiesTeam')
     this.loadEntities(enemiesTeam, selectedTeam)
+    this.load.image('skillSelected', SkillSelected)
+    this.load.image('lifeBar', LifeBar)
+    this.load.image('lifeBarOutline', LifeBarOutline)
+    this.load.image('turnBar', TurnBar)
+    this.load.image('turnBarOutline', TurnBarOutline)
   }
 
   create({}:{}) {
-    // this.createLoadingScreen()
-    // let worldId = this.registry.get('worldId')
-    // let battleId = this.registry.get('battleId')
-    // this.scene.start('Battle', {background:getLevelBackground(worldId, battleId), monsterArray:getLevelMonsters(worldId, battleId)})
-    // this.scene.start('UI')
+    this.game.scene.start('UIScene')
     this.scene.start('Battle')
   }
 
@@ -53,7 +53,6 @@ export default class BattleLoader extends Phaser.Scene {
         // this.load.spritesheet(enemiesNameArray[i], spritesheet, { frameWidth: 360, frameHeight: 160 })
         // const spritesheet  = require('../assets/monsters/' + enemiesNameArray[i] + '/' + 'spritesheet.png')
         this.load.spritesheet(enemiesNameArray[i], spritesheet, getSpriteSize(enemiesNameArray[i]))
-
         loadedNames.push(enemiesNameArray[i])
       }
     }
@@ -63,7 +62,6 @@ export default class BattleLoader extends Phaser.Scene {
         // this.load.spritesheet(selectedTeam[i].name, spritesheet, { frameWidth: 360, frameHeight: 160 })
         // const spritesheet  = require('../assets/monsters/' + selectedTeam[i].name + '/' + 'spritesheet.png')
         this.load.spritesheet(selectedTeam[i].name, spritesheet, getSpriteSize(selectedTeam[i].name))
-
         loadedNames.push(selectedTeam[i].name)
       }
     }
@@ -83,7 +81,6 @@ export default class BattleLoader extends Phaser.Scene {
       entitiesArray[i].skillArray.forEach((skill: Skill) => {
         if (!loadedSkills.includes(skill.name)) {
           loadedSkills.push(skill.name)
-          // this.load.image(skill.name, skillsDict[skill.name].image)
           this.load.image(skill.name, skill.image)
         }
       })

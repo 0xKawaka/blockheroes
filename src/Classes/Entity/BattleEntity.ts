@@ -9,11 +9,13 @@ import BattleScene from "../../Scenes/BattleScene";
 import { buffsDebuffsStats, onTurnStackableBuffNames, onTurnStackableStatusNames } from "../../GameDatas/Skills/buffsStatus";
 import BuffDisplay from "./BuffDisplay";
 import StackableBuff from "./StackableBuff";
-import ServerHandler from "../IO/ServerHandler";
 import SpriteWrapper from "../Animations/SpriteWrapper";
 import AnimationsHandler from "../Animations/AnimationsHandler";
 import ISkillAnimation from "../Skill/Animations/ISkillAnimation";
 import BitmapTextAnim from "../Animations/BitmapTextAnim";
+import ImgBar from "./ImgBar";
+import BarHandler from "../BarHandler";
+import { StartTurnEvent } from "../../Blockchain/event/eventTypes";
 
 export default class BattleEntity implements IBattleEntity {
   Entity: Entity
@@ -30,15 +32,19 @@ export default class BattleEntity implements IBattleEntity {
   turnbar: Turnbar
   sprite: SpriteWrapper
   healthBar: HealthBar
+  // healthBar: ImgBar
   displayTurnBar: HealthBar
+  outlineBarHorizontal:  BarHandler
+  outlineBarVertical:  BarHandler
   stunned: boolean
   scaleValue: number
+  buffStatusScale: number
   textScaleValue: number
   upscale: number
   countVisible: number
   processDamageAndHealAnimsQueuePromiseArray: Array<Promise<void>>
 
-  constructor(Entity:Entity, index: number, teamEntityCount: number, statusArray: Array<StatsModifier>, buffsArray: Array<StatsModifier>, battleScene: BattleScene, isAlly: boolean, animationIndexes:{[key: string]:{start:number, end:number}}, spriteWidth: number, spriteHeight: number, upscale:number) {
+  constructor(Entity:Entity, index: number, alliesCount: number, enemiesCount: number, statusArray: Array<StatsModifier>, buffsArray: Array<StatsModifier>, battleScene: BattleScene, isAlly: boolean, animationIndexes:{[key: string]:{start:number, end:number}}, spriteWidth: number, spriteHeight: number, upscale:number) {
     this.countVisible = 0
     this.stunned = false
     this.Entity = Entity
@@ -52,15 +58,19 @@ export default class BattleEntity implements IBattleEntity {
     this.currentHealth = Entity.statistics.health
     // this.scaleValue = battleScene.battle.positionScaler.computeScaleForWidthHeightRatio(spriteWidth, spriteHeight, battleScene.battle.positionScaler.entityRatio.widthRatio, battleScene.battle.positionScaler.entityRatio.heightRatio)
     this.scaleValue = battleScene.battle.scaler.getEntitiesScaleFactor()
-    this.textScaleValue = this.scaleValue / 2
+    this.buffStatusScale = battleScene.battle.scaler.getBuffStatusScaleFactor()
+    this.textScaleValue = this.scaleValue
     this.upscale = upscale
     // this.position = battleScene.battle.positionScaler.computePositionEntity(this.scaleValue, spriteWidth, spriteHeight, index, teamEntityCount, isAlly)
-    this.position = battleScene.battle.positionner.getEntityPosition(index, teamEntityCount, isAlly)
+    this.position = battleScene.battle.positionner.getEntityPosition(index, alliesCount, enemiesCount, isAlly)
     // console.log("Position for entity ", index, " is ", this.position)
     this.sprite = this.createSprite(battleScene, animationIndexes)
     this.turnbar = new Turnbar(index, this.battleSpeed)
-    this.createHealthBar(battleScene)
-    this.createTurnBar(battleScene)
+    // this.createTurnAndHealthBars(battleScene)
+    // this.createHealthBar(battleScene)
+    // this.createTurnBar(battleScene)
+    // this.createOutlineBars(battleScene)
+    this.createBars(battleScene)
     this.initBuffsDebuffsByName(battleScene)
   }
 
@@ -124,9 +134,14 @@ export default class BattleEntity implements IBattleEntity {
     if(buffs.length === 0 && status.length === 0)
       return;
 
-    const scale = battleScene.battle.positionScaler.computeScaleBuffsAndStatus()
-    const positions = battleScene.battle.positionScaler.computePositionBuffsAndStatus(this.healthBar.backgroundBar.bar.x, this.healthBar.backgroundBar.bar.y, this.healthBar.backgroundBar.width, this.healthBar.backgroundBar.height, buffs.length, status.length, scale)
-  
+    // const scale = battleScene.battle.positionScaler.computeScaleBuffsAndStatus()
+    // const positions = battleScene.battle.positionScaler.computePositionBuffsAndStatus(this.healthBar.backgroundBar.bar.x, this.healthBar.backgroundBar.bar.y, this.healthBar.backgroundBar.width, this.healthBar.backgroundBar.height, buffs.length, status.length, scale)
+    const scale = this.buffStatusScale
+    // const positions = battleScene.battle.positionner.getBuffStatusPosition(this.healthBar.backgroundBar.bar.x, this.healthBar.backgroundBar.bar.y, this.healthBar.backgroundBar.width, this.healthBar.backgroundBar.height, buffs.length, status.length, scale)
+    // const positions = battleScene.battle.positionner.getBuffStatusPosition(this.healthBar.getX(), this.healthBar.getY(), this.healthBar.getWidth(), this.healthBar.getHeight(), buffs.length, status.length, scale)
+    const positions = battleScene.battle.positionner.getBuffStatusPosition(this.outlineBarHorizontal.bar.x, this.outlineBarVertical.bar.y, this.outlineBarHorizontal.width, this.outlineBarVertical.height, buffs.length, status.length, scale)
+
+
     for(let i = 0; i < buffs.length; i++) {
       if(buffsDebuffsStats.includes(buffs[i].name)) {
         this.displayBuff(this.buffsByName[buffs[i].name], positions[i], buffs[i].duration, battleScene)
@@ -181,6 +196,8 @@ export default class BattleEntity implements IBattleEntity {
     animationsHandler.playAnim(this, "die")
     this.healthBar.hideBar()
     this.displayTurnBar.hideBar()
+    this.outlineBarHorizontal.hideBar()
+    this.outlineBarVertical.hideBar()
     console.log('Entity ' + this.getIndex() + ' died!')
     // this.sprite.visible = false
     this.resetBuffsAndStatus()
@@ -202,18 +219,19 @@ export default class BattleEntity implements IBattleEntity {
   initBuffsDebuffsByName(battleScene: BattleScene) {
     this.buffsByName = {}
     this.statusByName = {}
-    const scale = battleScene.battle.positionScaler.computeScaleBuffsAndStatus()
+    const textScale = battleScene.battle.scaler.getTextBuffStatusScaleFactor()
+    const scale = this.buffStatusScale
     for(let i = 0; i < buffsDebuffsStats.length; i++) {
-      this.buffsByName[buffsDebuffsStats[i]] = new BuffDisplay("buff_" + buffsDebuffsStats[i], battleScene, scale)
-      this.statusByName[buffsDebuffsStats[i]] = new BuffDisplay("status_" + buffsDebuffsStats[i], battleScene, scale)
+      this.buffsByName[buffsDebuffsStats[i]] = new BuffDisplay("buff_" + buffsDebuffsStats[i], battleScene, scale, textScale)
+      this.statusByName[buffsDebuffsStats[i]] = new BuffDisplay("status_" + buffsDebuffsStats[i], battleScene, scale, textScale)
     }
     for(let i = 0; i < onTurnStackableBuffNames.length; i++) {
-      this.stackableBuffsDict[onTurnStackableBuffNames[i]] = new StackableBuff(onTurnStackableBuffNames[i], scale)
+      this.stackableBuffsDict[onTurnStackableBuffNames[i]] = new StackableBuff(onTurnStackableBuffNames[i], scale, textScale)
     }
     for(let i = 0; i < onTurnStackableStatusNames.length; i++) {
-      this.stackableStatusDict[onTurnStackableStatusNames[i]] = new StackableBuff(onTurnStackableStatusNames[i], scale)
+      this.stackableStatusDict[onTurnStackableStatusNames[i]] = new StackableBuff(onTurnStackableStatusNames[i], scale, textScale)
     }
-    this.statusByName["stun"] = new BuffDisplay("status_stun", battleScene, scale)
+    this.statusByName["stun"] = new BuffDisplay("status_stun", battleScene, scale, textScale)
   }
 
   createSprite(battleScene: BattleScene, animationIndexes: {[key: string]:{start:number, end:number}}): SpriteWrapper {
@@ -247,33 +265,33 @@ export default class BattleEntity implements IBattleEntity {
   //   await animationHandler.playHurtThenIdle(this)
   // }
 
-  async playTurn(battle: Battle, onTurnProcs: {type: string, entityIndex: number, damages:Array<number>, heals:Array<number>, buffs:Array<{name: string, duration: number}>,
-  statuses:Array<{name: string, duration: number}>, isDead:boolean, speed:number}, serverHandler:ServerHandler, animationsHandler: AnimationsHandler): Promise<void> {
+  // TODO : change speed after turn in case of buff fading
+  async playTurn(battle: Battle, startTurnEvent: StartTurnEvent, animationsHandler: AnimationsHandler): Promise<void> {
     let damageAndHealAnimQueue: Array<{isDamageOrHeal:string, isCrit: boolean, value: number, battleScene: Phaser.Scene, animationHandler: AnimationsHandler}> = []
-    if(this.index != onTurnProcs.entityIndex)
-      throw new Error('OnTurnProcs Wrong entity index : ' + onTurnProcs.entityIndex + 'expected ' + this.index)
+    if(this.index != startTurnEvent.entityId)
+      throw new Error('StartTurn wrong entity index, received : ' + startTurnEvent.entityId + ' expected : ' + this.index)
     this.stunned = false
-    this.setBattleSpeed(onTurnProcs.speed)
-    for(let i= 0; i < onTurnProcs.heals.length; i++) {
-      damageAndHealAnimQueue.push({isDamageOrHeal:"heal", isCrit: false, value: onTurnProcs.heals[i], battleScene: battle.battleScene, animationHandler: animationsHandler})
-      this.applyHeal(onTurnProcs.heals[i])
+    // this.setBattleSpeed(onTurnProcs.speed)
+    for(let i= 0; i < startTurnEvent.heals.length; i++) {
+      damageAndHealAnimQueue.push({isDamageOrHeal:"heal", isCrit: false, value: startTurnEvent.heals[i], battleScene: battle.battleScene, animationHandler: animationsHandler})
+      this.applyHeal(startTurnEvent.heals[i])
     }
-    for(let i= 0; i < onTurnProcs.damages.length; i++) {
-      damageAndHealAnimQueue.push({isDamageOrHeal:"damage", isCrit: false, value: onTurnProcs.damages[i], battleScene: battle.battleScene, animationHandler: animationsHandler})
-      this.applyDamage(onTurnProcs.damages[i])
+    for(let i= 0; i < startTurnEvent.damages.length; i++) {
+      damageAndHealAnimQueue.push({isDamageOrHeal:"damage", isCrit: false, value: startTurnEvent.damages[i], battleScene: battle.battleScene, animationHandler: animationsHandler})
+      this.applyDamage(startTurnEvent.damages[i])
     }
     this.processDamageAndHealAnimsQueuePromiseArray.push(this.processDamageAndHealAnimsQueue(damageAndHealAnimQueue))
     this.updateHealth()
-    if(onTurnProcs.isDead) {
+    if(startTurnEvent.isDead) {
       this.die(battle.battleScene.battle, battle.battleScene, animationsHandler)
       // return;
     }
     else {
-      this.applyBuffsAndStatus(onTurnProcs.buffs, onTurnProcs.statuses, battle.battleScene)
+      this.applyBuffsAndStatus(startTurnEvent.buffs, startTurnEvent.status, battle.battleScene)
     }
   }
   async waitDamageAndHealAnimsDone(): Promise<void> {
-    console.log("waitDamageAndHealAnimsDone BEntity")
+    console.log("waitDamageAndHealAnimsDone")
     await Promise.all(this.processDamageAndHealAnimsQueuePromiseArray)
   }
 
@@ -292,30 +310,79 @@ export default class BattleEntity implements IBattleEntity {
     this.turnbar.resetTurn()
   }
   updateDisplayTurnBar(turnbarValue: number): void {
-    if(turnbarValue > 100)
+    if(turnbarValue > 999)
       this.displayTurnBar.setBarPercentageValue(1)
     else
-      this.displayTurnBar.setBarPercentageValue(turnbarValue/100)
+      this.displayTurnBar.setBarPercentageValue(turnbarValue/999)
   }
-  createHealthBar(battleScene: BattleScene): void {
-    let width = this.sprite.getWidth() * 0.9
-    let height = this.sprite.getHeight() / 7
-    let x = this.sprite.getPlaceholderX() - this.sprite.getWidth() * 0.9 / 2
-    let y = this.sprite.getPlaceholderY() - this.sprite.getHeight() - height
-    this.healthBar = new HealthBar(battleScene, x, y, 0x2ecc71, width, height);
+  // createTurnAndHealthBars(battleScene: BattleScene): void {
+  //   const barWidth = 32
+  //   const turnBarHeight = 2
+  //   let barScale  = this.scaleValue * 2
+  //   let x = this.sprite.getPlaceholderX()
+  //   let y  = this.sprite.getPlaceholderY() - this.sprite.getHeight()
+  //   this.displayTurnBar = new ImgBar(battleScene, x, y, "turnBar", barScale)
+  //   this.healthBar = new ImgBar(battleScene, x, y - turnBarHeight * barScale, "lifeBar", barScale)
+  // }
+  createBars(battleScene: BattleScene): void {
+    let turnBarWidth = this.sprite.getWidth() * 0.9
+    let turnbarHeight = this.sprite.getHeight() * 0.035
+    let turnBarX = this.sprite.getPlaceholderX() - this.sprite.getWidth() * 0.9  / 2
+    let turnBarY = this.sprite.getPlaceholderY() - this.sprite.getHeight() - turnbarHeight
+
+    const turnHealthGap = 2 * this.scaleValue
+
+    let healthWidth = this.sprite.getWidth() * 0.9
+    let healthHeight = this.sprite.getHeight() * 0.115
+    let healthX = this.sprite.getPlaceholderX() - this.sprite.getWidth() * 0.9 / 2
+    let healthY = this.sprite.getPlaceholderY() - this.sprite.getHeight() - healthHeight - turnbarHeight - turnHealthGap
+
+    let horizontalWidth = healthWidth * 1.07
+    let horizontalHeight = healthHeight + turnbarHeight + turnHealthGap
+    let horizontalX = healthX - (horizontalWidth - healthWidth) / 2
+    let verticalWidth = healthWidth
+    let verticalHeight = (horizontalHeight) * 1.34
+    let verticalY = healthY - (verticalHeight - horizontalHeight) / 2
+
+    this.outlineBarHorizontal = new BarHandler(battleScene, horizontalX, healthY, 0x000000, horizontalWidth, horizontalHeight)
+    this.outlineBarVertical = new BarHandler(battleScene, healthX, verticalY, 0x000000, verticalWidth, verticalHeight)
+
+    this.healthBar = new HealthBar(battleScene, healthX, healthY, 0x2ecc71, 0x134924, healthWidth, healthHeight);
+    this.displayTurnBar = new HealthBar(battleScene, turnBarX, turnBarY, 0x3498db, 0x1c506d, turnBarWidth, turnbarHeight);
   }
-  createTurnBar(battleScene: BattleScene): void {
-    let width = this.sprite.getWidth() * 0.9
-    let height = this.sprite.getHeight() * 0.03
-    let x = this.sprite.getPlaceholderX() - this.sprite.getWidth() * 0.9  / 2
-    let y = this.sprite.getPlaceholderY() - this.sprite.getHeight() - height
-    this.displayTurnBar = new HealthBar(battleScene, x, y, 0x3498db, width, height);
-  }
+  // createOutlineBars(battleScene: BattleScene): void {
+  //   let horizontalWidth = this.sprite.getWidth() * 0.9 * 1.2
+  //   let horizontalHeight = (this.healthBar.getHeight() + this.displayTurnBar.getHeight())
+  //   let verticalHeight = (this.healthBar.getHeight() + this.displayTurnBar.getHeight()) * 1.2
+  //   let verticalWidth = this.healthBar.getWidth()
+  //   let x = this.healthBar.getX()
+  //   let y = this.healthBar.getY()
+  //   this.outlineBarHorizontal = new BarHandler(battleScene, x, y, 0x000000, horizontalWidth, horizontalHeight)
+  //   // this.outlineBarVertical = new BarHandler(battleScene, x, y, 0x000000, verticalWidth, verticalHeight)
+  // }
+  // createHealthBar(battleScene: BattleScene): void {
+  //   let width = this.sprite.getWidth() * 0.9
+  //   let height = this.sprite.getHeight() / 7
+  //   let x = this.sprite.getPlaceholderX() - this.sprite.getWidth() * 0.9 / 2
+  //   let y = this.sprite.getPlaceholderY() - this.sprite.getHeight() - height
+  //   this.healthBar = new HealthBar(battleScene, x, y, 0x2ecc71, width, height);
+  // }
+  // createTurnBar(battleScene: BattleScene): void {
+  //   let width = this.sprite.getWidth() * 0.9
+  //   let height = this.sprite.getHeight() * 0.03
+  //   let x = this.sprite.getPlaceholderX() - this.sprite.getWidth() * 0.9  / 2
+  //   let y = this.sprite.getPlaceholderY() - this.sprite.getHeight() - height
+  //   this.displayTurnBar = new HealthBar(battleScene, x, y, 0x3498db, width, height);
+  // }
   selectSkill() {}
   endSkillSelection() {}
   // getSkillAnim(skillName: string): ISkillAnimation {
   //   return this.Entity.getSkillAnim(skillName)
   // }
+  setOutlineBarsColor(color: number, alpha: number): void {
+    this.outlineBarHorizontal.setColor(color, alpha)
+    this.outlineBarVertical.setColor(color, alpha)
+  }
   getFrontEntityX(): number {
     throw new Error("Method getFrontEntityX not implemented.");
   }
@@ -333,6 +400,9 @@ export default class BattleEntity implements IBattleEntity {
   }
   setOnCooldown(name: string): void {
     throw new Error("Method setOnCooldown not implemented.");
+  }
+  getSkillIndexByName(name: string): number {
+    return this.Entity.getSkillIndexByName(name)
   }
   getPosition(): {x: number, y: number} {
     return this.position
@@ -352,7 +422,7 @@ export default class BattleEntity implements IBattleEntity {
   getSprite(): SpriteWrapper {
     return this.sprite
   }
-  getHealthBar(): HealthBar{
+  getHealthBar(): HealthBar {
     return this.healthBar
   }
   getScaledValue(): number {

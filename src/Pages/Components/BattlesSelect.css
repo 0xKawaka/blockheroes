@@ -3,9 +3,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 3em;
+  gap: 3rem;
 }
 
 .BattleOverviewContainer {
-  width: 40em;
+  width: 80rem;
 }

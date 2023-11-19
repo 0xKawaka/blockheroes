@@ -26,6 +26,16 @@ export default class Entity {
     return -1
   }
 
+  getSkillIndexByName(name: string): number {
+    for (let i = 0; i < this.skillArray.length; i++) {
+      if (this.skillArray[i].name === name) {
+        return i
+      }
+    }
+    console.log("Skill index not found")
+    return -1
+  }
+
   // getSkillAnim(skillName: string): ISkillAnimation {
   //   return this.skillAnimationDict[skillName]
   // }

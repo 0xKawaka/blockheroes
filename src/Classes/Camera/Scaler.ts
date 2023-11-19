@@ -26,6 +26,22 @@ export default class Scaler {
         }
     }
 
+    getBuffStatusScaleFactor(): number{
+        // if(this.scaleFactor > 1){
+        //     return this.scaleFactor - 1
+        // }
+        return this.scaleFactor
+    }
+
+    getTextBuffStatusScaleFactor() : number{
+        // if(this.scaleFactor > 1){
+        //     return this.scaleFactor
+        // }
+        // return 1
+        return this.scaleFactor
+    }
+
+
     getEntitiesScaleFactor(): number{
         return this.scaleFactor
     }

@@ -39,8 +39,8 @@ export default function HeroPanel({heroIndex, heroInfos, runesList, setShowingHe
 
   return(
     <div className="HeroPanelContainer">
-      <div className="HeroPanelMenuButton" onClick={() => setShowingHero(false)}>
-        <img className="ArrowBack" src={ArrowBack} />
+      <div className="HeroPanelArrowBackContainer" >
+        <img className="ArrowBack" src={ArrowBack} onClick={() => setShowingHero(false)} />
       </div>
       <div className="HeroPanelMenuRunesStatsContainer">
         <div className="HeroPanelMenu">
@@ -54,7 +54,7 @@ export default function HeroPanel({heroIndex, heroInfos, runesList, setShowingHe
         {statsPanelSelected &&
         <div className="RunesAndStatsContainer">
           <div className="HeroNameLevelContainer">
-            <div className="HeroName">{heroInfos.name}</div>
+            <div className="HeroName">{heroInfos.name[0].toUpperCase() + heroInfos.name.slice(1)}</div>
             <div className="HeroLevel">Lvl {heroInfos.level}</div>
           </div>
           <RunesDisplay heroInfos={heroInfos} runesList={runesList} handleRuneClick={handleRuneClick} />

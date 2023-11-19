@@ -7,7 +7,7 @@ import CastProjectile from "../Skill/Animations/CastProjectile"
 import CastProjectileAOE from "../Skill/Animations/CastProjectileAOE"
 import FlatDamage from "../Skill/FlatDamage"
 import PercentHeal from "../Skill/PercentHeal"
-import { SkillApi, HeroesListApi, HeroesListType, SkillsDict, SkillsDictApi, RunesList } from "../../Types/apiTypes"
+import { SkillApi, HeroesListApi, SkillsDict, SkillsDictApi, RunesList, HeroInfos } from "../../Types/apiTypes"
 import { computeBonusStats } from "../../Pages/utils/statisticsCompute"
 
 export default class SkillsHandler {
@@ -80,10 +80,10 @@ export default class SkillsHandler {
     return skillsDictFormatted
   }
 
-  static formatHeroesSkillsAndBonusStats(heroesApiData: HeroesListApi, runesList: RunesList): HeroesListType {
-    let heroesWithFormattedSkills:HeroesListType = []
+  static formatHeroesSkillsAndBonusStats(heroesApiData: HeroesListApi, runesList: RunesList): Array<HeroInfos> {
+    let heroesWithFormattedSkills:Array<HeroInfos> = []
     for (let i = 0; i < heroesApiData.length; i++) {
-      heroesWithFormattedSkills[i] = {id: heroesApiData[i].id, name: heroesApiData[i].name, owner: heroesApiData[i].owner, level: heroesApiData[i].level, experience: heroesApiData[i].experience, runesIds: heroesApiData[i].runesIds, spots: heroesApiData[i].spots, baseStats:heroesApiData[i].baseStats, bonusStats:computeBonusStats(heroesApiData[i], runesList), spells:[]}
+      heroesWithFormattedSkills[i] = {id: heroesApiData[i].id, name: heroesApiData[i].name, level: heroesApiData[i].level, rank: 1, experience: heroesApiData[i].experience, runesIds: heroesApiData[i].runesIds, spots: heroesApiData[i].spots, baseStats:heroesApiData[i].baseStats, bonusStats:computeBonusStats(heroesApiData[i], runesList), spells:[]}
       for (let j = 0; j < heroesApiData[i].spells.length; j++) {
         heroesWithFormattedSkills[i].spells[j] = this.createSkillFromData(heroesApiData[i].spells[j])
       }

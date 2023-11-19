@@ -7,7 +7,6 @@ import ArrowBack from "../../assets/misc/arrowback.png"
 import Rune from "./Rune"
 import { useState, useEffect } from 'react'
 import { log } from "console"
-import ServerHandler from "../../Classes/IO/ServerHandler"
 import { createRuneListDict } from "../utils/runesSorterFilter"
 
 
@@ -17,18 +16,17 @@ type RunePanelProps = {
   runeListUnequiped: RunesList,
   heroId: number, 
   setShowingRunes: React.Dispatch<React.SetStateAction<boolean>>,
-  serverHandler: ServerHandler
 }
 
 
-export default function RunePanel({runeClicked, runeSpotClicked, runeListUnequiped, heroId, setShowingRunes, serverHandler}: RunePanelProps) {
+export default function RunePanel({runeClicked, runeSpotClicked, runeListUnequiped, heroId, setShowingRunes}: RunePanelProps) {
 
   const [runeSelectedId, setRuneSelectedId] = useState<number>(0)
   const [sortedName, setSortedName] = useState<string>("rank_desc")
   const [sortedRuneListUnequipedDict, setSortedRuneListUnequipedDict] = useState<{[key: string]: RunesList}>(createRuneListDict(runeListUnequiped))
   const runeSelected = runeListUnequiped.find(rune => rune.id === runeSelectedId)
 
-  serverHandler.RuneHandler.setRuneSelectedIdSetter(setRuneSelectedId)
+  // serverHandler.RuneHandler.setRuneSelectedIdSetter(setRuneSelectedId)
 
   useEffect(() => {
     setSortedRuneListUnequipedDict(createRuneListDict(runeListUnequiped))
@@ -36,8 +34,8 @@ export default function RunePanel({runeClicked, runeSpotClicked, runeListUnequip
   
   return(
   <div className="RunePanelContainer">
-    <div className="RunePanelArrowBackContainer" onClick={() => setShowingRunes(false)}>
-      <img className="ArrowBack" src={ArrowBack} />
+    <div className="RunePanelArrowBackContainer" >
+      <img className="ArrowBack" src={ArrowBack} onClick={() => setShowingRunes(false)}/>
     </div>
     <div className="RuneDetailsAndListContainer">
       <div className="RuneDetailsContainer">
@@ -55,8 +53,7 @@ export default function RunePanel({runeClicked, runeSpotClicked, runeListUnequip
           image={runesImgDict[runeClicked.shape]}
           heroId={heroId} 
           runeSpotClicked={runeSpotClicked}
-          alreadyEquippedRune={true}
-          serverHandler={serverHandler} />
+          alreadyEquippedRune={true} />
         }
         {!runeClicked &&
           <div className="TransparentRuneImg">
@@ -78,8 +75,7 @@ export default function RunePanel({runeClicked, runeSpotClicked, runeListUnequip
             image={runesImgDict[runeSelected.shape]} 
             heroId={heroId}
             runeSpotClicked={runeSpotClicked}
-            alreadyEquippedRune={runeClicked !== undefined}
-            serverHandler={serverHandler}/>
+            alreadyEquippedRune={runeClicked !== undefined} />
           }
         </div>
       </div>

@@ -3,45 +3,45 @@
   flex-direction: column;
   align-items: center;
   /* width: 100%; */
-  height: 13em;
-  gap: 1em;
+  height: 13rem;
+  gap: 1rem;
 }
 .RuneImageStatisticsContainer {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 1em;
+  gap: 1rem;
 }
 
 .RuneImage {
-  width: 8em;
+  width: 8rem;
 }
 
 .RuneStatisticsContainer {
   display: flex;
   flex-direction: column;
-  width: 7em;
+  width: 7rem;
 }
 
 .RuneStatistic {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: 1em;
+  gap: 1rem;
 }
 
 .RuneButtonsContainer {
   display: flex;
   justify-content: center;
-  gap: 2em;
+  gap: 2rem;
 }
 
 .RuneButton {
   cursor: pointer;
-  width: 4.5em;
+  width: 4.5rem;
   text-align: center;
-  padding: 0.5em;
-  border: 0.1em solid white;
+  padding: 0.5rem;
+  border: 0.1rem solid white;
   -webkit-user-select: none;
   user-select: none;
 }

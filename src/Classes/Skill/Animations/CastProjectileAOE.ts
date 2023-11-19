@@ -9,10 +9,10 @@ import ISkillAnimation from "./ISkillAnimation";
 export default class CastProjectileAOE implements ISkillAnimation {
   constructor() {}
   async play(animationHandler: AnimationsHandler, battle: Battle, animation: string,  casterEntity: IBattleEntity,
-    targetEntity: IBattleEntity, damageDict: {[key: number]: {isCrit: boolean,value: number}},
+    targetEntity: IBattleEntity, damageDict: {[key: number]: {value: number}},
     healDict: {[key: number]: {value: number}}, statusDict: {[key: number]: Array<{name: string, duration: number}>},
     buffsDict: {[key: number]: Array<{name: string, duration: number}>}, deathArray: Array<number>): Promise<void> {
-
+    
     await animationHandler.waitAndPlayAnim(casterEntity, animation)
     let allies = battle.getAlliesOf(targetEntity.getIndex())
     for (let ally of allies) {

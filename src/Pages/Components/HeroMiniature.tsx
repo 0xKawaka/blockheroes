@@ -9,7 +9,7 @@ type HeroMiniatureProps = {
 
 export default function HeroMiniature({image, rank, level, imageWidth}: HeroMiniatureProps) {
 
-  const bottomGap = parseInt(imageWidth.slice(0, -2)) * 0.02 + "px"
+  const bottomGap = parseInt(imageWidth.slice(0, -2)) * 0.02 + "rem"
 
   return(
   <div className="HeroMiniatureContainer">

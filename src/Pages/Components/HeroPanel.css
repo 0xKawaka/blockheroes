@@ -4,11 +4,17 @@
   width: 100%;
 }
 
+.HeroPanelArrowBackContainer {
+  position: absolute;
+}
+
 .HeroPanelMenuRunesStatsContainer {
+  padding-top: 0.7em;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2em;
+  justify-content: center;
+  gap: 2.1rem;
 }
 
 .HeroPanelMenu {
@@ -16,8 +22,17 @@
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
-  gap: 3em;
-  font-size: 1.3em;
+  gap: 9rem;
+  font-size: 2rem;
+}
+
+.HeroNameLevelContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.8rem;
 }
 
 .HeroPanelMenuButton {
@@ -28,6 +43,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2em;
+  gap: 3rem;
   width: 60%;
 }

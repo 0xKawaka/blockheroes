@@ -4,12 +4,10 @@
   align-items: center;
   justify-content: center;
   position: relative;
-
+  gap: 0.6rem;
 }
 
 
-/* .HeroMiniatureLevel { */
-  /* position: absolute; */
-  /* bold */
-  /* font-weight: 700; */
-/* } */
+.HeroMiniatureLevel {
+  font-size: 1.6rem;
+}

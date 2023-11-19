@@ -4,12 +4,13 @@ import Turnbar from "./Turnbar";
 import IBattleEntity from "./IBattleEntity";
 import BarHandler from "../BarHandler";
 import HealthBar from "./HealthBar";
-import ServerHandler from "../IO/ServerHandler";
 import BattleScene from "../../Scenes/BattleScene";
 import Battle from "../Battle";
 import SpriteWrapper from "../Animations/SpriteWrapper";
 import AnimationsHandler from "../Animations/AnimationsHandler";
 import ISkillAnimation from "../Skill/Animations/ISkillAnimation";
+import ImgBar from "./ImgBar";
+import { StartTurnEvent } from "../../Blockchain/event/eventTypes";
 
 export default class BattleEntityEnemy implements IBattleEntity {
   battleEntity: IBattleEntity
@@ -19,14 +20,15 @@ export default class BattleEntityEnemy implements IBattleEntity {
     this.battleEntity.getSprite().setFlipX(true)
   }
 
-  async playTurn(battle: Battle, onTurnProcs:any, serverHandler:ServerHandler, animationsHandler: AnimationsHandler): Promise<void> {
+  async playTurn(battle: Battle, startTurnEvent:StartTurnEvent, animationsHandler: AnimationsHandler): Promise<void> {
     console.log("Entity enemy ", this.getIndex(), ' playing')
-    await this.battleEntity.playTurn(battle, onTurnProcs, serverHandler, animationsHandler)
+    await this.battleEntity.playTurn(battle, startTurnEvent, animationsHandler)
+
     if(!this.battleEntity.isDead() && !this.battleEntity.isStunned()) {
-      battle.battleScene.battle.isWaitingForEnemySkill = true
-      serverHandler.send({type:"enemyTurn"})
+      battle.processNextSkill(this.battleEntity.getIndex())
     }
     else if (this.battleEntity.isStunned()) {
+      battle.updateEndTurnInCaseOfStun()
       this.endTurn()
       battle.isTurnPlaying = false
     }
@@ -90,6 +92,9 @@ export default class BattleEntityEnemy implements IBattleEntity {
   // getSkillAnim(skillName: string): ISkillAnimation {
   //   return this.battleEntity.getSkillAnim(skillName)
   // }
+  setOutlineBarsColor(color: number, alpha: number): void {
+    this.battleEntity.setOutlineBarsColor(color, alpha)
+  }
   getFrontEntityX(): number {
     return this.battleEntity.getSprite().getPlaceholderX() - this.battleEntity.getSprite().getWidth() / 1.5
   }
@@ -109,6 +114,9 @@ export default class BattleEntityEnemy implements IBattleEntity {
   }
   setOnCooldown(name: string): void {
     this.battleEntity.setOnCooldown(name)
+  }
+  getSkillIndexByName(name: string): number {
+    return this.battleEntity.getSkillIndexByName(name)
   }
   getPosition(): {x: number, y: number} {
     return this.battleEntity.getPosition()

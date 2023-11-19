@@ -2,6 +2,7 @@ export default class Positionner {
 
   backgroundDisplayWidth: number
   backgroundDisplayHeight: number
+  buffStatusSize: number = 16
 
   entitiesPositionsByTeamSize: { [key: number]: Array<{x: number, y: number}> } = {
     1: [{x: 0.21, y: 0.8}],
@@ -15,17 +16,19 @@ export default class Positionner {
     this.backgroundDisplayHeight = backgroundDisplayHeight
   }
 
-  getEntityPosition(indexEntity: number, teamEntityCount: number, isAlly:boolean): {x: number, y: number} {
-    const positionIndex = indexEntity % teamEntityCount
+  getEntityPosition(indexEntity: number, alliesCount: number, enemiesCount: number, isAlly:boolean): {x: number, y: number} {
+
     let x = 0
     let y = 0
     if(isAlly) {
-       x = this.entitiesPositionsByTeamSize[teamEntityCount][positionIndex].x * this.backgroundDisplayWidth
-        y = this.entitiesPositionsByTeamSize[teamEntityCount][positionIndex].y * this.backgroundDisplayHeight
+      const positionIndex = indexEntity
+       x = this.entitiesPositionsByTeamSize[alliesCount][positionIndex].x * this.backgroundDisplayWidth
+        y = this.entitiesPositionsByTeamSize[alliesCount][positionIndex].y * this.backgroundDisplayHeight
       return {x, y}
     }
-    x = this.backgroundDisplayWidth - this.entitiesPositionsByTeamSize[teamEntityCount][positionIndex].x * this.backgroundDisplayWidth
-    y = this.entitiesPositionsByTeamSize[teamEntityCount][positionIndex].y * this.backgroundDisplayHeight
+    const positionIndex = indexEntity - alliesCount
+    x = this.backgroundDisplayWidth - this.entitiesPositionsByTeamSize[enemiesCount][positionIndex].x * this.backgroundDisplayWidth
+    y = this.entitiesPositionsByTeamSize[enemiesCount][positionIndex].y * this.backgroundDisplayHeight
     return {x, y}
   }
 
@@ -34,5 +37,20 @@ export default class Positionner {
   }
   getSkillBarStartY() {
     return this.backgroundDisplayHeight * 0.9
+  }
+
+  getBuffStatusPosition(healthBarX: number, healthBarY: number, healthBarWidth:number, healthBarHeight: number, buffsCount:number, statusCount:number, scale:number): Array<{x: number, y: number}> {
+    const realWidth = this.buffStatusSize * scale
+    const realHeight = this.buffStatusSize * scale
+    const buffsPerRow = Math.floor(healthBarWidth / realWidth)
+    let positionArray = []
+    for (let i = 0; i < buffsCount + statusCount; i++) {
+      // const x = healthBarX + i % buffsPerRow * (realWidth + this.buffStatusGapRatio * this.canvasWidth)
+      const x = healthBarX + (((i % buffsPerRow) + 1) * realWidth)
+      // const y = healthBarY + Math.floor(i / buffsPerRow) * (realHeight + this.buffStatusGapRatio * this.canvasHeight)
+      const y = healthBarY - Math.floor(i / buffsPerRow) * realHeight
+      positionArray.push({x, y})
+    }
+    return positionArray
   }
 }

@@ -1,12 +1,13 @@
 import Phaser from 'phaser'
 import BattleScene from './BattleScene'
+import UIScene from './UIScene'
 import BattleLoader from './BattleLoader'
 import FontLoader from './FontLoader'
-import ServerHandler from '../Classes/IO/ServerHandler'
 import Entity from '../Classes/Entity/Entity'
+import EventHandler from '../Blockchain/event/EventHandler'
+import { Account } from 'starknet'
 
-function getPhaserConfig(serverHandler: ServerHandler, walletAdrs:string, parentContainer:string, worldId:string, battleId:string, selectedTeam: Entity[], selectedHeroesIds:number[], enemiesTeam: Entity[]): Phaser.Types.Core.GameConfig{
-
+function getPhaserConfig(eventHandler: EventHandler, localWallet: Account, walletAdrs:string, parentContainer:string, worldId:number, battleId:number, selectedTeam: Entity[], selectedHeroesIds:number[], enemiesTeam: Entity[]): Phaser.Types.Core.GameConfig{
   const Config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
     parent: parentContainer,
@@ -24,15 +25,12 @@ function getPhaserConfig(serverHandler: ServerHandler, walletAdrs:string, parent
     },
     physics: {
       default: 'arcade',
-      // arcade: {
-      //   debug: true
-      // }
     },
-    scene: [FontLoader, BattleLoader, BattleScene],
+    scene: [FontLoader, BattleLoader, BattleScene, UIScene],
   
     callbacks: {
       preBoot: function (game) {
-        game.registry.merge({"serverHandler": serverHandler, "walletAdrs": walletAdrs, "worldId": worldId, "battleId": battleId, "selectedTeam": selectedTeam, "selectedHeroesIds": selectedHeroesIds, "enemiesTeam": enemiesTeam});
+        game.registry.merge({"eventHandler": eventHandler, "localWallet": localWallet, "walletAdrs": walletAdrs, "worldId": worldId, "battleId": battleId, "selectedTeam": selectedTeam, "selectedHeroesIds": selectedHeroesIds, "enemiesTeam": enemiesTeam});
       }
     }
   }
