@@ -168,19 +168,18 @@ export default class AnimationsHandler {
     }
   }
 
-  playSpellEffectOnEntity(entity: IBattleEntity, spellEffectName: string, scaleValue: number, frameRate: number, spriteWidth: number, spriteHeight: number, widthRatio:number, heightRatio:number){
+  playSpellEffectOnEntity(entity: IBattleEntity, spellEffectName: string, scaleValue: number, frameRate: number){
     let spellEffect = this.battle.battleScene.add.sprite(entity.getSprite().x, entity.getSprite().y, spellEffectName);
     spellEffect.setOrigin(0.5, 1);
-    // spellEffect.setScale(this.battle.positionScaler.computeScaleForWidthHeightRatio(spriteWidth, spriteHeight, widthRatio, heightRatio))
     spellEffect.setScale(scaleValue)
     this.battle.battleScene.anims.create({
-      key: spellEffectName,
+      key: spellEffectName + entity.getIndex(),
       frames: this.battle.battleScene.anims.generateFrameNumbers(spellEffectName),
       frameRate: frameRate,
       repeat: 0
     });
     this.spellAnimationDict[entity.getName() + entity.getIndex()] = true
-    spellEffect.play(spellEffectName);
+    spellEffect.play(spellEffectName + entity.getIndex());
     spellEffect.once('animationcomplete', () => {
       spellEffect.destroy();
       this.spellAnimationDict[entity.getName() + entity.getIndex()] = false

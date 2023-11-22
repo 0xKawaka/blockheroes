@@ -1,11 +1,13 @@
+import BackgroundPick from "./BackgroundPick";
+
 export default class Scaler {
-    screenWidth:number;
+    canvasWidth:number;
     backgroundBaseWidth: number;
     scaleFactor: number;
 
-    constructor(screenWidth: number, backgroundBaseWidth: number = 640){
-        this.screenWidth = screenWidth
-        this.backgroundBaseWidth = backgroundBaseWidth
+    constructor(canvasWidth: number){
+        this.canvasWidth = canvasWidth
+        this.backgroundBaseWidth = BackgroundPick.getBackgroundWidth(canvasWidth)
         this.scaleFactor = this.getScaleFactor()
     }
 
@@ -14,13 +16,13 @@ export default class Scaler {
     }
 
     getScaleFactor(): number{
-        let screenByBackgroundRatio = this.screenWidth / this.backgroundBaseWidth
+        let screenByBackgroundRatio = this.canvasWidth / this.backgroundBaseWidth
         if(screenByBackgroundRatio > 1){
             return Math.trunc(screenByBackgroundRatio) + 1
         }
         else {
             if(screenByBackgroundRatio < 0.5){
-                return 1 / (Math.trunc(this.backgroundBaseWidth / this.screenWidth) + 1)
+                return 1 / (Math.trunc(this.backgroundBaseWidth / this.canvasWidth) + 1)
             }
             return 1
         }

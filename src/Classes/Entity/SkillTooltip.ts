@@ -11,7 +11,7 @@ export default class SkillTooltip {
   cooldown: Phaser.GameObjects.Text
   // cooldown: Phaser.GameObjects.BitmapText
 
-  constructor(scene: Phaser.Scene, skill: Skill, width: number, height: number, x:number, y:number, entityIndex: number, scale: number) {
+  constructor(scene: Phaser.Scene, skill: Skill, width: number, height: number, x:number, y:number, entityIndex: number) {
     this.rectangle = scene.add.graphics();
     this.rectangle.fillStyle(0x000000, 1);
     this.rectangle.setAlpha(0.7)

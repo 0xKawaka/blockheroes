@@ -26,7 +26,8 @@ export default class BattleEntityAlly implements IBattleEntity {
   skillTooltipByName: {[key: string]: SkillTooltip}
   skillCooldownByName: {[key: string]: number}
   skillCooldownRectangleByName: {[key: string]: Phaser.GameObjects.Graphics}
-  skillCooldownTextByName: {[key: string]: Phaser.GameObjects.Text}
+  // skillCooldownTextByName: {[key: string]: Phaser.GameObjects.Text}
+  skillCooldownTextByName: {[key: string]: Phaser.GameObjects.BitmapText}
 
   constructor(battleEntity: IBattleEntity, battleScene: BattleScene) {
     this.battleEntity = battleEntity
@@ -151,7 +152,7 @@ export default class BattleEntityAlly implements IBattleEntity {
     this.battleEntity.getEntity().skillArray.forEach((skill, index) => {
       // this.createSkillImage(battleScene, skill.name, xSkillBar + skillwidthScaled * 0.5 + index * skillwidthScaled + index * skillGap, ySkillBar, skillwidthScaled)
       // this.createSkillTooltip(battleScene, skill, totalSizeSkill, xSkillBar, ySkillBar - skillwidthScaled * 0.5)
-      this.createSkillImage(battleScene, skill.name, xSkillBar + skillwidthScaled * 0.5 + index * skillwidthScaled + index * skillGap, ySkillBar, skillwidthScaled)
+      this.createSkillImage(battleScene, skill.name, xSkillBar + skillwidthScaled * 0.5 + index * skillwidthScaled + index * skillGap, ySkillBar)
       // this.createSelectedImage()
     })
     this.createCooldownRectangles(this.battleEntity.getEntity().skillArray, skillwidthScaled, battleScene)
@@ -167,22 +168,19 @@ export default class BattleEntityAlly implements IBattleEntity {
       this.skillCooldownRectangleByName[skill.name].fillRect(this.skillImageByName[skill.name].x - skillwidthScaled / 2, this.skillImageByName[skill.name].y - skillwidthScaled / 2, skillwidthScaled, skillwidthScaled);
   
       const fontSize = battleScene.sys.canvas.height * 0.04
-      this.skillCooldownTextByName[skill.name] = battleScene.add.text(this.skillImageByName[skill.name].x, this.skillImageByName[skill.name].y, "0", {fontFamily: "Verdana", fontSize: fontSize.toString() + "px", color: "#FFFFFF"})
+      // this.skillCooldownTextByName[skill.name] = battleScene.add.text(this.skillImageByName[skill.name].x, this.skillImageByName[skill.name].y, "0", {fontFamily: "Verdana", fontSize: fontSize.toString() + "px", color: "#FFFFFF"})
+      this.skillCooldownTextByName[skill.name] = battleScene.add.bitmapText(this.skillImageByName[skill.name].x, this.skillImageByName[skill.name].y, 'RetroGaming10', '0');
+      this.skillCooldownTextByName[skill.name].setScale(this.skillScale)
       this.skillCooldownTextByName[skill.name].setVisible(false)
       this.skillCooldownTextByName[skill.name].setOrigin(0.5, 0.5)
     })
   }
 
-  createSkillImage(battleScene: BattleScene, name: string, x:number, y:number, skillwidthScaled:number): void {
+  createSkillImage(battleScene: BattleScene, name: string, x:number, y:number): void {
     this.skillHoveredByName[name] = false
 
-    // let test = battleScene.add.graphics();
-    // test.fillStyle(0x000000, 1);
-    // test.setAlpha(1)
-    // test.setVisible(true)
-    // test.fillRoundedRect(x - skillwidthScaled/2 - 5, y - skillwidthScaled/2 - 5, skillwidthScaled + 10, skillwidthScaled + 10, 8);
-
     this.skillImageByName[name] = battleScene.add.image(x, y, name)
+    console.log("Skill scale : ", this.skillScale)
     this.skillImageByName[name].setScale(this.skillScale)
     this.skillImageByName[name].setInteractive();
     this.skillImageByName[name].on("pointerover", () => { this.handlerHoverSkill(name, this.battleEntity.getIndex(), battleScene.battle.UIScene)})

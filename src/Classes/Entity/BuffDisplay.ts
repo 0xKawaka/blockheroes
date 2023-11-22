@@ -9,7 +9,7 @@ export default class BuffDisplay {
   constructor(imageName: string, battleScene: Phaser.Scene, scale:number, textScale:number, visible:boolean = false, position: {x:number, y:number} = {x:0, y:0}, duration: number = 0) {
     this.scale = scale
     this.textScale = textScale
-    this.image = battleScene.add.image(Math.round(position.x), Math.round(position.y), imageName)
+    this.image = battleScene.add.image(position.x, position.y, imageName)
     this.image.setScale(scale)
     this.image.setVisible(visible)
     this.image.setOrigin(1, 1)

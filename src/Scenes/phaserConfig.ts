@@ -13,15 +13,11 @@ function getPhaserConfig(eventHandler: EventHandler, localWallet: Account, walle
     parent: parentContainer,
     backgroundColor: '#282c34',
     pixelArt: true,
-    // width: 640,
-	  // height: 389,
     width: window.innerWidth,
 	  height: window.innerHeight,
 
     scale: {
       mode: Phaser.Scale.ScaleModes.NONE,
-      // mode: Phaser.Scale.WIDTH_CONTROLS_HEIGHT,
-      // zoom: window.innerWidth / 640,
     },
     physics: {
       default: 'arcade',

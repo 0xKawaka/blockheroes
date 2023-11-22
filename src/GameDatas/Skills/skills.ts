@@ -34,8 +34,8 @@ const projectilesDict: {[key: string]: {name:string, width:number, height:number
   "attackpriest": {name:"frostbolt", width:200, height:50, widthRatio: 0.2, heightRatio: 0.08}
 }
 
-const spellAnimDict: {[key: string]: {name:string, framerate:number, width:number, height:number, widthRatio: number, heightRatio: number}} = {
-  "skill2hunter": {name:"arrowShower", framerate:11, width:256, height:128, widthRatio: 0.3, heightRatio: 0.4},
+const spellAnimDict: {[key: string]: {name:string, framerate:number, width:number, height:number}} = {
+  "skill2hunter": {name:"arrowShower", framerate:11, width:256, height:128},
 }
 
 const projectileInfos = Object.values(projectilesDict)

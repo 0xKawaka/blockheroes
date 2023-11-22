@@ -20,10 +20,6 @@ export default class CastProjectileAOE implements ISkillAnimation {
         spellAnimDict[animation + casterEntity.getName()].name,
         battle.scaler.getScaleFactor(),
         spellAnimDict[animation + casterEntity.getName()].framerate,
-        spellAnimDict[animation + casterEntity.getName()].width,
-        spellAnimDict[animation + casterEntity.getName()].height,
-        spellAnimDict[animation + casterEntity.getName()].widthRatio,
-        spellAnimDict[animation + casterEntity.getName()].heightRatio,
       )
     }
 

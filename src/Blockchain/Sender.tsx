@@ -31,7 +31,7 @@ export abstract class Sender {
       const contract = new Contract(GameAbi, GameAdrs, wallet);
       const tx = await contract.startBattle(heroesId, worldId, battleId);
       const res: any = await wallet.waitForTransaction(tx.transaction_hash, {
-        retryInterval: 400,
+        retryInterval: 300,
         successStates: [TransactionFinalityStatus.ACCEPTED_ON_L2],
       });
       // console.log(res.events[1])

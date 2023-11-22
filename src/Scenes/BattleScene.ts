@@ -9,6 +9,7 @@ import Positionner from '../Classes/Camera/Positionner'
 import EventHandler from '../Blockchain/event/EventHandler'
 import Tooltips from './UIScene'
 import UIScene from './UIScene'
+import BackgroundPick from '../Classes/Camera/BackgroundPick'
 
 
 export default class BattleScene extends Phaser.Scene {
@@ -30,10 +31,11 @@ export default class BattleScene extends Phaser.Scene {
 
   async create() {
     this.battle.setUIScene(this.scene.get('UIScene') as UIScene)
+    this.cameras.main.setRoundPixels(true)
 
-    let backgroundWidth = 640
-    let backgroundHeight = 389
-    this.battle.setScaler(new Scaler(this.sys.canvas.width, backgroundWidth))
+    let backgroundWidth = BackgroundPick.getBackgroundWidth(this.sys.canvas.width)
+    let backgroundHeight = BackgroundPick.getBackgroundHeight(this.sys.canvas.width)
+    this.battle.setScaler(new Scaler(this.sys.canvas.width))
     this.battle.setZoomer(new Zoomer(this.sys.canvas.width, this.sys.canvas.height, backgroundWidth, backgroundHeight, this.battle.scaler.getScaleFactor()))
     this.battle.setPositionner(new Positionner(backgroundWidth * this.battle.scaler.getScaleFactor(), backgroundHeight * this.battle.scaler.getScaleFactor()))
 

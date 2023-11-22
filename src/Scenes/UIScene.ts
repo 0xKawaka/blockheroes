@@ -15,6 +15,7 @@ export default class UIScene extends Phaser.Scene {
   }
 
   async create() {
+    this.cameras.main.setRoundPixels(true)
     const selectedTeam: Array<Entity> = this.registry.get('selectedTeam')
     this.createSkillTooltips(selectedTeam)
   }
@@ -22,12 +23,12 @@ export default class UIScene extends Phaser.Scene {
   createSkillTooltips(selectedTeam: Array<Entity>): void {
     const width = Math.round(this.sys.canvas.width / 2.7)
     const height = this.sys.canvas.height * 0.25
-    const x = Math.round(this.sys.canvas.width / 3.2)
-    const y = Math.round(this.sys.canvas.height - (this.sys.canvas.height / 6.5))
+    const x = this.sys.canvas.width / 3.2
+    const y = this.sys.canvas.height - (this.sys.canvas.height / 6)
 
     selectedTeam.forEach((entity: Entity, i) => {
       entity.skillArray.forEach((skill: Skill) => {
-        this.skillTooltipsDict[skill.name + i] = new SkillTooltip(this, skill, width, height, x, y, i, 1)
+        this.skillTooltipsDict[skill.name + i] = new SkillTooltip(this, skill, width, height, x, y, i)
       })
     })
   }

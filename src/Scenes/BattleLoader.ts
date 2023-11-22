@@ -10,6 +10,7 @@ import LifeBar from "../assets/battleUI/LifeBar.png"
 import LifeBarOutline from "../assets/battleUI/LifeBarOutline.png"
 import TurnBar from "../assets/battleUI/TurnBar.png"
 import TurnBarOutline from "../assets/battleUI/TurnBarOutline.png"
+import BackgroundPick from '../Classes/Camera/BackgroundPick'
 
 export default class BattleLoader extends Phaser.Scene {
   constructor() {
@@ -20,7 +21,7 @@ export default class BattleLoader extends Phaser.Scene {
     this.createLoadingScreen()
     let worldId = this.registry.get('worldId')
     let battleId = this.registry.get('battleId')
-    let img = require('../assets/backgrounds/' +  getLevelBackground(worldId, battleId) + '.png')
+    let img = require('../assets/backgrounds/' +  getLevelBackground(worldId, battleId, this.sys.canvas.width) + '.png')
     this.load.image('background', img)
     this.loadMusicLoop()
     this.loadSpellAnimations()
@@ -36,7 +37,8 @@ export default class BattleLoader extends Phaser.Scene {
     this.load.image('turnBarOutline', TurnBarOutline)
   }
 
-  create({}:{}) {
+  create() {
+    this.cameras.main.setRoundPixels(true)
     this.game.scene.start('UIScene')
     this.scene.start('Battle')
   }
@@ -127,13 +129,13 @@ export default class BattleLoader extends Phaser.Scene {
   }
 
   createLoadingScreen(){
-
     let progressBar = this.add.graphics();
     // let progressBox = this.add.graphics();
 
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
-    const scale = Math.round(width / 640)
+
+    const scale = Math.round(width / BackgroundPick.getBackgroundWidth(width))
 
     const progressBarWidth = width / 4
     const progressBarHeight = height / 20
@@ -157,7 +159,7 @@ export default class BattleLoader extends Phaser.Scene {
     assetText.setOrigin(0.5, 0.5);
 
     this.load.on('progress', function (value:any) {
-      percentText.setText(Math.round(value * 100) + '%');
+      percentText.setText(value * 100 + '%');
       progressBar.clear();
       progressBar.fillStyle(0xeab676, 1);
       progressBar.fillRect(progressBarX + (progressBarWidth/100), progressBarY + (progressBarHeight/10), (progressBarWidth - (progressBarWidth/50)) * value, progressBarHeight - (progressBarHeight/5));
