@@ -26,12 +26,10 @@ type RunePanelProps = {
 
 
 export default function RunePanel({runesList, heroesList, runeClicked, runeSpotClicked, runeListUnequiped, heroId, localWallet, setShowingRunes, stateChangesHandler}: RunePanelProps) {
-
   const [runeSelectedId, setRuneSelectedId] = useState<number>(-1)
   const [sortedName, setSortedName] = useState<string>("rank_desc")
   const [sortedRuneListUnequipedDict, setSortedRuneListUnequipedDict] = useState<{[key: string]: RunesList}>(createRuneListDict(runeListUnequiped))
   const runeSelected = runeListUnequiped.find(rune => rune.id === runeSelectedId)
-  // serverHandler.RuneHandler.setRuneSelectedIdSetter(setRuneSelectedId)
 
   useEffect(() => {
     setSortedRuneListUnequipedDict(createRuneListDict(runeListUnequiped))
@@ -49,7 +47,7 @@ export default function RunePanel({runesList, heroesList, runeClicked, runeSpotC
           <Rune 
           runesList={runesList}
           heroesList={heroesList}
-          rune={runeSelected!}
+          rune={runeClicked}
           equipped={true}
           image={runesImgDict[runeClicked.shape]}
           heroId={heroId} 

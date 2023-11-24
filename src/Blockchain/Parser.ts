@@ -1,6 +1,40 @@
-import { BlockchainRune } from "../Types/blockchainTypes";
-
+import { BlockchainRune, HeroBlockchain } from "../Types/blockchainTypes";
+import { shortString } from "starknet";
 export abstract class Parser {
+
+  static parseHero(hero: any): HeroBlockchain {
+    return {
+      id: Number(hero.id),
+      name: shortString.decodeShortString(hero.name),
+      level: Number(hero.level),
+      rank: Number(hero.rank),
+      runeIds : this.parseRuneIds(hero.runes),
+      spots: this.parseSpots(hero.runes),
+    }
+  }
+
+  static parseRuneIds(runes: any): Array<number> {
+    let ids: Array<number> = [];
+    if(runes.isFirstRuneEquipped) ids.push(Number(runes.first));
+    if(runes.isSecondRuneEquipped) ids.push(Number(runes.second));
+    if(runes.isThirdRuneEquipped) ids.push(Number(runes.third));
+    if(runes.isFourthRuneEquipped) ids.push(Number(runes.fourth));
+    if(runes.isFifthRuneEquipped) ids.push(Number(runes.fifth));
+    if(runes.isSixthRuneEquipped) ids.push(Number(runes.sixth));
+    return ids;
+  }
+
+  static parseSpots(runes: any): Array<number> {
+    let spots: Array<number> = [];
+    if(runes.isFirstRuneEquipped) spots.push(1);
+    if(runes.isSecondRuneEquipped) spots.push(2);
+    if(runes.isThirdRuneEquipped) spots.push(3);
+    if(runes.isFourthRuneEquipped) spots.push(4);
+    if(runes.isFifthRuneEquipped) spots.push(5);
+    if(runes.isSixthRuneEquipped) spots.push(6);
+    return spots;
+  }
+
 
   static parseRune(rune: any): BlockchainRune {
     const rank = Number(rune.rank);

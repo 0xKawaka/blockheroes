@@ -26,12 +26,7 @@ export abstract class Getter {
     try {
       const contract = new Contract(AccountsAbi, AccountsAdrs, wallet);
       const res = await contract.getHero(wallet.address, heroId);
-      return {
-        id: Number(res.id),
-        name: shortString.decodeShortString(res.name),
-        level: Number(res.level),
-        rank: Number(res.rank)
-      }
+      return Parser.parseHero(res)
     }
     catch(error: any){
       console.log('getHero ', error.message)
@@ -39,23 +34,18 @@ export abstract class Getter {
     }
   }
 
-  public static async getAllHeroes(wallet: Account) {
+  public static async getAllHeroes(wallet: Account): Promise<Array<HeroBlockchain>> {
     try {
       const contract = new Contract(AccountsAbi, AccountsAdrs, wallet);
       const res = await contract.getAllHeroes(wallet.address);
       const newRes = res.map((hero: any) => {
-        return {
-          id: Number(hero.id),
-          name: shortString.decodeShortString(hero.name),
-          level: Number(hero.level),
-          rank: Number(hero.rank)
-        }
+        return Parser.parseHero(hero)
       })
       return newRes;
     }
     catch(error: any){
       console.log('getAllHeroes ', error.message)
-      return 0;
+      return [];
     }
   }
 

@@ -9,6 +9,24 @@ import { RuneInfos } from "../Types/apiTypes";
 
 export abstract class Sender {
 
+  public static async unequipRune(wallet: Account, rune: RuneInfos) {
+    try {
+      const contract = new Contract(GameAbi, GameAdrs, wallet);
+      const tx = await contract.unequipRune(rune.id);
+      const res: any = await wallet.waitForTransaction(tx.transaction_hash, {
+        retryInterval: 200,
+        successStates: [TransactionFinalityStatus.ACCEPTED_ON_L2],
+      });
+      if(res.execution_status == "SUCCEEDED")
+        return true;
+      return false;
+    }
+    catch(error: any){
+      console.log('Sender unequipRune ', error.message)
+      return false;
+    }
+  }
+
   public static async equipRune(wallet: Account, runeId: number, heroId: number) {
     try {
       const contract = new Contract(GameAbi, GameAdrs, wallet);

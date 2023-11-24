@@ -25,8 +25,8 @@ export default function StatsDisplay({heroInfos}: StatsDisplayProps) {
       <div className="HeroStatDetailsContainer">        
         <div className="HeroStatValue">{heroInfos.baseStats.attack + heroInfos.bonusStats.attack}</div>
         <div className="HeroBaseStatAndBonusSum">
-          <div className="HeroBaseStatValue">( {heroInfos.baseStats.attack} </div>
-          <div className="HeroBonusStatValue">+{heroInfos.bonusStats.attack} )</div>
+          <div className="HeroBaseStatValue">{heroInfos.baseStats.attack} </div>
+          <div className="HeroBonusStatValue">+{heroInfos.bonusStats.attack}</div>
         </div>
       </div>
     </div>
@@ -35,8 +35,8 @@ export default function StatsDisplay({heroInfos}: StatsDisplayProps) {
       <div className="HeroStatDetailsContainer">        
         <div className="HeroStatValue">{heroInfos.baseStats.defense + heroInfos.bonusStats.defense}</div>
         <div className="HeroBaseStatAndBonusSum">
-          <div className="HeroBaseStatValue">( {heroInfos.baseStats.defense} </div>
-          <div className="HeroBonusStatValue">+{heroInfos.bonusStats.defense} )</div>
+          <div className="HeroBaseStatValue">{heroInfos.baseStats.defense} </div>
+          <div className="HeroBonusStatValue">+{heroInfos.bonusStats.defense}</div>
         </div>
       </div>
     </div>
@@ -45,8 +45,8 @@ export default function StatsDisplay({heroInfos}: StatsDisplayProps) {
       <div className="HeroStatDetailsContainer">        
         <div className="HeroStatValue">{heroInfos.baseStats.speed + heroInfos.bonusStats.speed}</div>
         <div className="HeroBaseStatAndBonusSum">
-          <div className="HeroBaseStatValue">( {heroInfos.baseStats.speed} </div>
-          <div className="HeroBonusStatValue">+{heroInfos.bonusStats.speed} )</div>
+          <div className="HeroBaseStatValue">{heroInfos.baseStats.speed} </div>
+          <div className="HeroBonusStatValue">+{heroInfos.bonusStats.speed}</div>
         </div>
       </div>
     </div>
@@ -55,8 +55,8 @@ export default function StatsDisplay({heroInfos}: StatsDisplayProps) {
       <div className="HeroStatDetailsContainer">        
         <div className="HeroStatValue">{heroInfos.baseStats.criticalChance + heroInfos.bonusStats.criticalChance} %</div>
         <div className="HeroBaseStatAndBonusSum">
-          <div className="HeroBaseStatValue">( {heroInfos.baseStats.criticalChance} </div>
-          <div className="HeroBonusStatValue">+{heroInfos.bonusStats.criticalChance} )</div>
+          <div className="HeroBaseStatValue">{heroInfos.baseStats.criticalChance} </div>
+          <div className="HeroBonusStatValue">+{heroInfos.bonusStats.criticalChance}</div>
         </div>
       </div> 
     </div>
@@ -65,8 +65,8 @@ export default function StatsDisplay({heroInfos}: StatsDisplayProps) {
       <div className="HeroStatDetailsContainer">
         <div className="HeroStatValue">{heroInfos.baseStats.criticalDamage + heroInfos.bonusStats.criticalDamage} %</div>
         <div className="HeroBaseStatAndBonusSum">
-          <div className="HeroBaseStatValue">( {heroInfos.baseStats.criticalDamage} </div>
-          <div className="HeroBonusStatValue">+{heroInfos.bonusStats.criticalDamage} )</div>
+          <div className="HeroBaseStatValue">{heroInfos.baseStats.criticalDamage} </div>
+          <div className="HeroBonusStatValue">+{heroInfos.bonusStats.criticalDamage}</div>
         </div>
       </div>
     </div>

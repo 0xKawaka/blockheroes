@@ -7,7 +7,7 @@ type RuneMiniatureProps = {
 }
 
 function computeLeftBottomGap(imageWidth: string) {
-  if(imageWidth.slice(-3) !== "rem") throw new Error("imageWidth must be in rem")
+  // if(imageWidth.slice(-3) !== "rem") throw new Error("imageWidth must be in rem")
   const imageWidthNumber = parseInt(imageWidth.slice(0, -3))
   const bottomGap = imageWidthNumber * 0.1
   const leftGap = imageWidthNumber * 0.5
@@ -15,7 +15,7 @@ function computeLeftBottomGap(imageWidth: string) {
 }
 
 function computeFontSize(imageWidth: string) {
-  if(imageWidth.slice(-3) !== "rem") throw new Error("imageWidth must be in rem")
+  // if(imageWidth.slice(-3) !== "rem") throw new Error("imageWidth must be in rem")
   const imageWidthNumber = parseInt(imageWidth.slice(0, -3))
   const fontSize = Math.log(imageWidthNumber) * 1.17
   return fontSize

@@ -12,19 +12,20 @@ export abstract class HeroesFactory {
     return heroesWithStatsAndSkills;
   }
 
-  public static createHero(hero: HeroBlockchain,  runes: Array<RuneInfos>, skillsDict: SkillsDict, skillSets: SkillSets, baseStatsDict: BaseStatsDict): HeroInfos {
-    // let heroRunes = runes.filter(rune => rune.heroId === hero.id)
+  public static createHero(hero: HeroBlockchain, runes: Array<RuneInfos>, skillsDict: SkillsDict, skillSets: SkillSets, baseStatsDict: BaseStatsDict): HeroInfos {
+    let heroRunes = runes.filter(rune => hero.runeIds.includes(rune.id))
+    let baseStats = HeroesFactory.computeBaseStats(hero.level, hero.rank, baseStatsDict[hero.name])
     let heroWithStatsAndSkills: HeroInfos = {
       id: hero.id,
       name: hero.name,
       level: hero.level,
       rank: hero.rank,
       experience: 0,
-      runesIds: [],
-      spots: [],
+      runesIds: hero.runeIds,
+      spots: hero.spots,
       spells: HeroesFactory.getSkills(skillSets[hero.name], skillsDict),
-      baseStats: HeroesFactory.computeBaseStats(hero.level, hero.rank, baseStatsDict[hero.name]),
-      bonusStats: HeroesFactory.computeBonusStats()
+      baseStats: baseStats,
+      bonusStats: HeroesFactory.computeBonusStats(baseStats, heroRunes)
     }
     return heroWithStatsAndSkills;
   }
@@ -62,7 +63,6 @@ export abstract class HeroesFactory {
   }
 
   static computeBaseStats(level: number, rank: number, baseStats: HeroStats): HeroStats {
-
     return { 
       health: HeroesFactory.computeBaseStatFromLevelRank(level, rank, baseStats.health),
       attack: HeroesFactory.computeBaseStatFromLevelRank(level, rank, baseStats.attack),
@@ -75,8 +75,35 @@ export abstract class HeroesFactory {
     return Math.trunc(stat + (stat * (level - 1)) / 100);
   }
 
-  static computeBonusStats(): HeroStats {
-    return { health: 0, attack: 0, defense: 0, speed: 0, criticalChance: 0, criticalDamage: 0 };
+  static computeBonusStats(baseStats: HeroStats, runes: Array<RuneInfos>): HeroStats {
+    let bonusStats: HeroStats = {health: 0, attack: 0, defense: 0, speed: 0, criticalChance: 0, criticalDamage: 0};
+    runes.forEach((rune) => {
+      rune.statistics.forEach((stat, i) => {
+        switch (stat) {
+          case "health":
+            bonusStats.health += rune.isPercent[i] ? baseStats.health * rune.values[i] / 100  : rune.values[i];
+            break;
+          case "attack":
+            bonusStats.attack += rune.isPercent[i] ? baseStats.attack * rune.values[i] / 100  : rune.values[i];
+            break;
+          case "defense":
+            bonusStats.defense += rune.isPercent[i] ? baseStats.defense * rune.values[i] / 100  : rune.values[i];
+            break;
+          case "speed":
+            bonusStats.speed += rune.isPercent[i] ? baseStats.speed * rune.values[i] / 100  : rune.values[i];
+            break;
+          case "criticalChance":
+            bonusStats.criticalChance += rune.isPercent[i] ? baseStats.criticalChance * rune.values[i] / 100  : rune.values[i];
+            break;
+          case "criticalDamage":
+            bonusStats.criticalDamage += rune.isPercent[i] ? baseStats.criticalDamage * rune.values[i] / 100  : rune.values[i];
+            break;
+          default:
+            break;
+        }
+      })
+    })
+    return bonusStats;
   }
 
 }

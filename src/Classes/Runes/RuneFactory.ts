@@ -6,10 +6,10 @@ export default abstract class RuneFactory {
 
   static upgradeRune(rune: RuneInfos, bonus: RuneBonusEvent | undefined, runeStatsDict: RuneStatsDict): RuneInfos {
     rune.rank = rune.rank + 1;
-    rune.values[0] = this.computeRuneBaseValue(rune.statistics[0], rune.rank, rune.isPercents[0], runeStatsDict);
+    rune.values[0] = this.computeRuneBaseValue(rune.statistics[0], rune.rank, rune.isPercent[0], runeStatsDict);
     if(bonus !== undefined) {
       rune.statistics.push(bonus.procStat);
-      rune.isPercents.push(bonus.isPercent);
+      rune.isPercent.push(bonus.isPercent);
       rune.values.push(this.computeRuneBonusValue(bonus.procStat, bonus.isPercent, runeStatsDict))
     }
     return rune;
@@ -27,8 +27,10 @@ export default abstract class RuneFactory {
     return {
       id: blockchainRune.id,
       shape: blockchainRune.shape,
+      isEquipped: blockchainRune.isEquipped,
+      heroEquipped: blockchainRune.heroEquipped,
       statistics: this.getStatistics(blockchainRune),
-      isPercents: this.getIsPercents(blockchainRune),
+      isPercent: this.getisPercent(blockchainRune),
       values: this.getValues(blockchainRune, runeStatsDict),
       rarity: blockchainRune.rarity,
       rank: blockchainRune.rank
@@ -45,14 +47,14 @@ export default abstract class RuneFactory {
     return statistics;
   }
 
-  static getIsPercents(rune: BlockchainRune): Array<boolean> { 
-    let isPercents: Array<boolean> = [];
-    isPercents.push(rune.isPercent);
-    if(rune.rank > 3) isPercents.push(rune.rank4Bonus!.isPercent);
-    if(rune.rank > 7) isPercents.push(rune.rank8Bonus!.isPercent);
-    if(rune.rank > 11) isPercents.push(rune.rank12Bonus!.isPercent);
-    if(rune.rank > 15) isPercents.push(rune.rank16Bonus!.isPercent);
-    return isPercents;
+  static getisPercent(rune: BlockchainRune): Array<boolean> { 
+    let isPercent: Array<boolean> = [];
+    isPercent.push(rune.isPercent);
+    if(rune.rank > 3) isPercent.push(rune.rank4Bonus!.isPercent);
+    if(rune.rank > 7) isPercent.push(rune.rank8Bonus!.isPercent);
+    if(rune.rank > 11) isPercent.push(rune.rank12Bonus!.isPercent);
+    if(rune.rank > 15) isPercent.push(rune.rank16Bonus!.isPercent);
+    return isPercent;
   }
   
   static getValues(rune: BlockchainRune, runeStatsDict: RuneStatsDict): Array<number> {

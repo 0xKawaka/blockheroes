@@ -42,8 +42,13 @@ export default function Rune({runesList, heroesList, rune, equipped, image, hero
     console.log("Equip rune: ", rune.id, " on hero: ", heroId)
   }
   
-  function handleUnequipRune(runeId: number, spot: number, heroId: number){
-    console.log("Unequip rune:", runeId, " spot:", spot, "  hero:", heroId)
+  async function handleUnequipRune(rune: RuneInfos){
+    setIsEquipping(true)
+    const isSuccess = await Sender.unequipRune(localWallet, rune)
+    if(isSuccess)
+      stateChangesHandler.updateRuneUnequip(rune, runesList, heroesList)
+    setIsEquipping(false)
+    console.log("Unequip rune:", rune.id)
   }
   
   async function handleUpgradeRune(localWallet: Account, rune: RuneInfos){
@@ -66,17 +71,17 @@ export default function Rune({runesList, heroesList, rune, equipped, image, hero
             return (
               <div className="RuneStatistic" key={i}>
                 <div className="RuneStatisticName">{statistic}</div>
-                <div className="RuneStatisticValue">+{rune.values[i]}{rune.isPercents[i] ? "%" : ""}</div>
+                <div className="RuneStatisticValue">+{rune.values[i]}{rune.isPercent[i] ? "%" : ""}</div>
               </div>
             )
           })}
         </div>
       </div>
       <div className="RuneButtonsContainer">
-        {rune.rank < maxRankRune && <div className="RuneButton" onClick={() => handleUpgradeRune(localWallet, rune)}>{isUpgrading ? "Upgrading" : "Upgrade"}</div>}
-        {equipped && <div className="RuneButton" onClick={() => handleUnequipRune(rune.id, runeSpotClicked, heroId)}>{equippedString}</div>}
+        {rune.rank < maxRankRune && <div className="RuneButton" onClick={() => isUpgrading ? undefined : handleUpgradeRune(localWallet, rune)}>{isUpgrading ? "Upgrading" : "Upgrade"}</div>}
+        {equipped && <div className="RuneButton" onClick={isEquipping ? undefined : () => handleUnequipRune(rune)}>{isEquipping ? processEquippedString : equippedString}</div>}
         {!equipped && !alreadyEquippedRune && !(rune.shape !== runeSpotClicked) &&
-          <div className="RuneButton" onClick={() => handleEquipRune(rune, heroId)}>{isEquipping ? processEquippedString : equippedString}</div>
+          <div className="RuneButton" onClick={() => isEquipping ? undefined : handleEquipRune(rune, heroId)}>{isEquipping ? processEquippedString : equippedString}</div>
         }
         {!equipped && rune.shape !== runeSpotClicked &&
           <div className="RuneButton" onMouseOver={() => setShowWrongShapeTooltip(true)} onMouseOut={() => setShowWrongShapeTooltip(false)}>{isEquipping ? processEquippedString : equippedString}</div>

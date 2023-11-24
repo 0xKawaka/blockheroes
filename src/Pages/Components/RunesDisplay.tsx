@@ -34,7 +34,7 @@ export default function RunesDisplay({heroInfos, runesList, handleRuneClick}: Ru
       }
       return(
       <div className="RunePlaceholderContainer" onClick={() => handleRuneClick(runesIds[index], spotIndex)}>
-        <RunePlaceholder image={runeImgDict[shape]} rank={rank} imageWidth="100%"/>
+        <RunePlaceholder image={runeImgDict[shape]} rank={rank} imageWidth="8.2rem"/>
       </div>
       )
     }

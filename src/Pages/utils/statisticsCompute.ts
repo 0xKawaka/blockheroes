@@ -22,7 +22,7 @@ function computeBonusStats(heroInfos:HeroInfos |  HeroInfosApi, runesList:RunesL
     const rune = runesList.find(rune => rune.id === heroInfos.runesIds[i])
     if(rune){
       for(let j = 0; j < rune.statistics.length; j++){
-        bonusStats[rune.statistics[j].toLowerCase() as keyof typeof bonusStats] += computePercentOrFlat(heroInfos.baseStats[rune.statistics[j].toLowerCase() as keyof typeof heroInfos.baseStats], rune.values[j], rune.isPercents[j])
+        bonusStats[rune.statistics[j].toLowerCase() as keyof typeof bonusStats] += computePercentOrFlat(heroInfos.baseStats[rune.statistics[j].toLowerCase() as keyof typeof heroInfos.baseStats], rune.values[j], rune.isPercent[j])
       }
     }
   }

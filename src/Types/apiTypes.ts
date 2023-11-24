@@ -2,7 +2,7 @@ import Skill from "../Classes/Skill/Skill"
 
 type GameAccount = {shards: number, energy: number}
 type RunesList = Array<RuneInfos>
-type RuneInfos = {id:number, shape: number, statistics: Array<string>, isPercents:Array<boolean>, values:Array<number>, rarity:string, rank:number}
+type RuneInfos = {id:number, shape: number, isEquipped: boolean, heroEquipped: number, statistics: Array<string>, isPercent:Array<boolean>, values:Array<number>, rarity:string, rank:number}
 type HeroInfos = {id:number, name: string, level:number, rank: number, experience:number, runesIds:Array<number>, spots:Array<number>, spells: Array<Skill>, baseStats:HeroStats, bonusStats:HeroStats}
 type EnemyInfos = {name: string, level:number, rank: number, spells: Array<Skill>, stats:HeroStats}
 type HeroStats = {health:number, attack:number, defense:number, speed:number, criticalChance:number, criticalDamage:number}
