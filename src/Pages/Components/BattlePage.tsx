@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import EndBattlePanel from "./EndBattlePanel"
 import { HeroStats } from "../../Types/apiTypes"
 import Entity from "../../Classes/Entity/Entity"
-import EventHandler from "../../Blockchain/event/EventHandler"
+import GameEventHandler from "../../Blockchain/event/GameEventHandler"
 import { Account } from "starknet"
 
 type BattlePageProps = {
@@ -13,7 +13,7 @@ type BattlePageProps = {
   selectedTeam: Entity[]
   selectedHeroesIds: number[]
   enemiesTeam: Entity[]
-  eventHandler: EventHandler
+  eventHandler: GameEventHandler
   localWallet: Account
   setPhaserRunning: React.Dispatch<React.SetStateAction<boolean>>
   setIsBattleRunning: React.Dispatch<React.SetStateAction<boolean>>

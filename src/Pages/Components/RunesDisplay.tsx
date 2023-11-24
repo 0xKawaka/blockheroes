@@ -17,7 +17,7 @@ export default function RunesDisplay({heroInfos, runesList, handleRuneClick}: Ru
     const index = spots.indexOf(spotIndex)
     if(index === -1){
       return(
-      <div className="RunePlaceholderContainer" onClick={() => handleRuneClick(0, spotIndex)}>
+      <div className="RunePlaceholderContainer" onClick={() => handleRuneClick(-1, spotIndex)}>
         <RunePlaceholder image={runeImgDict[spotIndex]} rank={-1} imageWidth="100%"/>
       </div>
       )

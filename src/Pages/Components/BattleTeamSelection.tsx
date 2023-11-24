@@ -11,7 +11,7 @@ import { create } from "domain"
 import SkillsHandler from "../../Classes/IO/SkillsHandler"
 import { Sender } from "../../Blockchain/Sender"
 import { Account } from "starknet"
-import EventHandler from "../../Blockchain/event/EventHandler"
+import GameEventHandler from "../../Blockchain/event/GameEventHandler"
 
 
 type BattleTeamSelectionProps = {
@@ -24,7 +24,7 @@ type BattleTeamSelectionProps = {
   heroesList: Array<HeroInfos>
   selectedHeroesIds: number[],
   localWallet: Account,
-  eventHandler: EventHandler
+  eventHandler: GameEventHandler
   setSelectedHeroesIds: React.Dispatch<React.SetStateAction<number[]>>
   setPhaserRunning: React.Dispatch<React.SetStateAction<boolean>>
 }

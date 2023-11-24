@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   /* width: 100%; */
-  height: 13rem;
+  /* height: 13rem; */
   gap: 1rem;
 }
 .RuneImageStatisticsContainer {
@@ -13,14 +13,11 @@
   gap: 1rem;
 }
 
-.RuneImage {
-  width: 8rem;
-}
-
 .RuneStatisticsContainer {
   display: flex;
   flex-direction: column;
   width: 7rem;
+  font-size: 2rem;
 }
 
 .RuneStatistic {
@@ -37,10 +34,10 @@
 }
 
 .RuneButton {
+  font-size: 2rem;
   cursor: pointer;
-  width: 4.5rem;
   text-align: center;
-  padding: 0.5rem;
+  padding: 1rem;
   border: 0.1rem solid white;
   -webkit-user-select: none;
   user-select: none;

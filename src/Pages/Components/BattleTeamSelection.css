@@ -61,7 +61,6 @@
   flex-direction: row;  
   align-items: center;
   gap: 1.5rem;
-  /* border: 2px solid rgb(146, 113, 47); */
   border-radius: 0.3rem;
   padding : 1rem;
   background-color: rgb(180, 133, 38);

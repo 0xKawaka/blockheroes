@@ -10,7 +10,7 @@ import Entity from "../../Classes/Entity/Entity"
 import Skill from "../../Classes/Skill/Skill"
 import EndBattlePanel from "./EndBattlePanel"
 import { Account } from "starknet"
-import EventHandler from "../../Blockchain/event/EventHandler"
+import GameEventHandler from "../../Blockchain/event/GameEventHandler"
 
 type BattleSelectProps = {
   worldId: number
@@ -38,10 +38,10 @@ function BattlesSelect ( {worldId, battlesList, heroesList, localWallet, setWorl
   const [phaserRunning , setPhaserRunning] = useState<boolean>(false)
   const [isLootPanelVisible, setIsLootPanelVisible] = useState<boolean>(false)
   const [winOrLose, setWinOrLose] = useState<string>("")
-  const [eventHandler, setEventHandler] = useState<EventHandler>()
+  const [eventHandler, setGameEventHandler] = useState<GameEventHandler>()
 
   useEffect(() => {
-    setEventHandler(new EventHandler())
+    setGameEventHandler(new GameEventHandler())
   }, [])
 
   function getSelectedTeam(selectedHeroesIds:number[]): Entity[] {

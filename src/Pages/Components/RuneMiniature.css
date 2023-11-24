@@ -7,6 +7,6 @@
   position: absolute;
 }
 
-.RuneMiniatureImage {
-  image-rendering: pixelated;
-}
+/* .RuneMiniatureImage {
+  width: 10rem;
+} */

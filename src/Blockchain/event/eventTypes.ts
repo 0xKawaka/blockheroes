@@ -3,4 +3,5 @@ type StartTurnEvent = {owner: string, entityId: number, damages: number[], heals
 type SkillEvent = {owner: string, casterId: number, targetId: number, skillIndex: number, damagesDict: {[key: number]: {value: number}}, healsDict: {[key: number]: {value: number}}, deathArray: number[]}
 type EndTurnEvent = {owner: string, buffsDict: {[key: number]: Array<{name: string, duration: number}>}, statusDict: {[key: number]: Array<{name: string, duration: number}>}, speedsDict: {[key: number]: number},}
 type EndBattleEvent = {owner: string, hasPlayerWon: boolean}
-export type {NewBattleEvent, StartTurnEvent, SkillEvent, EndTurnEvent, EndBattleEvent}
+type RuneBonusEvent = {owner: string, id: number, rank: number, procStat: string, isPercent: boolean}
+export type {NewBattleEvent, StartTurnEvent, SkillEvent, EndTurnEvent, EndBattleEvent, RuneBonusEvent}

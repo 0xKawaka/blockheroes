@@ -10,7 +10,7 @@ import { getSpriteSize } from "../GameDatas/Monsters/spriteSize";
 import Scaler from "./Camera/Scaler";
 import Zoomer from "./Camera/Zoomer";
 import Positionner from "./Camera/Positionner";
-import EventHandler from "../Blockchain/event/EventHandler";
+import GameEventHandler from "../Blockchain/event/GameEventHandler";
 import { SkillEvent } from "../Blockchain/event/eventTypes";
 import { Sender } from "../Blockchain/Sender";
 import { Account } from "starknet";
@@ -30,7 +30,7 @@ export default class Battle {
   skillTargetType: string
   hasSelectedTarget: boolean
   isTurnPlaying: boolean
-  eventHandler: EventHandler
+  eventHandler: GameEventHandler
   localWallet: Account
   animationsHandler: AnimationsHandler
   positionScaler: PositionScaler
@@ -64,7 +64,7 @@ export default class Battle {
     this.zoomer = zoomer
   }
 
-  setEventHandler(eventHandler: EventHandler){
+  setGameEventHandler(eventHandler: GameEventHandler){
     this.eventHandler = eventHandler
   }
 

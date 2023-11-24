@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react'
 import "./MyHeroes.css"
 import HeroPanel from "./HeroPanel"
-import {HeroesStatsDict, HeroInfos, RunesList} from '../../Types/apiTypes'
+import {HeroesStatsDict, HeroInfos, RuneInfos, RunesList} from '../../Types/apiTypes'
 import RunePanel from "./RunePanel"
 import HeroesList from "./HeroesList"
 import ArrowBack from "../../assets/misc/arrowback.png"
+import { Account } from 'starknet'
+import StateChangesHandler from '../State/StateChangesHandler'
 
 type MyHeroesProps = {
   heroesList: Array<HeroInfos>
-  runesList: RunesList
+  runesList: Array<RuneInfos>
+  localWallet: Account
   setShowMyHeroes: React.Dispatch<React.SetStateAction<boolean>>
+  stateChangesHandler: StateChangesHandler
 }
 
 function getUnequipedRunes(runesList:RunesList, heroesList:Array<HeroInfos>){
@@ -22,7 +26,7 @@ function getHeroById(heroId:number, heroesList:Array<HeroInfos>){
 }
 
 
-function MyHeroes ( {heroesList, runesList, setShowMyHeroes} : MyHeroesProps) {
+function MyHeroes ( {heroesList, runesList, localWallet, setShowMyHeroes, stateChangesHandler } : MyHeroesProps) {
   const [showingHero, setShowingHero] = useState<boolean>(false)
   const [heroId, setHeroId] = useState<number>(0)
   const [showingRunes, setShowingRunes] = useState<boolean>(false)
@@ -60,7 +64,7 @@ function MyHeroes ( {heroesList, runesList, setShowMyHeroes} : MyHeroesProps) {
       <HeroPanel heroIndex={heroId} heroInfos={heroInfos} runesList={runesList} setShowingHero={setShowingHero} handleRuneClick={handleRuneClick}></HeroPanel>
     }
     {showingRunes &&
-      <RunePanel runeClicked={runesList.find(rune => rune.id === runeSelectId)} runeSpotClicked={runeSpotClicked} runeListUnequiped={runeListUnequiped} heroId={heroId} setShowingRunes={setShowingRunes} ></RunePanel>
+      <RunePanel runesList={runesList} heroesList={heroesList} runeClicked={runesList.find(rune => rune.id === runeSelectId)} runeSpotClicked={runeSpotClicked} runeListUnequiped={runeListUnequiped} heroId={heroId} localWallet={localWallet} setShowingRunes={setShowingRunes} stateChangesHandler={stateChangesHandler}></RunePanel>
     }
 
   </div>)

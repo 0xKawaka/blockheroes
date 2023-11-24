@@ -1,29 +1,19 @@
-import { HeroInfos, SkillsDict, BaseStatsDict, SkillSets, HeroStats, BattlesInfosDict, EnemyInfos, BattlesInfosApi } from "../../Types/apiTypes";
+import { HeroInfos, SkillsDict, BaseStatsDict, SkillSets, HeroStats, BattlesInfosDict, EnemyInfos, BattlesInfosApi, RuneInfos } from "../../Types/apiTypes";
 import { HeroBlockchain } from "../../Types/blockchainTypes";
 import Skill from "../Skill/Skill";
 
 export abstract class HeroesFactory {
-  public static createHeroes(heroes: Array<HeroBlockchain>, skillsDict: SkillsDict, skillSets: SkillSets, baseStatsDict: BaseStatsDict): Array<HeroInfos> {
+  public static createHeroes(heroes: Array<HeroBlockchain>, runes: Array<RuneInfos>, skillsDict: SkillsDict, skillSets: SkillSets, baseStatsDict: BaseStatsDict): Array<HeroInfos> {
     let heroesWithStatsAndSkills = new Array<HeroInfos>();
     heroes.forEach((hero) => {
-      let heroWithStatsAndSkills: HeroInfos = {
-        id: hero.id,
-        name: hero.name,
-        level: hero.level,
-        rank: hero.rank,
-        experience: 0,
-        runesIds: [],
-        spots: [],
-        spells: HeroesFactory.getSkills(skillSets[hero.name], skillsDict),
-        baseStats: HeroesFactory.computeBaseStats(hero.level, hero.rank, baseStatsDict[hero.name]),
-        bonusStats: HeroesFactory.computeBonusStats()
-      }
+      let heroWithStatsAndSkills: HeroInfos = this.createHero(hero, runes, skillsDict, skillSets, baseStatsDict)
       heroesWithStatsAndSkills.push(heroWithStatsAndSkills)
     })
     return heroesWithStatsAndSkills;
   }
 
-  public static createHero(hero: HeroBlockchain, skillsDict: SkillsDict, skillSets: SkillSets, baseStatsDict: BaseStatsDict): HeroInfos {
+  public static createHero(hero: HeroBlockchain,  runes: Array<RuneInfos>, skillsDict: SkillsDict, skillSets: SkillSets, baseStatsDict: BaseStatsDict): HeroInfos {
+    // let heroRunes = runes.filter(rune => rune.heroId === hero.id)
     let heroWithStatsAndSkills: HeroInfos = {
       id: hero.id,
       name: hero.name,

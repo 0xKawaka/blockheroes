@@ -29,4 +29,8 @@ export default class ApiHandler {
     return await this.get(apiEndpoint + 'battlesInfos')
   }
 
+  static async getRuneStats() {
+    return await this.get(apiEndpoint + 'runeStats')
+  }
+
 }

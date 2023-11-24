@@ -6,7 +6,7 @@ import ClickHandler from '../Classes/ClickHandler'
 import Scaler from '../Classes/Camera/Scaler'
 import Zoomer from '../Classes/Camera/Zoomer'
 import Positionner from '../Classes/Camera/Positionner'
-import EventHandler from '../Blockchain/event/EventHandler'
+import GameEventHandler from '../Blockchain/event/GameEventHandler'
 import Tooltips from './UIScene'
 import UIScene from './UIScene'
 import BackgroundPick from '../Classes/Camera/BackgroundPick'
@@ -16,7 +16,7 @@ export default class BattleScene extends Phaser.Scene {
   battle: Battle
   clickHandler: ClickHandler
   battleLoaded: boolean
-  eventHandler: EventHandler
+  eventHandler: GameEventHandler
 
   constructor() {
     super('Battle')
@@ -42,7 +42,7 @@ export default class BattleScene extends Phaser.Scene {
     this.battle.setBattleScene(this)
     let selectedTeam = this.registry.get('selectedTeam')
     let enemiesTeam = this.registry.get('enemiesTeam')
-    this.battle.setEventHandler(this.registry.get('eventHandler'))
+    this.battle.setGameEventHandler(this.registry.get('eventHandler'))
     this.battle.setLocalWallet(this.registry.get('localWallet'))
     this.battle.positionScaler.setCanvasWidthHeight(this.sys.canvas.width, this.sys.canvas.height)  
     

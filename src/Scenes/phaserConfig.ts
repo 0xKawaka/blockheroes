@@ -4,10 +4,10 @@ import UIScene from './UIScene'
 import BattleLoader from './BattleLoader'
 import FontLoader from './FontLoader'
 import Entity from '../Classes/Entity/Entity'
-import EventHandler from '../Blockchain/event/EventHandler'
+import GameEventHandler from '../Blockchain/event/GameEventHandler'
 import { Account } from 'starknet'
 
-function getPhaserConfig(eventHandler: EventHandler, localWallet: Account, walletAdrs:string, parentContainer:string, worldId:number, battleId:number, selectedTeam: Entity[], selectedHeroesIds:number[], enemiesTeam: Entity[]): Phaser.Types.Core.GameConfig{
+function getPhaserConfig(eventHandler: GameEventHandler, localWallet: Account, walletAdrs:string, parentContainer:string, worldId:number, battleId:number, selectedTeam: Entity[], selectedHeroesIds:number[], enemiesTeam: Entity[]): Phaser.Types.Core.GameConfig{
   const Config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
     parent: parentContainer,

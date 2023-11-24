@@ -159,7 +159,7 @@ export default class BattleLoader extends Phaser.Scene {
     assetText.setOrigin(0.5, 0.5);
 
     this.load.on('progress', function (value:any) {
-      percentText.setText(value * 100 + '%');
+      percentText.setText(Math.round(value * 100) + '%');
       progressBar.clear();
       progressBar.fillStyle(0xeab676, 1);
       progressBar.fillRect(progressBarX + (progressBarWidth/100), progressBarY + (progressBarHeight/10), (progressBarWidth - (progressBarWidth/50)) * value, progressBarHeight - (progressBarHeight/5));
