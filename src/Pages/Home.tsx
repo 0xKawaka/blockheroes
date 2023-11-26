@@ -29,9 +29,14 @@ function Home({localWallet, isDeploying, wallet, setWallet, setHasDisconnected}:
           </div>      
         }
         {localWallet &&
-          <Link className="GameButton" to={{pathname: '/game'}}>
-            Start Playing
-          </Link>
+          <div className="disclaimerAndPlayContainer">
+            <div className="disclaimerHome">
+              This is a preview demo, the state of your session will be lost when you refresh the page.
+            </div>
+            <Link className="GameButton" to={{pathname: '/game'}}>
+              Start Playing
+            </Link>
+          </div>
         }
       </div>
 

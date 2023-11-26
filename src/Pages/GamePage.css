@@ -1,12 +1,17 @@
-img {
+/* img {
   image-rendering: auto;
   image-rendering: crisp-edges;
   image-rendering: pixelated;
-  /* Safari seems to support, but seems deprecated and does the same thing as the others. */
   image-rendering: -webkit-optimize-contrast;
-}
+} */
 
 .GamePhaserContainer {
+  image-rendering: auto;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: -webkit-optimize-contrast;
+
+
   height: 100%;
   display: flex;
   flex-direction: column;

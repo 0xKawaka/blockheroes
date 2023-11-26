@@ -13,6 +13,9 @@ function getPhaserConfig(eventHandler: GameEventHandler, localWallet: Account, w
     parent: parentContainer,
     backgroundColor: '#282c34',
     pixelArt: true,
+    antialias: false,
+    autoRound: true,
+    roundPixels: true,
     width: window.innerWidth,
 	  height: window.innerHeight,
 

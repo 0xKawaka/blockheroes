@@ -69,6 +69,7 @@ export default class BattleEntityAlly implements IBattleEntity {
     console.log("Entity ally ", this.getIndex(), ' playing')
     console.log("Entity health before procs : ", this.getCurrentHealth())
     await this.battleEntity.playTurn(battle, startTurnEvent, animationsHandler)
+    console.log('health: ', this.getCurrentHealth())
     this.reduceCooldowns()
     console.log("Entity health after procs : ", this.getCurrentHealth())
     if(!this.battleEntity.isDead() && !this.battleEntity.isStunned()) {

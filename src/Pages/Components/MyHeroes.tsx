@@ -62,7 +62,7 @@ function MyHeroes ( {heroesList, runesList, localWallet, setShowMyHeroes, stateC
   <div className="myHeroesContainer">
     {!showingHero && !showingRunes &&
       <div className="myHeroesMenuAndHeroesListContainer">
-        <div className="myHeroesArrowBackContainer" >
+        <div className="ArrowBackContainer" >
           <img className="ArrowBack" src={ArrowBack} onClick={() => setShowMyHeroes(false)}/>
         </div>
         <HeroesList heroesList={heroesList} handleHeroClick={handleHeroClick} heroesWidth="8.8rem"></HeroesList>

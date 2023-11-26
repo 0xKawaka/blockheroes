@@ -45,12 +45,12 @@ export default function RunesDisplay({heroInfos, runesList, handleRuneClick}: Ru
     <div className="RuneTypeContainer">
       {createRunePlaceholder(1, heroInfos.runesIds, heroInfos.spots)}
       {createRunePlaceholder(2, heroInfos.runesIds, heroInfos.spots)}
-    </div>
-    <div className="RuneTypeContainer">
+    {/* </div> */}
+    {/* <div className="RuneTypeContainer"> */}
       {createRunePlaceholder(3, heroInfos.runesIds, heroInfos.spots)}
       {createRunePlaceholder(4, heroInfos.runesIds, heroInfos.spots)}
-    </div>
-    <div className="RuneTypeContainer">
+    {/* </div> */}
+    {/* <div className="RuneTypeContainer"> */}
       {createRunePlaceholder(5, heroInfos.runesIds, heroInfos.spots)}
       {createRunePlaceholder(6, heroInfos.runesIds, heroInfos.spots)}
     </div>

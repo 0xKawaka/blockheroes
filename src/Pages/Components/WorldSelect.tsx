@@ -22,7 +22,7 @@ export default function WorldSelect({ worldsBattlesList, heroesList, localWallet
   <div className="WorldSelectContainer">
     {worldId == -1 &&
       <div className="WorldSelectArrowBackAndWorldsListContainer">
-        <div className="WorldSelectArrowBackContainer" >
+        <div className="ArrowBackContainer" >
           <img className="ArrowBack" src={ArrowBack} onClick={() => setShowWorldSelect(false)}/>
         </div>
         <div className="WorldsList">

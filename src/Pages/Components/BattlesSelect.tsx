@@ -75,7 +75,7 @@ function BattlesSelect ( {worldId, battlesList, heroesList, localWallet, setWorl
   <div className="BattlesSelectContainer">
     {!phaserRunning && !isLootPanelVisible && selectedBattleIndex == -1  &&
       <div className="BattlesSelectArrowBackAndBattlesListContainer">
-        <div className="BattleSelectArrowBackContainer" >
+        <div className="ArrowBackContainer" >
           <img className="ArrowBack" src={ArrowBack} onClick={() => setWorldId(-1)}/>
         </div>
         <div className="BattlesSelectList">

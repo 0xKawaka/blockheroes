@@ -23,7 +23,7 @@ export default class BattleEntityEnemy implements IBattleEntity {
   async playTurn(battle: Battle, startTurnEvent:StartTurnEvent, animationsHandler: AnimationsHandler): Promise<void> {
     console.log("Entity enemy ", this.getIndex(), ' playing')
     await this.battleEntity.playTurn(battle, startTurnEvent, animationsHandler)
-
+    console.log('health: ', this.getCurrentHealth())
     if(!this.battleEntity.isDead() && !this.battleEntity.isStunned()) {
       battle.processNextSkill(this.battleEntity.getIndex())
     }

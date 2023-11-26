@@ -1,9 +1,12 @@
+.SummonArrowBackContainer {
+  position: absolute;
+}
 .SummonsContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3rem;
+  gap: 2.5rem;
 }
 .SummonImageAndButton {
   display: flex;
@@ -22,6 +25,7 @@
 
 .summonResultName {
   font-family: RetroGaming;
+  font-size: 2.5rem;
 }
 
 .SummonButton {
@@ -29,16 +33,16 @@
   align-items: center;
   justify-content: center;
   padding: 1.1rem;
-  width: 14rem;
+  width: 19rem;
   border: 0.1rem;
   border-radius: 0.5rem;
   background-color: rgb(94, 45, 104);
-  font-size: 1.6rem;
+  font-size: 2.5rem;
   font-weight: bold;
   cursor: pointer;
   align-items: center;
 }
 
 .SummonImage {
-  height: 24rem;
+  height: 30rem;
 }

@@ -84,7 +84,7 @@ export default function RunePanel({runesList, heroesList, runeClicked, runeSpotC
         {sortedRuneListUnequipedDict[sortedName].map((rune) => {
           return (
             <div className="RuneMiniatureWrapper" key={rune.id} onClick={() => setRuneSelectedId(rune.id)}>
-              <RuneMiniature image={runesImgDict[rune.shape]} rank={rune.rank} imageWidth="6rem"/>
+              <RuneMiniature image={runesImgDict[rune.shape]} rank={rune.rank} imageWidth="7.5rem"/>
             </div>
           )
         })}

@@ -45,7 +45,7 @@ export default function Summons({localWallet, wallet, setShowSummons, handleNewH
 
   return(
     <div className="WorldSelectArrowBackAndSummonsContainer">
-      <div className="WorldSelectArrowBackContainer">
+      <div className="SummonArrowBackContainer">
         <img className="ArrowBack" src={ArrowBack} onClick={() => setShowSummons(false)} />
       </div>
       <div className="SummonsContainer">
@@ -70,7 +70,7 @@ export default function Summons({localWallet, wallet, setShowSummons, handleNewH
           <div className="summonResultContainer">
             {/* <div className="summonResultTitle">You summoned</div> */}
             <div className="summonResultName">{heroSummoned.name[0].toUpperCase() + heroSummoned.name.slice(1)}</div>
-            <HeroMiniature image={portraitsDict[heroSummoned.name]} rank={heroSummoned.rank} level={heroSummoned.level} imageWidth="9.4rem"/>
+            <HeroMiniature image={portraitsDict[heroSummoned.name]} rank={heroSummoned.rank} level={heroSummoned.level} imageWidth="11rem"/>
           </div>
         }
       </div>

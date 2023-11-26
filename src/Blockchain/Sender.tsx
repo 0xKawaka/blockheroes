@@ -35,6 +35,7 @@ export abstract class Sender {
         retryInterval: 200,
         successStates: [TransactionFinalityStatus.ACCEPTED_ON_L2],
       });
+      console.log(res.events)
       if(res.execution_status == "SUCCEEDED")
         return true;
       return false;
@@ -53,10 +54,15 @@ export abstract class Sender {
         retryInterval: 200,
         successStates: [TransactionFinalityStatus.ACCEPTED_ON_L2],
       });
-
-      if(res.events.length > 0){
+      if(process.env.REACT_APP_ENV == "PROD" && res.events.length > 1) {
         return { success: true, bonus: EventHandler.parseRuneBonusEvent(res.events[0])};
       }
+      else if(process.env.REACT_APP_ENV == "DEV" && res.events.length > 0) {
+        return { success: true, bonus: EventHandler.parseRuneBonusEvent(res.events[0])};
+      }
+      // if(res.events.length > 0) {
+      //   return { success: true, bonus: EventHandler.parseRuneBonusEvent(res.events[0])};
+      // }
       return { success: true, bonus: undefined };
     }
     catch(error: any){
