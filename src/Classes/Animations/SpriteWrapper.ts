@@ -8,7 +8,7 @@ export default class SpriteWrapper extends Phaser.GameObjects.Sprite {
     super(scene, x, y, name);
     scene.add.existing(this);
     this.target = null
-    this.setScale(scaleValue)
+    // this.setScale(scaleValue)
     this.setOrigin(0.5, 1)
 
     this.placeholder = scene.add.rectangle(x, y, this.displayWidth / upscale / 5, this.displayHeight / upscale / 2.5, 0x000000, 0)

@@ -4,7 +4,6 @@ import EntityFactory from "./Entity/EntityFactory";
 import Turnbar from "./Entity/Turnbar";
 import IBattleEntity from "./Entity/IBattleEntity";
 import AnimationsHandler from "./Animations/AnimationsHandler";
-import PositionScaler from "./Entity/PositionScaler";
 import BattleScene from "../Scenes/BattleScene";
 import { getSpriteSize } from "../GameDatas/Monsters/spriteSize";
 import Scaler from "./Camera/Scaler";
@@ -33,7 +32,6 @@ export default class Battle {
   eventHandler: GameEventHandler
   localWallet: Account
   animationsHandler: AnimationsHandler
-  positionScaler: PositionScaler
   scaler: Scaler
   zoomer: Zoomer
   positionner: Positionner
@@ -49,7 +47,6 @@ export default class Battle {
     this.hasSelectedTarget = false
     this.isTurnPlaying = false
     this.animationsHandler = new AnimationsHandler(this)
-    this.positionScaler = new PositionScaler()
   }
 
   setPositionner(positionner: Positionner){

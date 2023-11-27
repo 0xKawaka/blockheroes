@@ -14,6 +14,13 @@ export default class Zoomer {
         this.scaleFactor = scaleFactor
     }
 
+    moveMainCamera(mainCamera: Phaser.Cameras.Scene2D.Camera, scaleFactor: number){
+        const yOverflow = (this.backgroundBaseHeight * scaleFactor - this.screenHeight) / scaleFactor
+
+        mainCamera.scrollX = (-this.screenWidth + this.backgroundBaseWidth) / 2
+        mainCamera.scrollY = (-this.screenHeight + this.backgroundBaseHeight + yOverflow) / 2
+    }
+
     zoomAndMoveMainCamera(mainCamera: Phaser.Cameras.Scene2D.Camera){
         let screenWidthByBackgroundWidthRatio = this.screenWidth / (this.backgroundBaseWidth * this.scaleFactor)
         let screenHeightByBackgroundHeightRatio = this.screenHeight / (this.backgroundBaseHeight * this.scaleFactor)

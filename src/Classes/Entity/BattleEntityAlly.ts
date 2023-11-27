@@ -142,21 +142,23 @@ export default class BattleEntityAlly implements IBattleEntity {
 
   createSkills(battleScene: BattleScene): void {
     const skillBaseWidth = 30
-    // this.skillScale = battleScene.battle.positionScaler.computeScaleForWidthHeightRatio(skillBaseWidth, skillBaseWidth, battleScene.battle.positionScaler.spellIconsRatio.widthRatio, battleScene.battle.positionScaler.spellIconsRatio.heightRatio)
-    const skillwidthScaled = skillBaseWidth * this.skillScale
-    const skillGap = skillwidthScaled / 3
-    const totalSizeSkill = skillGap * 2 + skillwidthScaled * 3
-    // const xSkillBar = battleScene.sys.canvas.width / 2 - totalSizeSkill / 2
-    // const ySkillBar = battleScene.sys.canvas.height - battleScene.sys.canvas.height * 0.1
+    const skillGap = skillBaseWidth / 3
+    const totalSizeSkill = skillGap * 2 + skillBaseWidth * 3
+    // const skillwidthScaled = skillBaseWidth * this.skillScale
+    // const skillGap = skillwidthScaled / 3
+    // const totalSizeSkill = skillGap * 2 + skillwidthScaled * 3
+
     const xSkillBar = battleScene.battle.positionner.getSkillBarStartX(totalSizeSkill)
     const ySkillBar = battleScene.battle.positionner.getSkillBarStartY()
     this.battleEntity.getEntity().skillArray.forEach((skill, index) => {
       // this.createSkillImage(battleScene, skill.name, xSkillBar + skillwidthScaled * 0.5 + index * skillwidthScaled + index * skillGap, ySkillBar, skillwidthScaled)
       // this.createSkillTooltip(battleScene, skill, totalSizeSkill, xSkillBar, ySkillBar - skillwidthScaled * 0.5)
-      this.createSkillImage(battleScene, skill.name, xSkillBar + skillwidthScaled * 0.5 + index * skillwidthScaled + index * skillGap, ySkillBar)
+      // this.createSkillImage(battleScene, skill.name, xSkillBar + skillwidthScaled * 0.5 + index * skillwidthScaled + index * skillGap, ySkillBar)
+      this.createSkillImage(battleScene, skill.name, xSkillBar + skillBaseWidth * 0.5 + index * skillBaseWidth + index * skillGap, ySkillBar)
       // this.createSelectedImage()
     })
-    this.createCooldownRectangles(this.battleEntity.getEntity().skillArray, skillwidthScaled, battleScene)
+    // this.createCooldownRectangles(this.battleEntity.getEntity().skillArray, skillwidthScaled, battleScene)
+    this.createCooldownRectangles(this.battleEntity.getEntity().skillArray, skillBaseWidth, battleScene)
   }
 
   createCooldownRectangles(skillArray: Skill[], skillwidthScaled:number, battleScene: BattleScene): void {
@@ -171,7 +173,7 @@ export default class BattleEntityAlly implements IBattleEntity {
       const fontSize = battleScene.sys.canvas.height * 0.04
       // this.skillCooldownTextByName[skill.name] = battleScene.add.text(this.skillImageByName[skill.name].x, this.skillImageByName[skill.name].y, "0", {fontFamily: "Verdana", fontSize: fontSize.toString() + "px", color: "#FFFFFF"})
       this.skillCooldownTextByName[skill.name] = battleScene.add.bitmapText(this.skillImageByName[skill.name].x, this.skillImageByName[skill.name].y, 'RetroGaming10', '0');
-      this.skillCooldownTextByName[skill.name].setScale(this.skillScale)
+      // this.skillCooldownTextByName[skill.name].setScale(this.skillScale)
       this.skillCooldownTextByName[skill.name].setVisible(false)
       this.skillCooldownTextByName[skill.name].setOrigin(0.5, 0.5)
     })
@@ -182,7 +184,7 @@ export default class BattleEntityAlly implements IBattleEntity {
 
     this.skillImageByName[name] = battleScene.add.image(x, y, name)
     console.log("Skill scale : ", this.skillScale)
-    this.skillImageByName[name].setScale(this.skillScale)
+    // this.skillImageByName[name].setScale(this.skillScale)
     this.skillImageByName[name].setInteractive();
     this.skillImageByName[name].on("pointerover", () => { this.handlerHoverSkill(name, this.battleEntity.getIndex(), battleScene.battle.UIScene)})
     this.skillImageByName[name].on("pointerout", () => { this.handlerHoverOutSkill(name, this.battleEntity.getIndex(), battleScene.battle.UIScene)});
@@ -191,7 +193,7 @@ export default class BattleEntityAlly implements IBattleEntity {
     this.skillImageByName[name].setInteractive()
 
     this.skillSelectedImageByName[name] = battleScene.add.image(x, y, "skillSelected")
-    this.skillSelectedImageByName[name].setScale(this.skillScale)
+    // this.skillSelectedImageByName[name].setScale(this.skillScale)
     this.skillSelectedImageByName[name].setVisible(false)
   }
 

@@ -171,7 +171,7 @@ export default class AnimationsHandler {
   playSpellEffectOnEntity(entity: IBattleEntity, spellEffectName: string, scaleValue: number, frameRate: number){
     let spellEffect = this.battle.battleScene.add.sprite(entity.getSprite().x, entity.getSprite().y, spellEffectName);
     spellEffect.setOrigin(0.5, 1);
-    spellEffect.setScale(scaleValue)
+    // spellEffect.setScale(scaleValue)
     this.battle.battleScene.anims.create({
       key: spellEffectName + entity.getIndex(),
       frames: this.battle.battleScene.anims.generateFrameNumbers(spellEffectName),
@@ -197,7 +197,6 @@ export default class AnimationsHandler {
     let angle = Phaser.Math.Angle.Between(casterEntity.getSprite().getPlaceholderX(), casterEntity.getSprite().getPlaceholderY(), targetEntity.getSprite().getPlaceholderX(), targetEntity.getSprite().getPlaceholderY())
 
     let projectile = this.battle.battleScene.add.image(casterEntity.getSprite().getPlaceholderX(), casterEntity.getSprite().getCenterY(), "projectile_" + projectilesDict[animation + casterEntity.getName()].name)
-    projectile.setScale(this.battle.positionScaler.computeScaleForWidthHeightRatio(projectilesDict[animation + casterEntity.getName()].width, projectilesDict[animation + casterEntity.getName()].height, projectilesDict[animation + casterEntity.getName()].widthRatio, projectilesDict[animation + casterEntity.getName()].heightRatio));
     projectile.rotation = angle;
     
     this.battle.battleScene.physics.add.existing(projectile);

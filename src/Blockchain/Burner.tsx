@@ -9,7 +9,7 @@ import {
 } from "starknet";
 import Storage from "../Cookies/storage";
 import { ETHAdrs } from "../Blockchain/data/contracts";
-const PREFUND_AMOUNT = "0x8AC7230489E80000"; // 10ETH
+const PREFUND_AMOUNT = "0x2386F26FC10000"; // 10ETH
 
 const provider = new RpcProvider({
   nodeUrl: process.env.REACT_APP_RPC_ENDPOINT!,

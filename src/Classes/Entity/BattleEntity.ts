@@ -56,12 +56,10 @@ export default class BattleEntity implements IBattleEntity {
     this.stackableStatusDict = {}
     this.processDamageAndHealAnimsQueuePromiseArray = []
     this.currentHealth = Entity.statistics.health
-    // this.scaleValue = battleScene.battle.positionScaler.computeScaleForWidthHeightRatio(spriteWidth, spriteHeight, battleScene.battle.positionScaler.entityRatio.widthRatio, battleScene.battle.positionScaler.entityRatio.heightRatio)
     this.scaleValue = battleScene.battle.scaler.getEntitiesScaleFactor()
     this.buffStatusScale = battleScene.battle.scaler.getBuffStatusScaleFactor()
     this.textScaleValue = this.scaleValue
     this.upscale = upscale
-    // this.position = battleScene.battle.positionScaler.computePositionEntity(this.scaleValue, spriteWidth, spriteHeight, index, teamEntityCount, isAlly)
     this.position = battleScene.battle.positionner.getEntityPosition(index, alliesCount, enemiesCount, isAlly)
     // console.log("Position for entity ", index, " is ", this.position)
     this.sprite = this.createSprite(battleScene, animationIndexes)
@@ -100,7 +98,8 @@ export default class BattleEntity implements IBattleEntity {
     let textAnim = isCrit ? "CRIT " + (~~value).toString() : (~~value).toString()
     let distanceTravel = this.sprite.getHeight() / 1.57
     // new TextAnim(battleScene, distanceTravel, this.position.x, this.position.y - this.sprite.getHeight() / 2, textAnim, { font: fontSize + "px Sans-serif"}, 0xff0000)
-    new BitmapTextAnim(battleScene, distanceTravel, this.scaleValue, this.position.x, this.position.y - this.sprite.getHeight() / 7, textAnim, "Kenney", 0xff0000).setScale(this.textScaleValue)
+    // new BitmapTextAnim(battleScene, distanceTravel, this.scaleValue, this.position.x, this.position.y - this.sprite.getHeight() / 7, textAnim, "Kenney", 0xff0000).setScale(this.textScaleValue)
+    new BitmapTextAnim(battleScene, distanceTravel, this.scaleValue, this.position.x, this.position.y - this.sprite.getHeight() / 7, textAnim, "Kenney", 0xff0000)
   }
 
   playDamageAnimWithoutHurt(isCrit: boolean, value: number, battleScene: Phaser.Scene, animationHandler: AnimationsHandler): void {
@@ -108,14 +107,16 @@ export default class BattleEntity implements IBattleEntity {
     let textAnim = isCrit ? "CRIT " + (~~value).toString() : (~~value).toString()
     let distanceTravel = this.sprite.getHeight() / 1.57
     // new TextAnim(battleScene, distanceTravel, this.position.x, this.position.y - this.sprite.getHeight() / 2, textAnim, { font: fontSize + "px Sans-serif"}, 0xff0000)
-    new BitmapTextAnim(battleScene, distanceTravel, this.scaleValue, this.position.x, this.position.y - this.sprite.getHeight() / 7, textAnim, "Kenney", 0xff0000).setScale(this.textScaleValue)
+    // new BitmapTextAnim(battleScene, distanceTravel, this.scaleValue, this.position.x, this.position.y - this.sprite.getHeight() / 7, textAnim, "Kenney", 0xff0000).setScale(this.textScaleValue)
+    new BitmapTextAnim(battleScene, distanceTravel, this.scaleValue, this.position.x, this.position.y - this.sprite.getHeight() / 7, textAnim, "Kenney", 0xff0000)
   }
 
   playHealAnim(value: number, battleScene: Phaser.Scene): void {
     // let fontSize = Math.floor(this.sprite.getHeight() / 2.6);
     let distanceTravel = this.sprite.getHeight() / 1.57
     // new TextAnim(battleScene, distanceTravel, this.position.x, this.position.y - this.sprite.getHeight() / 2, (~~value).toString(), { font: fontSize + "px Sans-serif"}, 0x07f100)
-    new BitmapTextAnim(battleScene, distanceTravel, this.scaleValue, this.position.x, this.position.y - this.sprite.getHeight() / 7, (~~value).toString(), "Kenney", 0x07f100).setScale(this.textScaleValue)
+    // new BitmapTextAnim(battleScene, distanceTravel, this.scaleValue, this.position.x, this.position.y - this.sprite.getHeight() / 7, (~~value).toString(), "Kenney", 0x07f100).setScale(this.textScaleValue)
+    new BitmapTextAnim(battleScene, distanceTravel, this.scaleValue, this.position.x, this.position.y - this.sprite.getHeight() / 7, (~~value).toString(), "Kenney", 0x07f100)
   }
 
   applyDamageAndPlayAnim(isCrit: boolean, value: number, battleScene: Phaser.Scene, animationHandler: AnimationsHandler): void {
@@ -134,13 +135,10 @@ export default class BattleEntity implements IBattleEntity {
     if(buffs.length === 0 && status.length === 0)
       return;
 
-    // const scale = battleScene.battle.positionScaler.computeScaleBuffsAndStatus()
-    // const positions = battleScene.battle.positionScaler.computePositionBuffsAndStatus(this.healthBar.backgroundBar.bar.x, this.healthBar.backgroundBar.bar.y, this.healthBar.backgroundBar.width, this.healthBar.backgroundBar.height, buffs.length, status.length, scale)
     const scale = this.buffStatusScale
     // const positions = battleScene.battle.positionner.getBuffStatusPosition(this.healthBar.backgroundBar.bar.x, this.healthBar.backgroundBar.bar.y, this.healthBar.backgroundBar.width, this.healthBar.backgroundBar.height, buffs.length, status.length, scale)
     // const positions = battleScene.battle.positionner.getBuffStatusPosition(this.healthBar.getX(), this.healthBar.getY(), this.healthBar.getWidth(), this.healthBar.getHeight(), buffs.length, status.length, scale)
     const positions = battleScene.battle.positionner.getBuffStatusPosition(this.outlineBarHorizontal.bar.x, this.outlineBarVertical.bar.y, this.outlineBarHorizontal.width, this.outlineBarVertical.height, buffs.length, status.length, scale)
-
 
     for(let i = 0; i < buffs.length; i++) {
       if(buffsDebuffsStats.includes(buffs[i].name)) {
@@ -235,7 +233,6 @@ export default class BattleEntity implements IBattleEntity {
   }
 
   createSprite(battleScene: BattleScene, animationIndexes: {[key: string]:{start:number, end:number}}): SpriteWrapper {
-    // let {width, height} = battleScene.battle.positionScaler.computeWidthHeightPlaceholder()
     // let sprite = new SpriteWrapper(battleScene, this.position.x, this.position.y, this.Entity.name, this.scaleValue, this.index, width, height)
     let sprite = new SpriteWrapper(battleScene, this.position.x, this.position.y, this.Entity.name, this.scaleValue, this.upscale, this.index)
     
@@ -325,14 +322,15 @@ export default class BattleEntity implements IBattleEntity {
   //   this.healthBar = new ImgBar(battleScene, x, y - turnBarHeight * barScale, "lifeBar", barScale)
   // }
   createBars(battleScene: BattleScene): void {
-    let turnBarWidth = this.sprite.getWidth() * 0.9
+    let turnBarWidth = this.sprite.getWidth() * 0.85
     let turnbarHeight = this.sprite.getHeight() * 0.035
     let turnBarX = this.sprite.getPlaceholderX() - this.sprite.getWidth() * 0.9  / 2
     let turnBarY = this.sprite.getPlaceholderY() - this.sprite.getHeight() - turnbarHeight
 
-    const turnHealthGap = 2 * this.scaleValue
+    // const turnHealthGap = 2 * this.scaleValue
+    const turnHealthGap = 2
 
-    let healthWidth = this.sprite.getWidth() * 0.9
+    let healthWidth = this.sprite.getWidth() * 0.85
     let healthHeight = this.sprite.getHeight() * 0.115
     let healthX = this.sprite.getPlaceholderX() - this.sprite.getWidth() * 0.9 / 2
     let healthY = this.sprite.getPlaceholderY() - this.sprite.getHeight() - healthHeight - turnbarHeight - turnHealthGap

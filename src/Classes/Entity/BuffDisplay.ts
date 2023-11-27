@@ -1,23 +1,27 @@
+import BattleScene from "../../Scenes/BattleScene"
+
 export default class BuffDisplay {
   image: Phaser.GameObjects.Image
-  // durationText: Phaser.GameObjects.Text
-  durationText: Phaser.GameObjects.BitmapText
+  durationText: Phaser.GameObjects.Text
+  // durationText: Phaser.GameObjects.BitmapText
   scale: number
   textScale: number
   fontSize: number
 
-  constructor(imageName: string, battleScene: Phaser.Scene, scale:number, textScale:number, visible:boolean = false, position: {x:number, y:number} = {x:0, y:0}, duration: number = 0) {
+  constructor(imageName: string, battleScene: BattleScene, scale:number, textScale:number, visible:boolean = false, position: {x:number, y:number} = {x:0, y:0}, duration: number = 0) {
     this.scale = scale
     this.textScale = textScale
     this.image = battleScene.add.image(position.x, position.y, imageName)
-    this.image.setScale(scale)
+    // this.image.setScale(scale)
     this.image.setVisible(visible)
     this.image.setOrigin(1, 1)
-    this.fontSize = 8 * textScale
-    // this.durationText = battleScene.add.text(position.x, position.y, duration.toString(), { font: this.fontSize + "px kenney", color: "#e8e8e8" });
-    this.durationText = battleScene.add.bitmapText(position.x, position.y, "RetroGaming10", duration.toString())
-    console.log("this.textScale ", this.textScale)
-    this.durationText.setScale(this.textScale)
+    // this.fontSize = Math.round(8 * textScale)
+    this.fontSize = 7
+    this.durationText = battleScene.battle.UIScene.add.text(position.x, position.y, duration.toString(), { font: this.fontSize + "px kenney", color: "#e8e8e8" });
+    // this.durationText = battleScene.add.text(position.x, position.y, duration.toString(), { font: this.fontSize + "px Arial", color: "#e8e8e8" });
+    // this.durationText = battleScene.add.bitmapText(position.x, position.y, "RetroGaming10", duration.toString())
+    // console.log("this.textScale ", this.textScale)
+    // this.durationText.setScale(this.textScale)
     this.durationText.setOrigin(1, 1)
     this.durationText.setVisible(visible)
   }

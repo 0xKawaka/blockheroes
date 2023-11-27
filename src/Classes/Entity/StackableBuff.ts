@@ -1,3 +1,5 @@
+import BattleScene from "../../Scenes/BattleScene"
+import Battle from "../Battle"
 import BuffDisplay from "./BuffDisplay"
 
 export default class StackableBuff{
@@ -17,7 +19,7 @@ export default class StackableBuff{
     this.buffs = []
   }
 
-  createOrSetBuff(position:{x:number, y:number}, duration: number, battleScene: Phaser.Scene) {
+  createOrSetBuff(position:{x:number, y:number}, duration: number, battleScene: BattleScene) {
     for(let i= 0; i < this.visibleBuffs.length; i++){
       if(!this.visibleBuffs[i]){
         this.setExistingImage(i, position, duration)
@@ -26,7 +28,7 @@ export default class StackableBuff{
     }
     this.createImage(position, duration,  battleScene)
   }
-  createImage(position:{x:number, y:number}, duration: number, battleScene: Phaser.Scene){
+  createImage(position:{x:number, y:number}, duration: number, battleScene: BattleScene){
     this.visibleBuffs.push(true)
     this.buffs.push(new BuffDisplay("buff_" + this.name, battleScene, this.scale, this.textScale, true, position, duration))
 

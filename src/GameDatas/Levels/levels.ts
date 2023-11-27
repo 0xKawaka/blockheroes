@@ -18,10 +18,11 @@ const levels: { [key: string]: {[key: string]: any} } = {
 };
 
 function getLevelBackground(worldId: number, battleId: number, canvasWidth: number): string {
-  if(canvasWidth < 800){
-    return levels[worldId][battleId].background
-  }
-  return levels[worldId][battleId].background + "_640"
+  return levels[worldId][battleId].background
+//   if(canvasWidth < 800){
+//     return levels[worldId][battleId].background
+//   }
+//   return levels[worldId][battleId].background + "_640"
 }
 
 export {getLevelBackground};
