@@ -16,9 +16,10 @@ export default class SkillTooltip {
     this.rectangle.fillStyle(0x000000, 1);
     this.rectangle.setAlpha(0.7)
     this.rectangle.fillRoundedRect(x, y - height, width, height, 8);
+    // this.rectangle.fillRoundedRect(x, y, width, height, 8);
 
     const startTextY = y - height * 0.95
-    const fontSize = scene.sys.canvas.height * 0.021
+    const fontSize = scene.game.canvas.width * 0.0085
     this.cooldown = scene.add.text(x + width - width * 0.2, startTextY, skill.cooldown.toString() + " turns", {fontFamily: "RetroGaming", fontSize: fontSize.toString() + "px", color: "#FFFFFF"})
   
     this.titleText = scene.add.text(x + scene.sys.canvas.width * 0.01, startTextY, skill.name, {fontFamily: "RetroGaming", fontSize: (fontSize + fontSize * 0.08).toString()  + "px", color: "#FFFFFF", fontStyle: "bold"})

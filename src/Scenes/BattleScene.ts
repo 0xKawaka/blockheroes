@@ -38,8 +38,13 @@ export default class BattleScene extends Phaser.Scene {
     this.battle.setScaler(new Scaler(this.sys.canvas.width))
     this.battle.setZoomer(new Zoomer(this.sys.canvas.width, this.sys.canvas.height, backgroundWidth, backgroundHeight, this.battle.scaler.getScaleFactor()))
     this.battle.setPositionner(new Positionner(backgroundWidth * this.battle.scaler.getScaleFactor(), backgroundHeight * this.battle.scaler.getScaleFactor(), backgroundWidth, backgroundHeight))
-
     this.battle.setBattleScene(this)
+
+    this.cameras.main.setZoom(this.battle.scaler.getScaleFactor())
+    this.battle.zoomer.moveMainCamera(this.cameras.main, this.battle.scaler.getScaleFactor())
+    // @ts-ignore
+    this.cameras.main.preRender()
+
     let selectedTeam = this.registry.get('selectedTeam')
     let enemiesTeam = this.registry.get('enemiesTeam')
     this.battle.setGameEventHandler(this.registry.get('eventHandler'))
@@ -48,12 +53,6 @@ export default class BattleScene extends Phaser.Scene {
     this.playMusic()
 
     let backgroundImg = this.add.image(0, 0, 'background').setOrigin(0, 0)
-
-    // this.battle.scaler.scaleBackground(backgroundImg)
-    // this.battle.zoomer.zoomAndMoveMainCamera(this.cameras.main)
-    this.cameras.main.setZoom(this.battle.scaler.getScaleFactor())
-    this.battle.zoomer.moveMainCamera(this.cameras.main, this.battle.scaler.getScaleFactor())
-    this.battle.zoomer.moveMainCamera(this.battle.UIScene.cameras.main, this.battle.scaler.getScaleFactor())
     
     this.createEntities(selectedTeam, enemiesTeam);
 

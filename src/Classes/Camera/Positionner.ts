@@ -7,10 +7,10 @@ export default class Positionner {
   buffStatusSize: number = 12
 
   entitiesPositionsByTeamSize: { [key: number]: Array<{x: number, y: number}> } = {
-    1: [{x: 0.23, y: 0.82}],
-    2: [{x: 0.17, y: 0.7}, {x: 0.17, y: 0.9}],
-    3: [{x: 0.29, y: 0.7}, {x: 0.17, y: 0.84}, {x: 0.29, y: 0.97}],
-    4: [{x: 0.29, y: 0.7}, {x: 0.17, y: 0.73}, {x: 0.17, y: 0.94}, {x: 0.29, y: 0.97}],
+    1: [{x: 0.23, y: 0.77}],
+    2: [{x: 0.25, y: 0.7}, {x: 0.25, y: 0.9}],
+    3: [{x: 0.29, y: 0.67}, {x: 0.17, y: 0.81}, {x: 0.29, y: 0.94}],
+    4: [{x: 0.29, y: 0.67}, {x: 0.17, y: 0.7}, {x: 0.17, y: 0.91}, {x: 0.29, y: 0.94}],
   }
 
 
@@ -51,7 +51,7 @@ export default class Positionner {
   }
 
 
-  getBuffStatusPosition(healthBarX: number, healthBarY: number, healthBarWidth:number, healthBarHeight: number, buffsCount:number, statusCount:number, scale:number): Array<{x: number, y: number}> {
+  getBuffStatusPosition(camera: Phaser.Cameras.Scene2D.Camera, healthBarX: number, healthBarY: number, healthBarWidth:number, healthBarHeight: number, buffsCount:number, statusCount:number, scale:number): Array<{image: {x: number, y: number}, text: {x: number, y: number}}> {
     // const realWidth = this.buffStatusSize * scale
     // const realHeight = this.buffStatusSize * scale
     const buffsPerRow = Math.floor(healthBarWidth / this.buffStatusSize)
@@ -61,7 +61,10 @@ export default class Positionner {
       const x = healthBarX + (((i % buffsPerRow) + 1) * this.buffStatusSize)
       // const y = healthBarY + Math.floor(i / buffsPerRow) * (realHeight + this.buffStatusGapRatio * this.canvasHeight)
       const y = healthBarY - Math.floor(i / buffsPerRow) * this.buffStatusSize
-      positionArray.push({x, y})
+      const textX = (x - camera.worldView.x) * camera.zoom
+      const textY = (y - camera.worldView.y) * camera.zoom    
+
+      positionArray.push({image: {x, y}, text: {x: textX, y: textY}})
     }
     return positionArray
   }

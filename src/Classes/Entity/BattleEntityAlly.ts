@@ -131,33 +131,21 @@ export default class BattleEntityAlly implements IBattleEntity {
     return this.battleEntity.isDead()
   }
 
-  // createSelectedBar(battleScene: BattleScene) {
-  //   let width = this.battleEntity.getSprite().getWidth() / 1.7
-  //   let height = this.battleEntity.getSprite().getHeight() / 12
-  //   let x = this.battleEntity.getSprite().getPlaceholderX() - width / 2
-  //   let y = this.battleEntity.getSprite().getPlaceholderY()
-  //   this.selectedBar = new BarHandler(battleScene, x, y, 0xffdda3, width, height)
-  //   this.selectedBar.hideBar()
-  // }
-
   createSkills(battleScene: BattleScene): void {
     const skillBaseWidth = 30
     const skillGap = skillBaseWidth / 3
     const totalSizeSkill = skillGap * 2 + skillBaseWidth * 3
-    // const skillwidthScaled = skillBaseWidth * this.skillScale
-    // const skillGap = skillwidthScaled / 3
-    // const totalSizeSkill = skillGap * 2 + skillwidthScaled * 3
 
     const xSkillBar = battleScene.battle.positionner.getSkillBarStartX(totalSizeSkill)
     const ySkillBar = battleScene.battle.positionner.getSkillBarStartY()
     this.battleEntity.getEntity().skillArray.forEach((skill, index) => {
-      // this.createSkillImage(battleScene, skill.name, xSkillBar + skillwidthScaled * 0.5 + index * skillwidthScaled + index * skillGap, ySkillBar, skillwidthScaled)
-      // this.createSkillTooltip(battleScene, skill, totalSizeSkill, xSkillBar, ySkillBar - skillwidthScaled * 0.5)
-      // this.createSkillImage(battleScene, skill.name, xSkillBar + skillwidthScaled * 0.5 + index * skillwidthScaled + index * skillGap, ySkillBar)
+      let position = {x: 0, y: 0}
+      position.x = ((xSkillBar - totalSizeSkill / 4) - battleScene.cameras.main.worldView.x) * battleScene.cameras.main.zoom
+      position.y = (ySkillBar - (skillBaseWidth * 0.5 + battleScene.cameras.main.worldView.y)) * battleScene.cameras.main.zoom
+      battleScene.battle.UIScene.createSkillTooltip(skill, this.battleEntity.getIndex(), totalSizeSkill * this.skillScale * 1.5, position)
+
       this.createSkillImage(battleScene, skill.name, xSkillBar + skillBaseWidth * 0.5 + index * skillBaseWidth + index * skillGap, ySkillBar)
-      // this.createSelectedImage()
     })
-    // this.createCooldownRectangles(this.battleEntity.getEntity().skillArray, skillwidthScaled, battleScene)
     this.createCooldownRectangles(this.battleEntity.getEntity().skillArray, skillBaseWidth, battleScene)
   }
 
@@ -183,7 +171,6 @@ export default class BattleEntityAlly implements IBattleEntity {
     this.skillHoveredByName[name] = false
 
     this.skillImageByName[name] = battleScene.add.image(x, y, name)
-    console.log("Skill scale : ", this.skillScale)
     // this.skillImageByName[name].setScale(this.skillScale)
     this.skillImageByName[name].setInteractive();
     this.skillImageByName[name].on("pointerover", () => { this.handlerHoverSkill(name, this.battleEntity.getIndex(), battleScene.battle.UIScene)})
@@ -191,6 +178,7 @@ export default class BattleEntityAlly implements IBattleEntity {
     this.skillImageByName[name].setName("skill_" + name + "_" + this.battleEntity.getIndex().toString())
     this.skillImageByName[name].setVisible(false)
     this.skillImageByName[name].setInteractive()
+    console.log("this.skillImageByName[name]  y : ", this.skillImageByName[name].y)
 
     this.skillSelectedImageByName[name] = battleScene.add.image(x, y, "skillSelected")
     // this.skillSelectedImageByName[name].setScale(this.skillScale)

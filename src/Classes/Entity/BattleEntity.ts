@@ -138,7 +138,7 @@ export default class BattleEntity implements IBattleEntity {
     const scale = this.buffStatusScale
     // const positions = battleScene.battle.positionner.getBuffStatusPosition(this.healthBar.backgroundBar.bar.x, this.healthBar.backgroundBar.bar.y, this.healthBar.backgroundBar.width, this.healthBar.backgroundBar.height, buffs.length, status.length, scale)
     // const positions = battleScene.battle.positionner.getBuffStatusPosition(this.healthBar.getX(), this.healthBar.getY(), this.healthBar.getWidth(), this.healthBar.getHeight(), buffs.length, status.length, scale)
-    const positions = battleScene.battle.positionner.getBuffStatusPosition(this.outlineBarHorizontal.bar.x, this.outlineBarVertical.bar.y, this.outlineBarHorizontal.width, this.outlineBarVertical.height, buffs.length, status.length, scale)
+    const positions = battleScene.battle.positionner.getBuffStatusPosition(battleScene.cameras.main, this.outlineBarHorizontal.bar.x, this.outlineBarVertical.bar.y, this.outlineBarHorizontal.width, this.outlineBarVertical.height, buffs.length, status.length, scale)
 
     for(let i = 0; i < buffs.length; i++) {
       if(buffsDebuffsStats.includes(buffs[i].name)) {
@@ -166,11 +166,13 @@ export default class BattleEntity implements IBattleEntity {
     if(this.isDead())
       this.resetBuffsAndStatus()
   }
-  displayBuff(buff: BuffDisplay, position:{x:number, y:number}, duration: number, battleScene: BattleScene): void {
+  displayBuff(buff: BuffDisplay, position:{image: {x: number, y: number}, text: {x: number, y: number}}, duration: number, battleScene: BattleScene): void {
     buff.setDurationText(duration)
     buff.setVisible(true)
-    buff.setX(position.x)
-    buff.setY(position.y)
+    buff.setXImage(position.image.x)
+    buff.setYImage(position.image.y)
+    buff.setXText(position.text.x)
+    buff.setYText(position.text.y)
   }
   resetBuffsAndStatus(): void {
     for(let key in this.buffsByName) {

@@ -19,7 +19,7 @@ export default class StackableBuff{
     this.buffs = []
   }
 
-  createOrSetBuff(position:{x:number, y:number}, duration: number, battleScene: BattleScene) {
+  createOrSetBuff(position:{image: {x: number, y: number}, text: {x: number, y: number}}, duration: number, battleScene: BattleScene) {
     for(let i= 0; i < this.visibleBuffs.length; i++){
       if(!this.visibleBuffs[i]){
         this.setExistingImage(i, position, duration)
@@ -28,14 +28,16 @@ export default class StackableBuff{
     }
     this.createImage(position, duration,  battleScene)
   }
-  createImage(position:{x:number, y:number}, duration: number, battleScene: BattleScene){
+  createImage(position:{image: {x: number, y: number}, text: {x: number, y: number}}, duration: number, battleScene: BattleScene){
     this.visibleBuffs.push(true)
     this.buffs.push(new BuffDisplay("buff_" + this.name, battleScene, this.scale, this.textScale, true, position, duration))
 
   }
-  setExistingImage(index:number, position:{x:number, y:number}, duration: number) {
-    this.buffs[index].setX(position.x)
-    this.buffs[index].setY(position.y)
+  setExistingImage(index:number, position:{image: {x: number, y: number}, text: {x: number, y: number}}, duration: number) {
+    this.buffs[index].setXImage(position.image.x)
+    this.buffs[index].setYImage(position.image.y)
+    this.buffs[index].setXText(position.text.x)
+    this.buffs[index].setYText(position.text.y)
     this.buffs[index].setDurationText(duration)
     this.visibleBuffs[index] = true
     this.buffs[index].setVisible(true)

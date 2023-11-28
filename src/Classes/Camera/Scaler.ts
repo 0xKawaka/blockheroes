@@ -20,12 +20,13 @@ export default class Scaler {
         if(screenByBackgroundRatio > 1){
             return Math.trunc(screenByBackgroundRatio) + 1
         }
-        else {
-            if(screenByBackgroundRatio < 0.5){
-                return 1 / (Math.trunc(this.backgroundBaseWidth / this.canvasWidth) + 1)
-            }
-            return 1
-        }
+        return 1
+        // else {
+        //     if(screenByBackgroundRatio < 0.5){
+        //         return 1 / (Math.trunc(this.backgroundBaseWidth / this.canvasWidth) + 1)
+        //     }
+        //     return 1
+        // }
     }
 
     getBuffStatusScaleFactor(): number{
