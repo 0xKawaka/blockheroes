@@ -62,7 +62,7 @@ export default abstract class Burner {
     );
     // console.log("address: ", publicKey);
 
-    await prefundAccount(address, admin);
+    // await prefundAccount(address, admin);
 
     // deploy burner
     const burner = new Account(provider, address, privateKey);

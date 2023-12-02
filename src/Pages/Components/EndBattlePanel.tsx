@@ -1,24 +1,31 @@
+import GameEventHandler from "../../Blockchain/event/GameEventHandler"
+import { HeroInfos } from "../../Types/apiTypes"
+import StateChangesHandler from "../State/StateChangesHandler"
 import "./EndBattlePanel.css"
+import ExperiencePanel from "./ExperiencePanel"
 import LootItem from "./LootItem"
 
 type EndBattlePanelProps = {
   title:string,
-  lootItems?: Array<{name:string, amount:number, image:string}>
+  heroesList: Array<HeroInfos>,
+  eventHandler: GameEventHandler,
   setWinOrLose: React.Dispatch<React.SetStateAction<string>>,
   setIsLootPanelVisible: React.Dispatch<React.SetStateAction<boolean>>,
-  setIsBattleRunning: React.Dispatch<React.SetStateAction<boolean>>
+  stateChangesHandler: StateChangesHandler
 }
 
 const imagesByItemName: {[key: string]: string} = {
   "Emblem": require("../../assets/lootItems/emblem.png"),
 }
 
-export default function EndBattlePanel({title, lootItems, setWinOrLose, setIsLootPanelVisible, setIsBattleRunning}: EndBattlePanelProps) {
+export default function EndBattlePanel({title, eventHandler, heroesList, setWinOrLose, setIsLootPanelVisible, stateChangesHandler}: EndBattlePanelProps) {
+
+  const heroesBeforeExperienceGained = heroesList.filter(hero => eventHandler.getExperienceGainEventArray().some(event => event.entityId === hero.id))
 
   function handleContinue() {
     setWinOrLose("")
     setIsLootPanelVisible(false)
-    setIsBattleRunning(false)
+    stateChangesHandler.setIsBattleRunning(false)
   }
 
   return(
@@ -27,7 +34,11 @@ export default function EndBattlePanel({title, lootItems, setWinOrLose, setIsLoo
     <div className="EndBattlePanelTitleDefeat">{title.toUpperCase()}</div>
     }
     {title === "Victory" && 
-    <div className="EndBattlePanelTitleVictory">{title.toUpperCase()}</div>
+    <div className="EndBattlePanelVictoryContainer">
+      <div className="EndBattlePanelTitleVictory">{title.toUpperCase()}</div>
+      <ExperiencePanel heroesList={heroesList} eventHandler={eventHandler} heroesBeforeExperienceGained={heroesBeforeExperienceGained} />
+    </div>
+  
     }
     {/* {lootItems && lootItems.length > 0 &&
       <div className="EndBattlePanelLootContainer">

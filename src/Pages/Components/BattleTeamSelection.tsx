@@ -1,9 +1,9 @@
 import "./BattleTeamSelection.css"
 import HeroMiniature from "./HeroMiniature"
 import portraitsDict from "../../assets/portraits/portraitsDict"
-import energy from "../../assets/icons/energy.png"
+import energyImg from "../../assets/icons/energy.png"
 import { useState, useEffect } from "react"
-import { HeroInfos } from "../../Types/apiTypes"
+import { GameAccount, HeroInfos } from "../../Types/apiTypes"
 import HeroesList from "./HeroesList"
 import ApiHandler from "../../Classes/IO/ApiHandler"
 import Skill from "../../Classes/Skill/Skill"
@@ -12,9 +12,13 @@ import SkillsHandler from "../../Classes/IO/SkillsHandler"
 import { Sender } from "../../Blockchain/Sender"
 import { Account } from "starknet"
 import GameEventHandler from "../../Blockchain/event/GameEventHandler"
+import StateChangesHandler from "../State/StateChangesHandler"
+import { Getter } from "../../Blockchain/Getter"
+import EnergyHandler from "../Classes/EnergyHandler"
 
 
 type BattleTeamSelectionProps = {
+  energy: number,
   worldId:number,
   battleId:number,
   enemiesNames: string[],
@@ -27,12 +31,12 @@ type BattleTeamSelectionProps = {
   eventHandler: GameEventHandler
   setSelectedHeroesIds: React.Dispatch<React.SetStateAction<number[]>>
   setPhaserRunning: React.Dispatch<React.SetStateAction<boolean>>
+  stateChangesHandler: StateChangesHandler
 }
 
-export default function BattleTeamSelection({worldId, battleId, enemiesNames, enemiesLevels, energyCost, heroesList, selectedHeroesIds, localWallet, eventHandler, setSelectedHeroesIds, setPhaserRunning }: BattleTeamSelectionProps) {
+export default function BattleTeamSelection({energy, worldId, battleId, enemiesNames, enemiesLevels, energyCost, heroesList, selectedHeroesIds, localWallet, eventHandler, setSelectedHeroesIds, setPhaserRunning, stateChangesHandler }: BattleTeamSelectionProps) {
   const [isStartingBattle, setIsStartingBattle] =  useState<boolean>(false)
   const notSelectedHeroesList = heroesList.filter(hero => !selectedHeroesIds.includes(hero.id))
-
 
   function handleHeroClick(heroId: number) {
     if(selectedHeroesIds.includes(heroId)){
@@ -47,10 +51,22 @@ export default function BattleTeamSelection({worldId, battleId, enemiesNames, en
       console.log("Can't start battle without heroes")
       return;
     }
+    if(energy < energyCost){
+      console.log("Not enough energy")
+      return;
+    }
     setIsStartingBattle(true)
-    await Sender.startBattle(localWallet, selectedHeroesIds, worldId, battleId, eventHandler);
-    setIsStartingBattle(false)
-    setPhaserRunning(true)
+    const isBattleStarted = await Sender.startBattle(localWallet, selectedHeroesIds, worldId, battleId, eventHandler);
+    if(isBattleStarted) {
+      setIsStartingBattle(false)
+      setPhaserRunning(true)
+      const energyInfos = await Getter.getEnergyInfos(localWallet);
+      console.log("energyInfos: ", energyInfos)
+      stateChangesHandler.updateEnergyHandler(energyInfos.energy, energyInfos.lastEnergyUpdateTimestamp)
+    }
+    else {
+      setIsStartingBattle(false)
+    }
   }
 
   return(
@@ -87,10 +103,14 @@ export default function BattleTeamSelection({worldId, battleId, enemiesNames, en
       </div>
       {!isStartingBattle && 
       <div className="BattleTeamSelectionPlayButton" onClick={handlePlayClick}>
-        <div className="BattleTeamSelectionPlayButtonText">Play</div>
+        {energy < energyCost ?
+          <div className="BattleTeamSelectionPlayButtonNotEnoughEnergyText">Not enough energy</div>
+          :
+          <div className="BattleTeamSelectionPlayButtonText">Play</div>
+        }
         <div className="BattleTeamSelectionEnergyCostValueIconContainer">
           <div className="BattleTeamSelectionEnergyCostValue">{energyCost}</div>
-          <img className="BattleTeamSelectionEnergyCostIcon" src={energy} />
+          <img className="BattleTeamSelectionEnergyCostIcon" src={energyImg} />
         </div>
       </div>
       }

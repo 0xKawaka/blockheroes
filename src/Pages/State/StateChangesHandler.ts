@@ -1,17 +1,38 @@
 import { RuneBonusEvent } from "../../Blockchain/event/eventTypes"
 import { HeroesFactory } from "../../Classes/Heroes/HeroesFactory"
 import RuneFactory from "../../Classes/Runes/RuneFactory"
-import { HeroInfos, RuneInfos, RuneStatsDict } from "../../Types/apiTypes"
+import { GameAccount, HeroInfos, RuneInfos, RuneStatsDict } from "../../Types/apiTypes"
+import EnergyHandler from "../Classes/EnergyHandler"
+
 
 export default class StateChangesHandler {
+  energyHandler: EnergyHandler
   runeStatsDict: RuneStatsDict
   setHeroesList: React.Dispatch<React.SetStateAction<HeroInfos[]>>
   setRunesList: React.Dispatch<React.SetStateAction<RuneInfos[]>>
+  setGameAccount: React.Dispatch<React.SetStateAction<GameAccount>>
+  setShowMyHeroes: React.Dispatch<React.SetStateAction<boolean>>
+  setShowWorldSelect: React.Dispatch<React.SetStateAction<boolean>>
+  setIsBattleRunning: React.Dispatch<React.SetStateAction<boolean>>
 
 
-  constructor(setHeroesList: React.Dispatch<React.SetStateAction<HeroInfos[]>>, setRunesList: React.Dispatch<React.SetStateAction<RuneInfos[]>>) {
+  constructor(setHeroesList: React.Dispatch<React.SetStateAction<HeroInfos[]>>, setRunesList: React.Dispatch<React.SetStateAction<RuneInfos[]>>, setGameAccount: React.Dispatch<React.SetStateAction<GameAccount>>, setShowMyHeroes: React.Dispatch<React.SetStateAction<boolean>>, setShowWorldSelect: React.Dispatch<React.SetStateAction<boolean>>, setIsBattleRunning: React.Dispatch<React.SetStateAction<boolean>>) {
     this.setHeroesList = setHeroesList
     this.setRunesList = setRunesList
+    this.setGameAccount = setGameAccount
+    this.setShowMyHeroes = setShowMyHeroes
+    this.setShowWorldSelect = setShowWorldSelect
+    this.setIsBattleRunning = setIsBattleRunning
+  }
+
+  setEnergyHandler(energyHandler: EnergyHandler) {
+    this.energyHandler = energyHandler
+  }
+
+  async updateEnergyHandler(energy: number, lastEnergyUpdateTimestamp: number) {
+    this.energyHandler.updateEnergy(energy, lastEnergyUpdateTimestamp)
+    // console.log("energyHandler energy : ", energyHandler.getEnergy())
+    // this.setEnergyHandler(energyHandler)
   }
 
   updateRuneUpgrade(rune: RuneInfos, bonus: RuneBonusEvent | undefined, runesList: Array<RuneInfos>, heroesList: Array<HeroInfos>) {

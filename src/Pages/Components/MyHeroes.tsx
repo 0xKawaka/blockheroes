@@ -12,7 +12,6 @@ type MyHeroesProps = {
   heroesList: Array<HeroInfos>
   runesList: Array<RuneInfos>
   localWallet: Account
-  setShowMyHeroes: React.Dispatch<React.SetStateAction<boolean>>
   stateChangesHandler: StateChangesHandler
 }
 
@@ -26,7 +25,7 @@ function getHeroById(heroId:number, heroesList:Array<HeroInfos>){
 }
 
 
-function MyHeroes ( {heroesList, runesList, localWallet, setShowMyHeroes, stateChangesHandler } : MyHeroesProps) {
+function MyHeroes ( {heroesList, runesList, localWallet, stateChangesHandler } : MyHeroesProps) {
   const [showingHero, setShowingHero] = useState<boolean>(false)
   const [heroId, setHeroId] = useState<number>(-1)
   const [showingRunes, setShowingRunes] = useState<boolean>(false)
@@ -63,7 +62,7 @@ function MyHeroes ( {heroesList, runesList, localWallet, setShowMyHeroes, stateC
     {!showingHero && !showingRunes &&
       <div className="myHeroesMenuAndHeroesListContainer">
         <div className="ArrowBackContainer" >
-          <img className="ArrowBack" src={ArrowBack} onClick={() => setShowMyHeroes(false)}/>
+          <img className="ArrowBack" src={ArrowBack} onClick={() => stateChangesHandler.setShowMyHeroes(false)}/>
         </div>
         <HeroesList heroesList={heroesList} handleHeroClick={handleHeroClick} heroesWidth="8.8rem"></HeroesList>
       </div>

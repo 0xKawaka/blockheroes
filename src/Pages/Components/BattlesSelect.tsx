@@ -1,4 +1,4 @@
-import { BattleInfos, HeroInfos, HeroStats, HeroesStatsDict, RunesList } from "../../Types/apiTypes"
+import { BattleInfos, GameAccount, HeroInfos, HeroStats, HeroesStatsDict, RunesList } from "../../Types/apiTypes"
 import BattleOverview from "./BattleOverview"
 import './BattlesSelect.css'
 import { useEffect, useState } from "react"
@@ -11,14 +11,17 @@ import Skill from "../../Classes/Skill/Skill"
 import EndBattlePanel from "./EndBattlePanel"
 import { Account } from "starknet"
 import GameEventHandler from "../../Blockchain/event/GameEventHandler"
+import StateChangesHandler from "../State/StateChangesHandler"
+import EnergyHandler from "../Classes/EnergyHandler"
 
 type BattleSelectProps = {
+  energy: number
   worldId: number
   battlesList: Array<BattleInfos>
   heroesList: Array<HeroInfos>
   localWallet: Account
   setWorldId: React.Dispatch<React.SetStateAction<number>>
-  setIsBattleRunning: React.Dispatch<React.SetStateAction<boolean>>
+  stateChangesHandler: StateChangesHandler
 }
 
 function computeTotalStats(baseeStats: HeroStats, bonusStats: HeroStats): HeroStats {
@@ -32,7 +35,7 @@ function computeTotalStats(baseeStats: HeroStats, bonusStats: HeroStats): HeroSt
   }
 }
 
-function BattlesSelect ( {worldId, battlesList, heroesList, localWallet, setWorldId, setIsBattleRunning} : BattleSelectProps) {
+function BattlesSelect ({energy, worldId, battlesList, heroesList, localWallet, setWorldId, stateChangesHandler} : BattleSelectProps) {
   const [selectedBattleIndex, setSelectedBattleIndex] = useState<number>(-1)
   const [selectedHeroesIds, setSelectedHeroesIds] = useState<number[]>([])
   const [phaserRunning , setPhaserRunning] = useState<boolean>(false)
@@ -92,19 +95,19 @@ function BattlesSelect ( {worldId, battlesList, heroesList, localWallet, setWorl
     {!phaserRunning && !isLootPanelVisible && selectedBattleIndex !== -1 &&
       <div className="BattleTeamSelectionAndArrowBackContainer">
         <img className="ArrowBack" src={ArrowBack} onClick={() => setSelectedBattleIndex(-1)}/>
-        <BattleTeamSelection worldId={worldId} battleId={selectedBattleIndex} enemiesNames={battlesList[selectedBattleIndex].enemies.map((enemy) => {return enemy.name})} enemiesLevels={battlesList[selectedBattleIndex].enemies.map((enemy) => {return enemy.level})} energyCost={battlesList[selectedBattleIndex].energyCost} heroesList={heroesList} selectedHeroesIds={selectedHeroesIds} localWallet={localWallet} eventHandler={eventHandler!} setSelectedHeroesIds={setSelectedHeroesIds} setPhaserRunning={setPhaserRunning} />
+        <BattleTeamSelection energy={energy} worldId={worldId} battleId={selectedBattleIndex} enemiesNames={battlesList[selectedBattleIndex].enemies.map((enemy) => {return enemy.name})} enemiesLevels={battlesList[selectedBattleIndex].enemies.map((enemy) => {return enemy.level})} energyCost={battlesList[selectedBattleIndex].energyCost} heroesList={heroesList} selectedHeroesIds={selectedHeroesIds} localWallet={localWallet} eventHandler={eventHandler!} setSelectedHeroesIds={setSelectedHeroesIds} setPhaserRunning={setPhaserRunning} stateChangesHandler={stateChangesHandler}/>
       </div>
     }
     {phaserRunning &&
-      <BattlePage worldId={worldId} battleId={selectedBattleIndex} selectedTeam={getSelectedTeam(selectedHeroesIds)} selectedHeroesIds={selectedHeroesIds} enemiesTeam={getEnemiesTeam(selectedBattleIndex)} eventHandler={eventHandler!} localWallet={localWallet} setPhaserRunning={setPhaserRunning} setIsBattleRunning={setIsBattleRunning} setIsLootPanelVisible={setIsLootPanelVisible} setWinOrLose={setWinOrLose}  />
+      <BattlePage worldId={worldId} battleId={selectedBattleIndex} selectedTeam={getSelectedTeam(selectedHeroesIds)} selectedHeroesIds={selectedHeroesIds} enemiesTeam={getEnemiesTeam(selectedBattleIndex)} eventHandler={eventHandler!} localWallet={localWallet} setPhaserRunning={setPhaserRunning} stateChangesHandler={stateChangesHandler} setIsLootPanelVisible={setIsLootPanelVisible} setWinOrLose={setWinOrLose}  />
     }
     {!phaserRunning && isLootPanelVisible &&
       <div className="OutOfBattleContainer">
         {winOrLose === "Defeat" &&
-          <EndBattlePanel title={winOrLose} setWinOrLose={setWinOrLose} setIsLootPanelVisible={setIsLootPanelVisible} setIsBattleRunning={setIsBattleRunning} />          
+          <EndBattlePanel title={winOrLose} heroesList={heroesList} eventHandler={eventHandler!} setWinOrLose={setWinOrLose} setIsLootPanelVisible={setIsLootPanelVisible} stateChangesHandler={stateChangesHandler} />          
         }
         {winOrLose === "Victory" &&
-          <EndBattlePanel title={winOrLose} lootItems={[{name:"Explorer's emblem", amount:1, image:"Emblem"}]} setWinOrLose={setWinOrLose} setIsLootPanelVisible={setIsLootPanelVisible} setIsBattleRunning={setIsBattleRunning} />
+          <EndBattlePanel title={winOrLose} heroesList={heroesList} eventHandler={eventHandler!} setWinOrLose={setWinOrLose} setIsLootPanelVisible={setIsLootPanelVisible} stateChangesHandler={stateChangesHandler} />
           // {name:"Contributor's emblem", amount:1, image:"Emblem"}    
         }
       </div>

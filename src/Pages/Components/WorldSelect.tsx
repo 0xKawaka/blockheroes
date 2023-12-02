@@ -1,20 +1,22 @@
-import { HeroInfos, HeroesStatsDict, RunesList, BattlesInfosDict } from "../../Types/apiTypes"
+import { HeroInfos, HeroesStatsDict, RunesList, BattlesInfosDict, GameAccount } from "../../Types/apiTypes"
 import "./WorldSelect.css"
 import ArrowBack from "../../assets/misc/arrowback.png"
 import { useState } from "react"
 import BattlesSelect from "./BattlesSelect"
 import { Account } from "starknet"
+import StateChangesHandler from "../State/StateChangesHandler"
+import EnergyHandler from "../Classes/EnergyHandler"
 
 
 type WorldSelectProps = {
+  energy: number
   worldsBattlesList: BattlesInfosDict
   heroesList: Array<HeroInfos>
   localWallet: Account
-  setShowWorldSelect: React.Dispatch<React.SetStateAction<boolean>>
-  setIsBattleRunning: React.Dispatch<React.SetStateAction<boolean>>
+  stateChangesHandler: StateChangesHandler
 }
 
-export default function WorldSelect({ worldsBattlesList, heroesList, localWallet, setShowWorldSelect, setIsBattleRunning }: WorldSelectProps) {
+export default function WorldSelect({ energy, worldsBattlesList, heroesList, localWallet, stateChangesHandler }: WorldSelectProps) {
 
   const [worldId, setWorldId] = useState<number>(-1)
 
@@ -23,7 +25,7 @@ export default function WorldSelect({ worldsBattlesList, heroesList, localWallet
     {worldId == -1 &&
       <div className="WorldSelectArrowBackAndWorldsListContainer">
         <div className="ArrowBackContainer" >
-          <img className="ArrowBack" src={ArrowBack} onClick={() => setShowWorldSelect(false)}/>
+          <img className="ArrowBack" src={ArrowBack} onClick={() => stateChangesHandler.setShowWorldSelect(false)}/>
         </div>
         <div className="WorldsList">
           {Object.keys(worldsBattlesList).map((worldIndex, i) => {
@@ -38,7 +40,7 @@ export default function WorldSelect({ worldsBattlesList, heroesList, localWallet
       </div>
     }
     {worldId !== -1 &&
-      <BattlesSelect worldId={worldId} battlesList={worldsBattlesList[worldId]} heroesList={heroesList} localWallet={localWallet} setWorldId={setWorldId} setIsBattleRunning={setIsBattleRunning} />
+      <BattlesSelect energy={energy} worldId={worldId} battlesList={worldsBattlesList[worldId]} heroesList={heroesList} localWallet={localWallet} setWorldId={setWorldId} stateChangesHandler={stateChangesHandler} />
     }
   </div>
   )

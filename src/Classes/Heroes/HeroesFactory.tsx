@@ -20,7 +20,7 @@ export abstract class HeroesFactory {
       name: hero.name,
       level: hero.level,
       rank: hero.rank,
-      experience: 0,
+      experience: hero.experience,
       runesIds: hero.runeIds,
       spots: hero.spots,
       spells: HeroesFactory.getSkills(skillSets[hero.name], skillsDict),
@@ -63,12 +63,13 @@ export abstract class HeroesFactory {
   }
 
   static computeBaseStats(level: number, rank: number, baseStats: HeroStats): HeroStats {
-    return { 
+    return {
       health: HeroesFactory.computeBaseStatFromLevelRank(level, rank, baseStats.health),
       attack: HeroesFactory.computeBaseStatFromLevelRank(level, rank, baseStats.attack),
       defense: HeroesFactory.computeBaseStatFromLevelRank(level, rank, baseStats.defense),
       speed: HeroesFactory.computeBaseStatFromLevelRank(level, rank, baseStats.speed),
-      criticalChance: baseStats.criticalChance, criticalDamage: baseStats.criticalDamage};
+      criticalChance: baseStats.criticalChance, criticalDamage: baseStats.criticalDamage
+    };
   }
 
   static computeBaseStatFromLevelRank(level: number, rank: number, stat: number): number {

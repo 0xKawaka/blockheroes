@@ -1,14 +1,15 @@
 import RawEvent from "./RawEvent";
 import {eventHashesDict} from "./eventHash";
-import {NewBattleEvent, StartTurnEvent, SkillEvent, EndTurnEvent, EndBattleEvent} from "./eventTypes";
+import {NewBattleEvent, StartTurnEvent, SkillEvent, EndTurnEvent, EndBattleEvent, ExperienceGainEvent} from "./eventTypes";
 import { num, shortString } from "starknet";
 
-export default class GameGameEventHandler {
+export default class GameEventHandler {
   private newBattleEvent: NewBattleEvent | undefined;
   private endBattleEvent: EndBattleEvent | undefined;
   private startTurnEventArray: StartTurnEvent[];
   private skillEventArray: SkillEvent[];
   private endTurnEventArray: EndTurnEvent[];
+  private experienceGainEventArray: ExperienceGainEvent[];
 
   constructor() {
     console.log("GameEventHandler constructor")
@@ -17,6 +18,7 @@ export default class GameGameEventHandler {
     this.startTurnEventArray = [];
     this.skillEventArray = [];
     this.endTurnEventArray = [];
+    this.experienceGainEventArray = [];
   }
 
   parseAndStore(rawEventArray: RawEvent[]): void {
@@ -40,6 +42,9 @@ export default class GameGameEventHandler {
       }
       else  if (eventName === "EndBattleEvent") {
         this.endBattleEvent = {owner: num.toHexString(rawEvent.data[0]), hasPlayerWon: Boolean(Number(rawEvent.data[1]))};
+      }
+      else if (eventName === "ExperienceGainEvent") {
+        this.experienceGainEventArray.push({owner: num.toHexString(rawEvent.data[0]), entityId: Number(rawEvent.data[1]), experienceGained: Number(rawEvent.data[2]), levelAfter: Number(rawEvent.data[3]), experienceAfter: Number(rawEvent.data[4])})
       }
     });
   }
@@ -146,6 +151,10 @@ export default class GameGameEventHandler {
     this.startTurnEventArray = [];
     this.skillEventArray = [];
     this.endTurnEventArray = [];
+  }
+
+  getExperienceGainEventArray(): ExperienceGainEvent[] {
+    return this.experienceGainEventArray;
   }
 
   getNewBattleEvent(): NewBattleEvent | undefined {

@@ -7,6 +7,7 @@ export abstract class Parser {
       id: Number(hero.id),
       name: shortString.decodeShortString(hero.name),
       level: Number(hero.level),
+      experience: Number(hero.experience),
       rank: Number(hero.rank),
       runeIds : this.parseRuneIds(hero.runes),
       spots: this.parseSpots(hero.runes),

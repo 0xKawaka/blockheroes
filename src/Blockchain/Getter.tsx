@@ -1,11 +1,27 @@
 import { Account, Contract, shortString } from "starknet"
 import {AccountsAdrs} from './data/contracts'
 import AccountsAbi from './abi/Accounts.json'
-import { GameAccount, HeroInfos } from "../Types/apiTypes";
-import { BlockchainRune, HeroBlockchain } from "../Types/blockchainTypes";
+import { AccountBlockchain, BlockchainRune, HeroBlockchain } from "../Types/blockchainTypes";
 import { Parser } from "./Parser";
+import EnergyHandler from "../Pages/Classes/EnergyHandler";
 
 export abstract class Getter {
+
+  public static async getEnergyInfos(wallet: Account): Promise<{energy: number, lastEnergyUpdateTimestamp: number}> {
+    try {
+      const contract = new Contract(AccountsAbi, AccountsAdrs, wallet);
+      const res = await contract.getEnergyInfos(wallet.address);
+
+      return {
+        energy: Number(res[0]),
+        lastEnergyUpdateTimestamp: Number(res[1]),
+      }
+    }
+    catch(error: any){
+      console.log('getEnergyInfos ', error.message)
+      return {energy: 0, lastEnergyUpdateTimestamp: 0};
+    }
+  }
 
   public static async getAllRunes(wallet: Account): Promise<Array<BlockchainRune>> {
     try {
@@ -49,14 +65,15 @@ export abstract class Getter {
     }
   }
 
-  public static async getAccount(wallet: Account): Promise<GameAccount | false> {
+  public static async getAccount(wallet: Account): Promise<AccountBlockchain | false> {
     try {
       const contract = new Contract(AccountsAbi, AccountsAdrs, wallet);
       const res = await contract.getAccount(wallet.address);
       if(Number(res.owner) === 0)
         return false;
       return {
-        energy: Number(res.energy),
+        username: shortString.decodeShortString(res.username),
+        energyInfos: {energy: Number(res.energy), lastEnergyUpdateTimestamp: Number(res.lastEnergyUpdateTimestamp)},
         shards: Number(res.shards),
       }
     }

@@ -93,7 +93,6 @@ export default class BattleScene extends Phaser.Scene {
       isAllyOrEnemy.push(i < selectedTeamNameArray.length ? 'ally' : 'enemy')
     }
     for (let i = 0; i < entitiesNames.length; i++) {
-      console.log('creating entity ' + entitiesNames[i] + ' '+ isAllyOrEnemy[i])
       this.battle.createEntity(entitiesArray[i], i, isAllyOrEnemy[i], selectedTeam.length, enemiesTeam.length)
     }
   }

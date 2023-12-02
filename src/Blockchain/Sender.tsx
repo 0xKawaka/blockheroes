@@ -54,7 +54,7 @@ export abstract class Sender {
         retryInterval: 200,
         successStates: [TransactionFinalityStatus.ACCEPTED_ON_L2],
       });
-      if(process.env.REACT_APP_ENV == "PROD" && res.events.length > 1) {
+      if((process.env.REACT_APP_ENV == "PROD" || process.env.REACT_APP_ENV == "TEST") && res.events.length > 1) {
         return { success: true, bonus: EventHandler.parseRuneBonusEvent(res.events[0])};
       }
       else if(process.env.REACT_APP_ENV == "DEV" && res.events.length > 0) {
@@ -88,7 +88,8 @@ export abstract class Sender {
   }
 
 
-  public static async startBattle(wallet: Account, heroesId: number[], worldId: number, battleId: number, eventHandler: GameEventHandler) {
+  public static async startBattle(wallet: Account, heroesId: number[], worldId: number, battleId: number, eventHandler: GameEventHandler): Promise<Boolean> {
+    console.log('startBattle')
     try {
       const contract = new Contract(GameAbi, GameAdrs, wallet);
       const tx = await contract.startBattle(heroesId, worldId, battleId);
@@ -97,10 +98,11 @@ export abstract class Sender {
         successStates: [TransactionFinalityStatus.ACCEPTED_ON_L2],
       });
       eventHandler.parseAndStore(res.events)
+      return true;
     }
     catch(error: any){
       console.log('Sender startBattle ', error.message)
-      return 0;
+      return false;
     }
   }
 

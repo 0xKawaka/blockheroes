@@ -6,6 +6,7 @@ import { HeroStats } from "../../Types/apiTypes"
 import Entity from "../../Classes/Entity/Entity"
 import GameEventHandler from "../../Blockchain/event/GameEventHandler"
 import { Account } from "starknet"
+import StateChangesHandler from "../State/StateChangesHandler"
 
 type BattlePageProps = {
   worldId: number
@@ -16,17 +17,17 @@ type BattlePageProps = {
   eventHandler: GameEventHandler
   localWallet: Account
   setPhaserRunning: React.Dispatch<React.SetStateAction<boolean>>
-  setIsBattleRunning: React.Dispatch<React.SetStateAction<boolean>>
+  stateChangesHandler: StateChangesHandler
   setIsLootPanelVisible: React.Dispatch<React.SetStateAction<boolean>>
   setWinOrLose: React.Dispatch<React.SetStateAction<string>>
 }
 
-export default function BattlePage({worldId, battleId, selectedTeam, selectedHeroesIds, enemiesTeam, eventHandler, localWallet, setPhaserRunning, setIsBattleRunning, setIsLootPanelVisible, setWinOrLose}: BattlePageProps) {
+export default function BattlePage({worldId, battleId, selectedTeam, selectedHeroesIds, enemiesTeam, eventHandler, localWallet, setPhaserRunning, stateChangesHandler, setIsLootPanelVisible, setWinOrLose}: BattlePageProps) {
 
   // const [walletAdrs, setWalletAdrs] = useState("")
 
   function handleStartFight() {
-    setIsBattleRunning(true)
+    stateChangesHandler.setIsBattleRunning(true)
     setPhaserRunning(true)
     setIsLootPanelVisible(false)
     const phaserGame = new Phaser.Game(getPhaserConfig(eventHandler, localWallet, "0xtest", "GamePhaserContainer", worldId, battleId, selectedTeam, selectedHeroesIds, enemiesTeam))
@@ -50,7 +51,7 @@ export default function BattlePage({worldId, battleId, selectedTeam, selectedHer
     setWinOrLose(endBattleEvent.hasPlayerWon ? "Victory" : "Defeat")
     eventHandler.reset()
     setPhaserRunning(false)
-    setIsBattleRunning(false)
+    stateChangesHandler.setIsBattleRunning(false)
     setIsLootPanelVisible(true)
   }
 

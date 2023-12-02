@@ -140,9 +140,9 @@ export default class BattleEntityAlly implements IBattleEntity {
     const ySkillBar = battleScene.battle.positionner.getSkillBarStartY()
     this.battleEntity.getEntity().skillArray.forEach((skill, index) => {
       let position = {x: 0, y: 0}
-      position.x = ((xSkillBar - totalSizeSkill / 4) - battleScene.cameras.main.worldView.x) * battleScene.cameras.main.zoom
+      position.x = ((xSkillBar - totalSizeSkill / 2) - battleScene.cameras.main.worldView.x) * battleScene.cameras.main.zoom
       position.y = (ySkillBar - (skillBaseWidth * 0.5 + battleScene.cameras.main.worldView.y)) * battleScene.cameras.main.zoom
-      battleScene.battle.UIScene.createSkillTooltip(skill, this.battleEntity.getIndex(), totalSizeSkill * this.skillScale * 1.5, position)
+      battleScene.battle.UIScene.createSkillTooltip(skill, this.battleEntity.getIndex(), totalSizeSkill * battleScene.cameras.main.zoom * 2, position, battleScene.cameras.main.zoom)
 
       this.createSkillImage(battleScene, skill.name, xSkillBar + skillBaseWidth * 0.5 + index * skillBaseWidth + index * skillGap, ySkillBar)
     })
@@ -178,7 +178,6 @@ export default class BattleEntityAlly implements IBattleEntity {
     this.skillImageByName[name].setName("skill_" + name + "_" + this.battleEntity.getIndex().toString())
     this.skillImageByName[name].setVisible(false)
     this.skillImageByName[name].setInteractive()
-    console.log("this.skillImageByName[name]  y : ", this.skillImageByName[name].y)
 
     this.skillSelectedImageByName[name] = battleScene.add.image(x, y, "skillSelected")
     // this.skillSelectedImageByName[name].setScale(this.skillScale)

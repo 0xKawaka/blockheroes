@@ -7,10 +7,10 @@ export default class Positionner {
   buffStatusSize: number = 12
 
   entitiesPositionsByTeamSize: { [key: number]: Array<{x: number, y: number}> } = {
-    1: [{x: 0.23, y: 0.77}],
+    1: [{x: 0.25, y: 0.8}],
     2: [{x: 0.25, y: 0.7}, {x: 0.25, y: 0.9}],
-    3: [{x: 0.29, y: 0.67}, {x: 0.17, y: 0.81}, {x: 0.29, y: 0.94}],
-    4: [{x: 0.29, y: 0.67}, {x: 0.17, y: 0.7}, {x: 0.17, y: 0.91}, {x: 0.29, y: 0.94}],
+    3: [{x: 0.32, y: 0.67}, {x: 0.20, y: 0.81}, {x: 0.29, y: 0.94}],
+    4: [{x: 0.32, y: 0.67}, {x: 0.20, y: 0.7}, {x: 0.20, y: 0.91}, {x: 0.32, y: 0.94}],
   }
 
 

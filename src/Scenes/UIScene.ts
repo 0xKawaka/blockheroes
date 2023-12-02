@@ -33,15 +33,13 @@ export default class UIScene extends Phaser.Scene {
   //   })
   // }
 
-  createSkillTooltip(skill: Skill, entityIndex: number, width: number, position: {x: number, y: number}): void {
-    console.log("createSkillTooltip ", skill.name, " ", entityIndex)
+  createSkillTooltip(skill: Skill, entityIndex: number, width: number, position: {x: number, y: number}, zoom: number): void {
     // const width = Math.round(this.sys.canvas.width / 2.7)
-    const height = this.sys.canvas.height * 0.3
-    this.skillTooltipsDict[skill.name + entityIndex] = new SkillTooltip(this, skill, width, height, position.x, position.y, entityIndex)
+    const height = this.sys.canvas.height * 0.35
+    this.skillTooltipsDict[skill.name + entityIndex] = new SkillTooltip(this, skill, width, height, position.x, position.y, entityIndex, zoom)
   }
 
   setTooltipVisibility(skillName: string, entityIndex: number, visible: boolean): void {
-    console.log("setTooltipVisibility ", skillName, " ", entityIndex)
     this.skillTooltipsDict[skillName + entityIndex].setVisible(visible)
   }
 
