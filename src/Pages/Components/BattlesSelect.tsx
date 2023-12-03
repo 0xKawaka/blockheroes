@@ -38,6 +38,7 @@ function computeTotalStats(baseeStats: HeroStats, bonusStats: HeroStats): HeroSt
 function BattlesSelect ({energy, worldId, battlesList, heroesList, localWallet, setWorldId, stateChangesHandler} : BattleSelectProps) {
   const [selectedBattleIndex, setSelectedBattleIndex] = useState<number>(-1)
   const [selectedHeroesIds, setSelectedHeroesIds] = useState<number[]>([])
+  const [heroesBeforeExperienceGained, setHeroesBeforeExperienceGained] = useState<HeroInfos[]>([])
   const [phaserRunning , setPhaserRunning] = useState<boolean>(false)
   const [isLootPanelVisible, setIsLootPanelVisible] = useState<boolean>(false)
   const [winOrLose, setWinOrLose] = useState<string>("")
@@ -46,6 +47,7 @@ function BattlesSelect ({energy, worldId, battlesList, heroesList, localWallet, 
   useEffect(() => {
     setGameEventHandler(new GameEventHandler())
   }, [])
+
 
   function getSelectedTeam(selectedHeroesIds:number[]): Entity[] {
     let selectedTeamNames = []
@@ -99,15 +101,15 @@ function BattlesSelect ({energy, worldId, battlesList, heroesList, localWallet, 
       </div>
     }
     {phaserRunning &&
-      <BattlePage worldId={worldId} battleId={selectedBattleIndex} selectedTeam={getSelectedTeam(selectedHeroesIds)} selectedHeroesIds={selectedHeroesIds} enemiesTeam={getEnemiesTeam(selectedBattleIndex)} eventHandler={eventHandler!} localWallet={localWallet} setPhaserRunning={setPhaserRunning} stateChangesHandler={stateChangesHandler} setIsLootPanelVisible={setIsLootPanelVisible} setWinOrLose={setWinOrLose}  />
+      <BattlePage worldId={worldId} battleId={selectedBattleIndex} selectedTeam={getSelectedTeam(selectedHeroesIds)} selectedHeroesIds={selectedHeroesIds} enemiesTeam={getEnemiesTeam(selectedBattleIndex)} heroesList={heroesList} eventHandler={eventHandler!} localWallet={localWallet} setPhaserRunning={setPhaserRunning} stateChangesHandler={stateChangesHandler} setIsLootPanelVisible={setIsLootPanelVisible} setWinOrLose={setWinOrLose} setHeroesBeforeExperienceGained={setHeroesBeforeExperienceGained} />
     }
     {!phaserRunning && isLootPanelVisible &&
       <div className="OutOfBattleContainer">
         {winOrLose === "Defeat" &&
-          <EndBattlePanel title={winOrLose} heroesList={heroesList} eventHandler={eventHandler!} setWinOrLose={setWinOrLose} setIsLootPanelVisible={setIsLootPanelVisible} stateChangesHandler={stateChangesHandler} />          
+          <EndBattlePanel title={winOrLose} heroesList={heroesList} heroesBeforeExperienceGained={heroesBeforeExperienceGained} eventHandler={eventHandler!} setWinOrLose={setWinOrLose} setIsLootPanelVisible={setIsLootPanelVisible} stateChangesHandler={stateChangesHandler} />          
         }
         {winOrLose === "Victory" &&
-          <EndBattlePanel title={winOrLose} heroesList={heroesList} eventHandler={eventHandler!} setWinOrLose={setWinOrLose} setIsLootPanelVisible={setIsLootPanelVisible} stateChangesHandler={stateChangesHandler} />
+          <EndBattlePanel title={winOrLose} heroesList={heroesList} heroesBeforeExperienceGained={heroesBeforeExperienceGained} eventHandler={eventHandler!} setWinOrLose={setWinOrLose} setIsLootPanelVisible={setIsLootPanelVisible} stateChangesHandler={stateChangesHandler} />
           // {name:"Contributor's emblem", amount:1, image:"Emblem"}    
         }
       </div>

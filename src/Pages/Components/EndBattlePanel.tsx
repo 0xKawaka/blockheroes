@@ -4,10 +4,12 @@ import StateChangesHandler from "../State/StateChangesHandler"
 import "./EndBattlePanel.css"
 import ExperiencePanel from "./ExperiencePanel"
 import LootItem from "./LootItem"
+import { useEffect } from "react"
 
 type EndBattlePanelProps = {
   title:string,
   heroesList: Array<HeroInfos>,
+  heroesBeforeExperienceGained: Array<HeroInfos>,
   eventHandler: GameEventHandler,
   setWinOrLose: React.Dispatch<React.SetStateAction<string>>,
   setIsLootPanelVisible: React.Dispatch<React.SetStateAction<boolean>>,
@@ -18,9 +20,7 @@ const imagesByItemName: {[key: string]: string} = {
   "Emblem": require("../../assets/lootItems/emblem.png"),
 }
 
-export default function EndBattlePanel({title, eventHandler, heroesList, setWinOrLose, setIsLootPanelVisible, stateChangesHandler}: EndBattlePanelProps) {
-
-  const heroesBeforeExperienceGained = heroesList.filter(hero => eventHandler.getExperienceGainEventArray().some(event => event.entityId === hero.id))
+export default function EndBattlePanel({title, eventHandler, heroesList, heroesBeforeExperienceGained, setWinOrLose, setIsLootPanelVisible, stateChangesHandler}: EndBattlePanelProps) {
 
   function handleContinue() {
     setWinOrLose("")

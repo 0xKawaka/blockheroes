@@ -2,7 +2,7 @@ import { getPhaserConfig } from "../../Scenes/phaserConfig"
 import "./BattlePage.css"
 import { useEffect, useState } from "react"
 import EndBattlePanel from "./EndBattlePanel"
-import { HeroStats } from "../../Types/apiTypes"
+import { HeroInfos, HeroStats } from "../../Types/apiTypes"
 import Entity from "../../Classes/Entity/Entity"
 import GameEventHandler from "../../Blockchain/event/GameEventHandler"
 import { Account } from "starknet"
@@ -14,19 +14,21 @@ type BattlePageProps = {
   selectedTeam: Entity[]
   selectedHeroesIds: number[]
   enemiesTeam: Entity[]
+  heroesList: Array<HeroInfos>
   eventHandler: GameEventHandler
   localWallet: Account
   setPhaserRunning: React.Dispatch<React.SetStateAction<boolean>>
   stateChangesHandler: StateChangesHandler
   setIsLootPanelVisible: React.Dispatch<React.SetStateAction<boolean>>
   setWinOrLose: React.Dispatch<React.SetStateAction<string>>
+  setHeroesBeforeExperienceGained: React.Dispatch<React.SetStateAction<HeroInfos[]>>
 }
 
-export default function BattlePage({worldId, battleId, selectedTeam, selectedHeroesIds, enemiesTeam, eventHandler, localWallet, setPhaserRunning, stateChangesHandler, setIsLootPanelVisible, setWinOrLose}: BattlePageProps) {
-
-  // const [walletAdrs, setWalletAdrs] = useState("")
+export default function BattlePage({worldId, battleId, selectedTeam, selectedHeroesIds, enemiesTeam, heroesList, eventHandler, localWallet, setPhaserRunning, stateChangesHandler, setIsLootPanelVisible, setWinOrLose, setHeroesBeforeExperienceGained}: BattlePageProps) {
 
   function handleStartFight() {
+    const heroesBeforeExperienceGained = structuredClone(heroesList.filter(hero => selectedHeroesIds.some(id => id === hero.id)))
+    setHeroesBeforeExperienceGained(heroesBeforeExperienceGained)
     stateChangesHandler.setIsBattleRunning(true)
     setPhaserRunning(true)
     setIsLootPanelVisible(false)
@@ -49,7 +51,7 @@ export default function BattlePage({worldId, battleId, selectedTeam, selectedHer
     }
     console.log('endBattleEvent.hasPlayerWon : ' + endBattleEvent.hasPlayerWon)
     setWinOrLose(endBattleEvent.hasPlayerWon ? "Victory" : "Defeat")
-    eventHandler.reset()
+    stateChangesHandler.updateAfterExperience(heroesList, eventHandler.getExperienceGainEventArray())
     setPhaserRunning(false)
     stateChangesHandler.setIsBattleRunning(false)
     setIsLootPanelVisible(true)

@@ -11,7 +11,13 @@
   justify-content: flex-start;  
   color: white;
   gap: 4rem;
-} 
+}
+
+.EndBattlePanelVictoryContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
 
 .EndBattlePanelTitleVictory, .EndBattlePanelTitleDefeat  {
   font-size: 5rem;

@@ -1,4 +1,4 @@
-import { RuneBonusEvent } from "../../Blockchain/event/eventTypes"
+import { ExperienceGainEvent, RuneBonusEvent } from "../../Blockchain/event/eventTypes"
 import { HeroesFactory } from "../../Classes/Heroes/HeroesFactory"
 import RuneFactory from "../../Classes/Runes/RuneFactory"
 import { GameAccount, HeroInfos, RuneInfos, RuneStatsDict } from "../../Types/apiTypes"
@@ -29,10 +29,18 @@ export default class StateChangesHandler {
     this.energyHandler = energyHandler
   }
 
+  updateAfterExperience(heroesList: Array<HeroInfos>, experienceGainArray: ExperienceGainEvent[]) {
+    let newHeroesList = [...heroesList]
+    experienceGainArray.forEach((experienceGain: ExperienceGainEvent) => {
+      const indexHero = newHeroesList.findIndex(h => h.id === experienceGain.entityId)
+      newHeroesList[indexHero].experience = experienceGain.experienceAfter
+      newHeroesList[indexHero].level = experienceGain.levelAfter
+    })
+    this.setHeroesList(newHeroesList)
+  }
+
   async updateEnergyHandler(energy: number, lastEnergyUpdateTimestamp: number) {
     this.energyHandler.updateEnergy(energy, lastEnergyUpdateTimestamp)
-    // console.log("energyHandler energy : ", energyHandler.getEnergy())
-    // this.setEnergyHandler(energyHandler)
   }
 
   updateRuneUpgrade(rune: RuneInfos, bonus: RuneBonusEvent | undefined, runesList: Array<RuneInfos>, heroesList: Array<HeroInfos>) {

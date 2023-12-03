@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import './Home.css'
 import { StarknetWindowObject } from "get-starknet";
 import { Account } from "starknet";
-import NavBar from "./Components/Navbar";
 
 type HomeProps = {
   localWallet: Account | undefined

@@ -151,6 +151,7 @@ export default class GameEventHandler {
     this.startTurnEventArray = [];
     this.skillEventArray = [];
     this.endTurnEventArray = [];
+    this.experienceGainEventArray = [];
   }
 
   getExperienceGainEventArray(): ExperienceGainEvent[] {
