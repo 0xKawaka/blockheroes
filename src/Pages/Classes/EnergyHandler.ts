@@ -52,10 +52,10 @@ export default class EnergyHandler {
 
     this.updateProcessCount += 1
     let processCount = this.updateProcessCount
-    let i = 0
+
     while(this.actualEnergy < maxEnergy) {
       const now = Date.now() / 1000
-      const timeSinceLastUpdate = now - (this.lastEnergyUpdateTimestamp + i * timeTickEnergy)
+      const timeSinceLastUpdate = now - (this.lastEnergyUpdateTimestamp + (this.actualEnergy - this.currentBlockchainEnergy) * timeTickEnergy)
 
       if(timeSinceLastUpdate > timeTickEnergy) {
         console.log("timeSinceLastUpdate > timeTickEnergy")
@@ -71,7 +71,6 @@ export default class EnergyHandler {
         return
       }
       this.actualEnergy += 1
-      i += 1
       this.setEnergy(this.actualEnergy)
     }
   }
