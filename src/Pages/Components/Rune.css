@@ -34,18 +34,31 @@
   gap: 2rem;
 }
 
-.RuneButton {
-  font-size: 2.2rem;
+.RuneButton, .RuneButtonUpgrade {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
   cursor: pointer;
   text-align: center;
   width: 14rem;
-  padding: 0.8rem;
+  padding: 0.3rem;
   border: 0.1rem solid white;
   -webkit-user-select: none;
   user-select: none;
 }
 
-.RuneButton:hover {
+.RuneButtonUpgradeCrystalValue {
+  display: flex;
+  align-items: center;
+}
+
+.RuneButtonUpgradeCrystalIcon {
+  width : 2.4rem;
+}
+
+.RuneButton:hover, .RuneButtonUpgrade:hover {
   background-color: white;
   color: black;
 }

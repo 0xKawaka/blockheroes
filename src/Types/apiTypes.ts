@@ -1,7 +1,7 @@
 import Skill from "../Classes/Skill/Skill"
 import EnergyHandler from "../Pages/Classes/EnergyHandler"
 
-type GameAccount = {username: string, shards: number}
+type GameAccount = {username: string, crystals: number}
 type RunesList = Array<RuneInfos>
 type RuneInfos = {id:number, shape: number, isEquipped: boolean, heroEquipped: number, statistics: Array<string>, isPercent:Array<boolean>, values:Array<number>, rarity:string, rank:number}
 type HeroInfos = {id:number, name: string, level:number, rank: number, experience:number, runesIds:Array<number>, spots:Array<number>, spells: Array<Skill>, baseStats:HeroStats, bonusStats:HeroStats}

@@ -5,4 +5,5 @@ export const eventHashesDict: {[key: string]: string} = {
   "0x10dfc37ad65804aa830bec1dc0284b3410a8366355b641b41ccb6063b41acc5": "EndTurnEvent",
   "0x169143d013e7076216610ff35d9f8aaed3705a203efcaad1474f9a854f900bd": "EndBattleEvent",
   "0xe652e0407ea68d77a436a2e8d511b75b7885524d7a62e8c28312b419dcde4c": "ExperienceGainEvent",
+  "0x1aa4251c55065346137f3c4c733fd2305e0640fbe22c9143a8c9cfe59e1bc54": "LootEvent",
 }

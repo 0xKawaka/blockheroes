@@ -5,4 +5,5 @@ type EndTurnEvent = {owner: string, buffsDict: {[key: number]: Array<{name: stri
 type EndBattleEvent = {owner: string, hasPlayerWon: boolean}
 type RuneBonusEvent = {owner: string, id: number, rank: number, procStat: string, isPercent: boolean}
 type ExperienceGainEvent = {owner: string,  entityId: number, experienceGained: number, levelAfter: number, experienceAfter: number }
-export type {NewBattleEvent, StartTurnEvent, SkillEvent, EndTurnEvent, EndBattleEvent, RuneBonusEvent, ExperienceGainEvent}
+type LootEvent = {owner: string, crystals: number}
+export type {NewBattleEvent, StartTurnEvent, SkillEvent, EndTurnEvent, EndBattleEvent, RuneBonusEvent, ExperienceGainEvent, LootEvent}

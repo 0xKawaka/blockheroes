@@ -18,7 +18,7 @@ export default function ExperiencePanel({eventHandler, heroesList, heroesBeforeE
       return (
         <div className="experienceHero" key={hero.id}>
           <img className="experienceHeroImage" src={portraitsDict[hero.name]} />
-          <ProgressExperience startLevel={heroBeforeExperienceGained!.level} endLevel={hero.level} startXp={heroBeforeExperienceGained!.experience} currentXp={hero.experience} width={15} height={2}/>
+          <ProgressExperience startLevel={heroBeforeExperienceGained!.level} endLevel={hero.level} startXp={heroBeforeExperienceGained!.experience} currentXp={hero.experience} width={15} height={1.8}/>
           <div className="experienceHeroLevelAndExperienceGained">
             {hero.level > heroBeforeExperienceGained!.level ?
             <div className="experienceHeroLevel">
@@ -37,7 +37,6 @@ export default function ExperiencePanel({eventHandler, heroesList, heroesBeforeE
       )
     }
   })
-  eventHandler.reset()
 
   return(
     <div className="ExperiencePanelContainer">

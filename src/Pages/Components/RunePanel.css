@@ -28,16 +28,10 @@
 .RuneEquippedWrapper, .RuneSelectedWrapper {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-}
-
-
-.RuneEquippedWrapper, .RuneSelectedWrapper {
-  display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
+
 
 .RunesList {
   display: flex;

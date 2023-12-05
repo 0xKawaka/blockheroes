@@ -17,6 +17,7 @@ const provider = new RpcProvider({
 
 type BurnerStorage = {
   [address: string]: {
+    username: string;
     privateKey: string;
     publicKey: string;
     deployTx: string;
@@ -32,9 +33,8 @@ const admin = new Account(
 
 export default abstract class Burner {
   public static getFirstActiveBurner(): Account | undefined {
-    const storage: BurnerStorage = Storage.get("burners");
+    const storage: BurnerStorage = Storage.get("blockheroesAccounts");
     if (storage) {
-      // set active account
       for (let address in storage) {
         if (storage[address].active) {
           const burner = new Account(
@@ -49,7 +49,35 @@ export default abstract class Burner {
     return undefined;
   }
 
-  public static async createBurnerAccount() {
+  public static getAccountByAddress(address: string): Account | undefined {
+    const storage: BurnerStorage = Storage.get("blockheroesAccounts");
+    if (storage) {
+      if (storage[address].active) {
+        const burner = new Account(
+          provider,
+          address,
+          storage[address].privateKey,
+        );
+        return burner;
+      }
+    }
+    return undefined;
+  }
+
+  public static getAllAccounts(): {address: string, username: string}[] {
+    const storage: BurnerStorage = Storage.get("blockheroesAccounts");
+    let accounts: {address: string, username: string}[] = [];
+    if (storage) {
+      for (let address in storage) {
+        if(!storage[address].active)
+          continue;
+          accounts.push({address, username: storage[address].username});
+      }
+    }
+    return accounts;
+  }
+
+  public static async createBurnerAccount(): Promise<{account: Account, privateKey: string, publicKey: string, deployTx: string}> {
     const privateKey = stark.randomAddress();
     
     const publicKey = ec.starkCurve.getStarkKey(privateKey);
@@ -74,23 +102,26 @@ export default abstract class Burner {
       },
       { maxFee: 0 },
     );
-    // save burner
-    let storage = Storage.get("burners") || {};
-    for (let address in storage) {
-      storage[address].active = false;
-    }
+    return {account: burner, privateKey, publicKey, deployTx };
+  }
+
+  public static saveAccount(address: string, privateKey: string, publicKey: string, deployTx: string, username: string) {
+    let storage = Storage.get("blockheroesAccounts") || {};
+
     storage[address] = {
+      username,
       privateKey,
       publicKey,
       deployTx,
       active: true,
     };
-    Storage.set("burners", storage);
-    console.log("burner created: ", address);
-
-    return burner;
+    
+    Storage.set("blockheroesAccounts", storage);
+    console.log("burner saved: ", publicKey);
   }
+  
 }
+
 
 const prefundAccount = async (address: string, account: Account) => {
   const { transaction_hash } = await account.execute(

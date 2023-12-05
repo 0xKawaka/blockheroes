@@ -1,22 +1,16 @@
 import { Link } from "react-router-dom";
 import './Home.css'
-import { StarknetWindowObject } from "get-starknet";
-import { Account } from "starknet";
+// import { StarknetWindowObject } from "get-starknet";
+// import { Account } from "starknet";
 
 type HomeProps = {
-  localWallet: Account | undefined
-  isDeploying: boolean
-  wallet: StarknetWindowObject | undefined
-  setWallet: React.Dispatch<React.SetStateAction<StarknetWindowObject | undefined>>
-  setHasDisconnected: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 
-function Home({localWallet, isDeploying, wallet, setWallet, setHasDisconnected}: HomeProps) {
+function Home({}: HomeProps) {
   return (
     <div className="HomeContainerAndNavbar">
-      {/* <NavBar wallet={wallet} setWallet={setWallet} setHasDisconnected={setHasDisconnected} /> */}
-      <div className="HomeContainer">
+      {/* <div className="HomeContainer">
         {!localWallet && !isDeploying &&
           <div className="LocalWalletLoading">
             Loading local test wallet...
@@ -38,20 +32,14 @@ function Home({localWallet, isDeploying, wallet, setWallet, setHasDisconnected}:
             </Link>
           </div>
         }
-      </div>
-
-      {/* <div className="HomeContainer">
-        {(wallet === undefined || !wallet?.isConnected) &&
-          <div className="WalletError">
-            Please connect your Starknet Wallet
-          </div>
-        }
-        {wallet !== undefined && wallet?.isConnected &&
+      </div> */}
+    <div className="HomeContainer">
+      <div className="disclaimerAndPlayContainer">
         <Link className="GameButton" to={{pathname: '/game'}}>
           Start Playing
         </Link>
-        }
-      </div> */}
+        </div>
+      </div>
     </div>
   )
 }

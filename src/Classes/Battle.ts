@@ -65,7 +65,7 @@ export default class Battle {
     this.eventHandler = eventHandler
   }
 
-  setLocalWallet(localWallet: Account){
+  setAccountWallet(localWallet: Account){
     this.localWallet = localWallet
   }
 

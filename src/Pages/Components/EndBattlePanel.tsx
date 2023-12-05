@@ -5,6 +5,7 @@ import "./EndBattlePanel.css"
 import ExperiencePanel from "./ExperiencePanel"
 import LootItem from "./LootItem"
 import { useEffect } from "react"
+import LootPanel from "./LootPanel"
 
 type EndBattlePanelProps = {
   title:string,
@@ -37,18 +38,10 @@ export default function EndBattlePanel({title, eventHandler, heroesList, heroesB
     <div className="EndBattlePanelVictoryContainer">
       <div className="EndBattlePanelTitleVictory">{title.toUpperCase()}</div>
       <ExperiencePanel heroesList={heroesList} eventHandler={eventHandler} heroesBeforeExperienceGained={heroesBeforeExperienceGained} />
+      <LootPanel eventHandler={eventHandler} />
     </div>
   
     }
-    {/* {lootItems && lootItems.length > 0 &&
-      <div className="EndBattlePanelLootContainer">
-        {lootItems.map((item, index) => {
-          return (
-            <LootItem key={index} name={item.name} amount={item.amount} image={imagesByItemName[item.image]} />
-          )
-        })} 
-      </div>
-    } */}
     <div className="buttonContinue" onClick={handleContinue}>Continue</div>
   </div>
   )

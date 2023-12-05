@@ -7,6 +7,7 @@ import "./Rune.css"
 import RuneMiniature from "./RuneMiniature"
 import { useState } from "react"
 import { Account } from "starknet"
+import crystalImg from "../../assets/icons/crystal.png"
 
 type RuneProps = {
   runesList: Array<RuneInfos>,
@@ -59,6 +60,7 @@ export default function Rune({runesList, heroesList, rune, equipped, image, hero
       return
     }
     stateChangesHandler.updateRuneUpgrade(rune, upgradeRuneDatas.bonus, runesList, heroesList)
+    stateChangesHandler.updateCrystals(upgradeRuneDatas.crystalCost)
     setIsUpgrading(false)
   }
 
@@ -78,7 +80,15 @@ export default function Rune({runesList, heroesList, rune, equipped, image, hero
         </div>
       </div>
       <div className="RuneButtonsContainer">
-        {rune.rank < maxRankRune && <div className="RuneButton" onClick={() => isUpgrading ? undefined : handleUpgradeRune(localWallet, rune)}>{isUpgrading ? "Upgrading" : "Upgrade"}</div>}
+        {rune.rank < maxRankRune && 
+        <div className="RuneButtonUpgrade" onClick={() => isUpgrading ? undefined : handleUpgradeRune(localWallet, rune)}>
+          <div className="RuneButtonUpgradeText"> {isUpgrading ? "Upgrading" : "Upgrade"}</div>
+          <div className="RuneButtonUpgradeCrystalValue">
+            {200 + rune.rank * 200}
+            <img className="RuneButtonUpgradeCrystalIcon" src={crystalImg} />
+          </div>
+          
+        </div>}
         {equipped && <div className="RuneButton" onClick={isEquipping ? undefined : () => handleUnequipRune(rune)}>{isEquipping ? processEquippedString : equippedString}</div>}
         {!equipped && !alreadyEquippedRune && !(rune.shape !== runeSpotClicked) &&
           <div className="RuneButton" onClick={() => isEquipping ? undefined : handleEquipRune(rune, heroId)}>{isEquipping ? processEquippedString : equippedString}</div>

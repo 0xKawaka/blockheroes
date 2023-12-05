@@ -1,6 +1,6 @@
 import RawEvent from "./RawEvent";
 import {eventHashesDict} from "./eventHash";
-import {NewBattleEvent, StartTurnEvent, SkillEvent, EndTurnEvent, EndBattleEvent, ExperienceGainEvent} from "./eventTypes";
+import {NewBattleEvent, StartTurnEvent, SkillEvent, EndTurnEvent, EndBattleEvent, ExperienceGainEvent, LootEvent} from "./eventTypes";
 import { num, shortString } from "starknet";
 
 export default class GameEventHandler {
@@ -10,6 +10,7 @@ export default class GameEventHandler {
   private skillEventArray: SkillEvent[];
   private endTurnEventArray: EndTurnEvent[];
   private experienceGainEventArray: ExperienceGainEvent[];
+  private lootEvent: LootEvent | undefined;
 
   constructor() {
     console.log("GameEventHandler constructor")
@@ -45,6 +46,9 @@ export default class GameEventHandler {
       }
       else if (eventName === "ExperienceGainEvent") {
         this.experienceGainEventArray.push({owner: num.toHexString(rawEvent.data[0]), entityId: Number(rawEvent.data[1]), experienceGained: Number(rawEvent.data[2]), levelAfter: Number(rawEvent.data[3]), experienceAfter: Number(rawEvent.data[4])})
+      }
+      else if (eventName === "LootEvent") {
+        this.lootEvent = {owner: num.toHexString(rawEvent.data[0]), crystals: Number(rawEvent.data[1])}
       }
     });
   }
@@ -152,6 +156,11 @@ export default class GameEventHandler {
     this.skillEventArray = [];
     this.endTurnEventArray = [];
     this.experienceGainEventArray = [];
+    this.lootEvent = undefined;
+  }
+
+  getLootEvent(): LootEvent | undefined {
+    return this.lootEvent;
   }
 
   getExperienceGainEventArray(): ExperienceGainEvent[] {

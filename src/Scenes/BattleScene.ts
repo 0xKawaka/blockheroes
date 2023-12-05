@@ -48,7 +48,7 @@ export default class BattleScene extends Phaser.Scene {
     let selectedTeam = this.registry.get('selectedTeam')
     let enemiesTeam = this.registry.get('enemiesTeam')
     this.battle.setGameEventHandler(this.registry.get('eventHandler'))
-    this.battle.setLocalWallet(this.registry.get('localWallet'))
+    this.battle.setAccountWallet(this.registry.get('localWallet'))
     
     this.playMusic()
 

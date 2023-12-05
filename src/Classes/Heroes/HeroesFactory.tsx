@@ -82,22 +82,22 @@ export abstract class HeroesFactory {
       rune.statistics.forEach((stat, i) => {
         switch (stat) {
           case "health":
-            bonusStats.health += rune.isPercent[i] ? baseStats.health * rune.values[i] / 100  : rune.values[i];
+            bonusStats.health += Math.trunc(rune.isPercent[i] ? baseStats.health * rune.values[i] / 100  : rune.values[i]);
             break;
           case "attack":
-            bonusStats.attack += rune.isPercent[i] ? baseStats.attack * rune.values[i] / 100  : rune.values[i];
+            bonusStats.attack += Math.trunc(rune.isPercent[i] ? baseStats.attack * rune.values[i] / 100  : rune.values[i]);
             break;
           case "defense":
-            bonusStats.defense += rune.isPercent[i] ? baseStats.defense * rune.values[i] / 100  : rune.values[i];
+            bonusStats.defense += Math.trunc(rune.isPercent[i] ? baseStats.defense * rune.values[i] / 100  : rune.values[i]);
             break;
           case "speed":
-            bonusStats.speed += rune.isPercent[i] ? baseStats.speed * rune.values[i] / 100  : rune.values[i];
+            bonusStats.speed += Math.trunc(rune.isPercent[i] ? baseStats.speed * rune.values[i] / 100  : rune.values[i]);
             break;
           case "criticalChance":
-            bonusStats.criticalChance += rune.isPercent[i] ? baseStats.criticalChance * rune.values[i] / 100  : rune.values[i];
+            bonusStats.criticalChance += Math.trunc(rune.isPercent[i] ? baseStats.criticalChance * rune.values[i] / 100  : rune.values[i]);
             break;
           case "criticalDamage":
-            bonusStats.criticalDamage += rune.isPercent[i] ? baseStats.criticalDamage * rune.values[i] / 100  : rune.values[i];
+            bonusStats.criticalDamage += Math.trunc(rune.isPercent[i] ? baseStats.criticalDamage * rune.values[i] / 100  : rune.values[i]);
             break;
           default:
             break;

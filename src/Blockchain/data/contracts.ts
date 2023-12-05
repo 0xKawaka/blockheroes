@@ -3,7 +3,7 @@ let GameAdrs = "";
 let ETHAdrs = "";
 
 if(process.env.REACT_APP_ENV == "DEV") {
-  AccountsAdrs = "0x03ec2325aa97ce10103b49b14e7ad5098ee0e06236606c95d2e5eaa6d65d34cd";
+  AccountsAdrs = "0x0475b10550469ea2ef33767a284cca08e84795ca87390460e5d6ca7d8380334c";
   GameAdrs = "0x00811151934e2220b7cfb58643215433536e2db997ca18c4353b2c86fbd7896b";
   ETHAdrs = "0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
 }

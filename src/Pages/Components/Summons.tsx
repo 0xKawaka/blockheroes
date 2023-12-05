@@ -15,12 +15,11 @@ import portraitsDict from "../../assets/portraits/portraitsDict"
 
 type SummonsProps = {
   localWallet: Account
-  wallet: StarknetWindowObject | undefined
   setShowSummons: React.Dispatch<React.SetStateAction<boolean>>
   handleNewHeroEvent: (hero: HeroBlockchain) => void
 }
 
-export default function Summons({localWallet, wallet, setShowSummons, handleNewHeroEvent }: SummonsProps) {
+export default function Summons({localWallet, setShowSummons, handleNewHeroEvent }: SummonsProps) {
   const [isSummoning, setIsSummoning] = useState(false);
   const [showSummongAnimation, setShowSummonAnimation] = useState(false);
   const [showSummonResult, setShowSummonResult] = useState(false);

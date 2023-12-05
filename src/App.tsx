@@ -10,28 +10,28 @@ import Storage from './Cookies/storage'
 
 
 function App() {
-  const [wallet, setWallet] = useState<StarknetWindowObject>();
-  const [hasDisconnected, setHasDisconnected] = useState<boolean>(false);
+  // const [wallet, setWallet] = useState<StarknetWindowObject>();
+  // const [hasDisconnected, setHasDisconnected] = useState<boolean>(false);
 
-  const [localWallet, setLocalWallet] = useState<Account>();
-  const [isDeploying, setIsDeploying] = useState(false);
+  // const [localWallet, setAccountWallet] = useState<Account>();
+  // const [isDeploying, setIsDeploying] = useState(false);
 
-  useEffect(() => {
-    Storage.clear();
-    let firstActivBurner = Burner.getFirstActiveBurner();
-    console.log('old localWallet : ', firstActivBurner);
-    if(firstActivBurner){
-      setLocalWallet(firstActivBurner);
-    }
-    else {
-      setIsDeploying(true);
-      Burner.createBurnerAccount().then((account) => {
-        setLocalWallet(account);
-        setIsDeploying(false);
-        console.log('new localWallet : ', account);
-      })
-    }    
-  }, [])
+  // useEffect(() => {
+  //   Storage.clear();
+  //   let firstActivBurner = Burner.getFirstActiveBurner();
+  //   console.log('old localWallet : ', firstActivBurner);
+  //   if(firstActivBurner){
+  //     setAccountWallet(firstActivBurner);
+  //   }
+  //   else {
+  //     setIsDeploying(true);
+  //     Burner.createBurnerAccount().then((account) => {
+  //       setAccountWallet(account);
+  //       setIsDeploying(false);
+  //       console.log('new localWallet : ', account);
+  //     })
+  //   }    
+  // }, [])
 
   // useEffect(() => {
   //   (async () => {
@@ -48,9 +48,8 @@ function App() {
   return (
     <Router>
         <Routes>
-          <Route path="/" element={<Home localWallet={localWallet} isDeploying={isDeploying} wallet={wallet} setWallet={setWallet} setHasDisconnected={setHasDisconnected} />} />
-          {/* <Route path="/game" element={wallet && localWallet ? <GamePage localWallet={localWallet} wallet={wallet} /> : <Home localWallet={localWallet} isDeploying={isDeploying} wallet={wallet} setWallet={setWallet} setHasDisconnected={setHasDisconnected} />} /> */}
-          <Route path="/game" element={localWallet ? <GamePage localWallet={localWallet} wallet={wallet} /> : <Home localWallet={localWallet} isDeploying={isDeploying} wallet={wallet} setWallet={setWallet} setHasDisconnected={setHasDisconnected} />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/game" element={<GamePage />} />
         </Routes>
     </Router>
   )

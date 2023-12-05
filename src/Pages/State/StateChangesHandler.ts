@@ -1,13 +1,14 @@
-import { ExperienceGainEvent, RuneBonusEvent } from "../../Blockchain/event/eventTypes"
+import { ExperienceGainEvent, LootEvent, RuneBonusEvent } from "../../Blockchain/event/eventTypes"
 import { HeroesFactory } from "../../Classes/Heroes/HeroesFactory"
 import RuneFactory from "../../Classes/Runes/RuneFactory"
-import { GameAccount, HeroInfos, RuneInfos, RuneStatsDict } from "../../Types/apiTypes"
+import { BaseStatsDict, GameAccount, HeroInfos, RuneInfos, RuneStatsDict } from "../../Types/apiTypes"
 import EnergyHandler from "../Classes/EnergyHandler"
 
 
 export default class StateChangesHandler {
   energyHandler: EnergyHandler
   runeStatsDict: RuneStatsDict
+  baseStatsDict: BaseStatsDict
   setHeroesList: React.Dispatch<React.SetStateAction<HeroInfos[]>>
   setRunesList: React.Dispatch<React.SetStateAction<RuneInfos[]>>
   setGameAccount: React.Dispatch<React.SetStateAction<GameAccount>>
@@ -25,8 +26,16 @@ export default class StateChangesHandler {
     this.setIsBattleRunning = setIsBattleRunning
   }
 
-  setEnergyHandler(energyHandler: EnergyHandler) {
-    this.energyHandler = energyHandler
+  updateLoot(loot: LootEvent) {
+    this.setGameAccount((prevState: GameAccount) => {
+      return {...prevState, crystals: prevState.crystals + loot.crystals}
+    })
+  }
+
+  updateCrystals(crystalCost: number) {
+    this.setGameAccount((prevState: GameAccount) => {
+      return {...prevState, crystals: prevState.crystals - crystalCost}
+    })
   }
 
   updateAfterExperience(heroesList: Array<HeroInfos>, experienceGainArray: ExperienceGainEvent[]) {
@@ -35,6 +44,7 @@ export default class StateChangesHandler {
       const indexHero = newHeroesList.findIndex(h => h.id === experienceGain.entityId)
       newHeroesList[indexHero].experience = experienceGain.experienceAfter
       newHeroesList[indexHero].level = experienceGain.levelAfter
+      newHeroesList[indexHero].baseStats = HeroesFactory.computeBaseStats(newHeroesList[indexHero].level, newHeroesList[indexHero].rank, this.baseStatsDict[newHeroesList[indexHero].name])
     })
     this.setHeroesList(newHeroesList)
   }
@@ -121,5 +131,13 @@ export default class StateChangesHandler {
 
   setRuneStatsDict(runeStatsDict: RuneStatsDict) {
     this.runeStatsDict = runeStatsDict
+  }
+
+  setBaseStatsDict(baseStatsDict: BaseStatsDict) {
+    this.baseStatsDict = baseStatsDict
+  }
+
+  setEnergyHandler(energyHandler: EnergyHandler) {
+    this.energyHandler = energyHandler
   }
 }

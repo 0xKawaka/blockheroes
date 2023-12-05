@@ -21,6 +21,7 @@ export default class EnergyHandler {
     this.lastEnergyUpdateTimestamp = lastEnergyUpdateTimestamp
     this.actualEnergy = this.computeActualEnergy()
     this.setEnergy(this.actualEnergy)
+    this.updateEnergyOnCd()
   }
 
   updateEnergy(energy: number, lastEnergyUpdateTimestamp: number) {
@@ -30,9 +31,7 @@ export default class EnergyHandler {
     this.actualEnergy = this.computeActualEnergy()
     console.log("this.actualEnergy :", this.actualEnergy)
     this.setEnergy(this.actualEnergy)
-    if(this.actualEnergy < maxEnergy) {
-      this.updateEnergyOnCd()
-    }
+    this.updateEnergyOnCd()
   }
 
   computeActualEnergy() {
@@ -47,6 +46,10 @@ export default class EnergyHandler {
   }
 
   async updateEnergyOnCd() {
+    if(this.actualEnergy >= maxEnergy) {
+      return
+    }
+
     this.updateProcessCount += 1
     let processCount = this.updateProcessCount
     let i = 0

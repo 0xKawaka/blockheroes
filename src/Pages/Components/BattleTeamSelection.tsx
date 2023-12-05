@@ -56,6 +56,7 @@ export default function BattleTeamSelection({energy, worldId, battleId, enemiesN
       return;
     }
     setIsStartingBattle(true)
+    eventHandler.reset()
     const isBattleStarted = await Sender.startBattle(localWallet, selectedHeroesIds, worldId, battleId, eventHandler);
     if(isBattleStarted) {
       setIsStartingBattle(false)

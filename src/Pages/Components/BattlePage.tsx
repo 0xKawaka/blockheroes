@@ -52,6 +52,7 @@ export default function BattlePage({worldId, battleId, selectedTeam, selectedHer
     console.log('endBattleEvent.hasPlayerWon : ' + endBattleEvent.hasPlayerWon)
     setWinOrLose(endBattleEvent.hasPlayerWon ? "Victory" : "Defeat")
     stateChangesHandler.updateAfterExperience(heroesList, eventHandler.getExperienceGainEventArray())
+    stateChangesHandler.updateLoot(eventHandler.getLootEvent()!)
     setPhaserRunning(false)
     stateChangesHandler.setIsBattleRunning(false)
     setIsLootPanelVisible(true)

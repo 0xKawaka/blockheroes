@@ -13,18 +13,15 @@
   padding-right: 3rem;
 }
 
-.EnergyContainer {
+.EnergyContainer, .CrystalsContainer {
   display: flex;
   flex-direction: row;
   align-items: center;
+  font-size: 2.2rem;
   /* border: 0.1rem solid white;
   padding: 0.8rem; */
 }
 
-.EnergyValue {
-  font-size: 2.2rem;
-}
-
-.EnergyIcon {
-  height: 2.8rem;
+.EnergyIcon, .CrystalsIcon {
+  height: 3rem;
 }

@@ -71,10 +71,11 @@ export abstract class Getter {
       const res = await contract.getAccount(wallet.address);
       if(Number(res.owner) === 0)
         return false;
+
       return {
         username: shortString.decodeShortString(res.username),
         energyInfos: {energy: Number(res.energy), lastEnergyUpdateTimestamp: Number(res.lastEnergyUpdateTimestamp)},
-        shards: Number(res.shards),
+        crystals: Number(res.crystals),
       }
     }
     catch(error: any){

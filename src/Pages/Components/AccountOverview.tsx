@@ -1,15 +1,16 @@
 import "./AccountOverview.css"
 import energyImg from "../../assets/icons/energy.png"
+import crystalImg from "../../assets/icons/crystal.png"
 import EnergyHandler from "../Classes/EnergyHandler"
 
 type AccountOverviewProps = {
   username: string
   energy: number
   maxEnergy: number
-  shards: number
+  crystals: number
 }
 
-export default function AccountOverview({username, energy, maxEnergy, shards}: AccountOverviewProps) {
+export default function AccountOverview({username, energy, maxEnergy, crystals}: AccountOverviewProps) {
 
   return(
   <div className="AccountOverviewContainer">
@@ -21,10 +22,10 @@ export default function AccountOverview({username, energy, maxEnergy, shards}: A
         <div className="EnergyValue">{energy} / {maxEnergy}</div>
         <img className="EnergyIcon" src={energyImg} />
       </div>
-      
-      {/* <div className="ShardsContainer">
-        <div className="ShardsValue">{shards}</div>
-      </div> */}
+      <div className="CrystalsContainer">
+        <div className="CrystalsValue">{crystals}</div>
+        <img className="CrystalsIcon" src={crystalImg} />
+      </div>
     </div>
   </div>
   )

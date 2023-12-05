@@ -35,7 +35,9 @@ export default function ProgressExperience({startLevel, endLevel, startXp, curre
         }
       }
       else {
+        setShowExpText(true)
         clearInterval(animation)
+        console.log("clearInterval")
       }
     }, 10)
     return () => clearInterval(animation)

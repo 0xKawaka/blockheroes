@@ -10,4 +10,9 @@ export default abstract class EventHandler {
     const isPercent = Boolean(Number(rawEvent.data[4]));
     return {owner: rawEvent.keys[0], id: id, rank: rank, procStat: procStat, isPercent: isPercent};
   }
+
+  static parseRuneUpgradeEvent(rawEvent: RawEvent): number {
+    return Number(rawEvent.data[3]);
+  }
+  
 }

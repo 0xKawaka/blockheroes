@@ -21,6 +21,7 @@ import RuneFactory from '../Classes/Runes/RuneFactory'
 import StateChangesHandler from './State/StateChangesHandler'
 import AccountOverview from './Components/AccountOverview'
 import EnergyHandler from './Classes/EnergyHandler'
+import AccountSelect from './Components/AccountSelect'
 
 function getGamePageContainerStyle(isBattleRunning: boolean){
   if (isBattleRunning){
@@ -36,12 +37,11 @@ function getGamePageContainerStyle(isBattleRunning: boolean){
 }
 
 type GamePageProps = {
-  localWallet: Account
-  wallet: StarknetWindowObject | undefined
 }  
 
-function GamePage({localWallet, wallet} : GamePageProps) {
-  const [gameAccount, setGameAccount] = useState<GameAccount>({ username: "", shards: 0})
+function GamePage({} : GamePageProps) {
+  const [localWallet, setAccountWallet] = useState<Account>();
+  const [gameAccount, setGameAccount] = useState<GameAccount>({ username: "", crystals: 0})
   const [energy, setEnergy] = useState<number>(0)
   const [hasAccount, setHasAccount] = useState<boolean>(false)
   const [heroesList, setHeroesList] = useState<Array<HeroInfos>>([])
@@ -50,16 +50,15 @@ function GamePage({localWallet, wallet} : GamePageProps) {
   const [skillSets, setSkillSets] = useState<SkillSets>({})
   const [baseStatsDict, setBaseStatsDict] = useState<BaseStatsDict>({})
   const [worldsBattlesList, setWorldsBattlesList] = useState<BattlesInfosDict>({})
-  const [refreshUseEffect, setRefreshUseEffect] = useState<number>(0)
   const [showMyHeroes, setShowMyHeroes] = useState<boolean>(false)
   const [showWorldSelect, setShowWorldSelect] = useState<boolean>(false)
   const [showSummons, setShowSummons] = useState<boolean>(false)
   const [isBattleRunning, setIsBattleRunning] = useState<boolean>(false)
   const [stateChangesHandler, setStateChangesHandler] = useState<StateChangesHandler>(new StateChangesHandler(setHeroesList, setRunesList, setGameAccount, setShowMyHeroes, setShowWorldSelect, setIsBattleRunning))
 
-  function handleNewAccount(){
-    setRefreshUseEffect(refreshUseEffect + 1)
-  }
+  // function handleNewAccount(){
+  //   setRefreshUseEffect(refreshUseEffect + 1)
+  // }
 
   async function handleNewHeroEvent(hero: HeroBlockchain) {
     let heroInfos = HeroesFactory.createHero(hero!, [], skillsDict, skillSets, baseStatsDict)
@@ -71,6 +70,10 @@ function GamePage({localWallet, wallet} : GamePageProps) {
   useEffect(() => {
     (async () => {
       console.log('useEffect GamePage')
+      if(localWallet === undefined){
+        console.log('localWallet undefined')
+        return;
+      }
       let accountPromise = await Getter.getAccount(localWallet);
       let heroesPromise = Getter.getAllHeroes(localWallet);
       let runesPromise = Getter.getAllRunes(localWallet);
@@ -80,6 +83,7 @@ function GamePage({localWallet, wallet} : GamePageProps) {
       let runeStatsDictPromise = ApiHandler.getRuneStats();
       let [account, heroes, blockchainRunes, skillsDictApi, skillSets, baseStatsDict, runeStatsDict] = await Promise.all([accountPromise, heroesPromise, runesPromise, skillsDictPromise, skillSetsPromise, baseStatsDictPromise, runeStatsDictPromise]);
       stateChangesHandler.setRuneStatsDict(runeStatsDict)
+      stateChangesHandler.setBaseStatsDict(baseStatsDict)
       if(account){
         let energyHandler = new EnergyHandler(setEnergy)
         energyHandler.initEnergy(account.energyInfos.energy, account.energyInfos.lastEnergyUpdateTimestamp)
@@ -101,12 +105,12 @@ function GamePage({localWallet, wallet} : GamePageProps) {
       // console.log(battlesWithEnemyStatsAndSkills);
       setWorldsBattlesList(battlesWithEnemyStatsAndSkills);
     })();
-  }, [refreshUseEffect]);
+  }, [localWallet]);
 
   return (
     <div className='GamePhaserContainer' id='GamePhaserContainer'>
       <div className='GamePageContainer' style={getGamePageContainerStyle(isBattleRunning)}>
-        {hasAccount && !isBattleRunning && <AccountOverview username={gameAccount.username} energy={energy} maxEnergy={5} shards={gameAccount.shards} />}
+        {hasAccount && !isBattleRunning && <AccountOverview username={gameAccount.username} energy={energy} maxEnergy={5} crystals={gameAccount.crystals} />}
         {hasAccount && !showMyHeroes && !showWorldSelect && !showSummons &&
         <div className='GamePageTitleAndMenu'>
           <img className='GamePageTitle' src={title} />
@@ -132,17 +136,17 @@ function GamePage({localWallet, wallet} : GamePageProps) {
           </div>
         </div>
         }
-        {!hasAccount &&
-          <Register localWallet={localWallet} wallet={wallet} handleNewAccount={handleNewAccount} />
+        {localWallet === undefined &&
+          <AccountSelect setAccountWallet={setAccountWallet} />
         }
         {showMyHeroes &&
-          <MyHeroes heroesList={heroesList} runesList={runesList} localWallet={localWallet} stateChangesHandler={stateChangesHandler}/>
+          <MyHeroes heroesList={heroesList} runesList={runesList} localWallet={localWallet!} stateChangesHandler={stateChangesHandler}/>
         }
         {showWorldSelect &&
-          <WorldSelect energy={energy} worldsBattlesList={worldsBattlesList} heroesList={heroesList} localWallet={localWallet} stateChangesHandler={stateChangesHandler} />
+          <WorldSelect energy={energy} worldsBattlesList={worldsBattlesList} heroesList={heroesList} localWallet={localWallet!} stateChangesHandler={stateChangesHandler} />
         }
         {showSummons &&
-          <Summons localWallet={localWallet} wallet={wallet} setShowSummons={setShowSummons} handleNewHeroEvent={handleNewHeroEvent} />
+          <Summons localWallet={localWallet!} setShowSummons={setShowSummons} handleNewHeroEvent={handleNewHeroEvent} />
         }
       </div>
     </div>
