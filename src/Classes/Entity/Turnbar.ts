@@ -1,3 +1,5 @@
+import truncOrRoundDecimalPoint from '../MathInteger/MathInteger'
+
 export default class Turnbar {
   entityIndex: number
   speed: number
@@ -11,7 +13,7 @@ export default class Turnbar {
   }
 
   incrementTurnbar() {
-    this.turnbar += Math.floor(this.speed * this.incrementStep)
+    this.turnbar += truncOrRoundDecimalPoint(this.speed * this.incrementStep)
   }
 
   resetTurn() {

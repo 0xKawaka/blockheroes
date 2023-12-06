@@ -1,6 +1,7 @@
 import { HeroInfos, SkillsDict, BaseStatsDict, SkillSets, HeroStats, BattlesInfosDict, EnemyInfos, BattlesInfosApi, RuneInfos } from "../../Types/apiTypes";
 import { HeroBlockchain } from "../../Types/blockchainTypes";
 import Skill from "../Skill/Skill";
+import truncOrRoundDecimalPoint from "../MathInteger/MathInteger"
 
 export abstract class HeroesFactory {
   public static createHeroes(heroes: Array<HeroBlockchain>, runes: Array<RuneInfos>, skillsDict: SkillsDict, skillSets: SkillSets, baseStatsDict: BaseStatsDict): Array<HeroInfos> {
@@ -73,7 +74,7 @@ export abstract class HeroesFactory {
   }
 
   static computeBaseStatFromLevelRank(level: number, rank: number, stat: number): number {
-    return Math.trunc(stat + (stat * (level - 1)) / 100);
+    return truncOrRoundDecimalPoint(stat + (stat * (level - 1)) / 100);
   }
 
   static computeBonusStats(baseStats: HeroStats, runes: Array<RuneInfos>): HeroStats {
@@ -82,22 +83,22 @@ export abstract class HeroesFactory {
       rune.statistics.forEach((stat, i) => {
         switch (stat) {
           case "health":
-            bonusStats.health += Math.trunc(rune.isPercent[i] ? baseStats.health * rune.values[i] / 100  : rune.values[i]);
+            bonusStats.health += truncOrRoundDecimalPoint(rune.isPercent[i] ? baseStats.health * rune.values[i] / 100  : rune.values[i]);
             break;
           case "attack":
-            bonusStats.attack += Math.trunc(rune.isPercent[i] ? baseStats.attack * rune.values[i] / 100  : rune.values[i]);
+            bonusStats.attack += truncOrRoundDecimalPoint(rune.isPercent[i] ? baseStats.attack * rune.values[i] / 100  : rune.values[i]);
             break;
           case "defense":
-            bonusStats.defense += Math.trunc(rune.isPercent[i] ? baseStats.defense * rune.values[i] / 100  : rune.values[i]);
+            bonusStats.defense += truncOrRoundDecimalPoint(rune.isPercent[i] ? baseStats.defense * rune.values[i] / 100  : rune.values[i]);
             break;
           case "speed":
-            bonusStats.speed += Math.trunc(rune.isPercent[i] ? baseStats.speed * rune.values[i] / 100  : rune.values[i]);
+            bonusStats.speed += truncOrRoundDecimalPoint(rune.isPercent[i] ? baseStats.speed * rune.values[i] / 100  : rune.values[i]);
             break;
           case "criticalChance":
-            bonusStats.criticalChance += Math.trunc(rune.isPercent[i] ? baseStats.criticalChance * rune.values[i] / 100  : rune.values[i]);
+            bonusStats.criticalChance += truncOrRoundDecimalPoint(rune.isPercent[i] ? baseStats.criticalChance * rune.values[i] / 100  : rune.values[i]);
             break;
           case "criticalDamage":
-            bonusStats.criticalDamage += Math.trunc(rune.isPercent[i] ? baseStats.criticalDamage * rune.values[i] / 100  : rune.values[i]);
+            bonusStats.criticalDamage += truncOrRoundDecimalPoint(rune.isPercent[i] ? baseStats.criticalDamage * rune.values[i] / 100  : rune.values[i]);
             break;
           default:
             break;

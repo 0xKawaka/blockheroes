@@ -54,13 +54,13 @@ export default class Positionner {
   getBuffStatusPosition(camera: Phaser.Cameras.Scene2D.Camera, healthBarX: number, healthBarY: number, healthBarWidth:number, healthBarHeight: number, buffsCount:number, statusCount:number, scale:number): Array<{image: {x: number, y: number}, text: {x: number, y: number}}> {
     // const realWidth = this.buffStatusSize * scale
     // const realHeight = this.buffStatusSize * scale
-    const buffsPerRow = Math.floor(healthBarWidth / this.buffStatusSize)
+    const buffsPerRow = Math.trunc(healthBarWidth / this.buffStatusSize)
     let positionArray = []
     for (let i = 0; i < buffsCount + statusCount; i++) {
       // const x = healthBarX + i % buffsPerRow * (realWidth + this.buffStatusGapRatio * this.canvasWidth)
       const x = healthBarX + (((i % buffsPerRow) + 1) * this.buffStatusSize)
       // const y = healthBarY + Math.floor(i / buffsPerRow) * (realHeight + this.buffStatusGapRatio * this.canvasHeight)
-      const y = healthBarY - Math.floor(i / buffsPerRow) * this.buffStatusSize
+      const y = healthBarY - Math.trunc(i / buffsPerRow) * this.buffStatusSize
       const textX = (x - camera.worldView.x) * camera.zoom
       const textY = (y - camera.worldView.y) * camera.zoom    
 

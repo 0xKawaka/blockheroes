@@ -1,5 +1,7 @@
+import truncOrRoundDecimalPoint from '../../Classes/MathInteger/MathInteger'
+
 const maxEnergy = 5
-const timeTickEnergy = 120 // in seconds
+const timeTickEnergy = 1200 // in seconds
 
 export default class EnergyHandler {
   currentBlockchainEnergy: number
@@ -36,8 +38,8 @@ export default class EnergyHandler {
 
   computeActualEnergy() {
     let now = Date.now() / 1000
-    let timeSinceLastUpdate = Math.floor(now - this.lastEnergyUpdateTimestamp)
-    let energyToAdd = Math.floor(timeSinceLastUpdate / timeTickEnergy)
+    let timeSinceLastUpdate = truncOrRoundDecimalPoint(now - this.lastEnergyUpdateTimestamp)
+    let energyToAdd = truncOrRoundDecimalPoint(timeSinceLastUpdate / timeTickEnergy)
     let actualEnergy = this.currentBlockchainEnergy + energyToAdd
     if(actualEnergy > maxEnergy) {
       actualEnergy = maxEnergy

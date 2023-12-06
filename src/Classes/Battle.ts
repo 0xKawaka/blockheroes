@@ -87,6 +87,7 @@ export default class Battle {
       // })
       // console.log('before : ', JSON.parse(JSON.stringify(this.turnTimeline)))
       this.loopUntilNextTurn()
+      // console.log(this.turnTimeline)
       // console.log('after : ', JSON.parse(JSON.stringify(this.turnTimeline)))
       this.isTurnPlaying = true
       this.updateDisplayTurnBars()
